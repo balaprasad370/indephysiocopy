@@ -67,6 +67,24 @@ const App = () => {
     setLoading,
   };
 
+  // const getDatFunc = async () => {
+  //   const token =
+  //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhdmlAZ21haWwuY29tIiwidXNlcnR5cGUiOiJhZG1pbiIsImNsaWVudF9pZCI6NywibW9iaWxlIjoiU1dERkVHUkgiLCJmaXJzdF9uYW1lIjoiUmFpIHJhaiIsImxhc3RfbmFtZSI6IiIsImlhdCI6MTcyMjM0NDMxMywiZXhwIjoxNzI0OTM2MzEzfQ.fGd66gNmClvBteneWYom1ic6qRBjsZXxO-eBotf7hIA';
+  //   try {
+  //     const res = await axios({
+  //       method: 'get',
+  //       url: 'https://server.indephysio.com/flashcard/' + {id: 7},
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: 'Bearer ' + token,
+  //       },
+  //     });
+  //     console.log('yeh reha flashcard', res.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   const fetchToken = async () => {
     try {
       const isLoggedIn = await storage.getBoolAsync('isLoggedIn');
@@ -126,6 +144,7 @@ const App = () => {
 
   useEffect(() => {
     // verifyToken();
+    // getDatFunc();
     fetchToken();
   }, []);
 

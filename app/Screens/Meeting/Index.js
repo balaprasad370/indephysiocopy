@@ -1,4 +1,4 @@
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
 
@@ -26,6 +26,8 @@ const Meeting = ({route}) => {
     onEndpointMessageReceived,
   };
 
+  const [newRoom, setNewRoom] = useState('android');
+
   return (
     // @ts-ignore
     <JitsiMeeting
@@ -51,7 +53,7 @@ const Meeting = ({route}) => {
       }}
       ref={jitsiMeeting}
       style={{flex: 1}}
-      room={room}
+      room={newRoom}
       serverURL={'https://meet.indephysio.com'}
     />
   );
