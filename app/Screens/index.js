@@ -1,0 +1,15 @@
+export {default as Login} from './Login/Index';
+export {default as Signup} from './Signup/Index';
+export {default as OTP} from './OTP/Index';
+export {default as ResetPassword} from './ResetPassword/Index';
+export {default as Recovery} from './Recovery/Index';
+export {default as LiveClasses} from './LiveClasses/Index';
+export {default as Dashboard} from './Dashboard/Index';
+export {default as Documents} from './Documents/Index';
+export {default as SelfLearnScreen} from './SelfLearning/Index';
+export {default as SelfLearn} from './SelfLearning/SelfLearn';
+export {default as Level} from './Level/Index';
+export {default as ProfileSetting} from './ProfileSetting/Index';
+export {default as ReadingMaterial} from '../Components/ReadingMaterial/Index';
+export {default as Chapters} from './Chapters/Index';
+export {default as Meeting} from './Meeting/Index';

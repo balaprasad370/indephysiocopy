@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import {Button, TextInput, View} from 'react-native';
-
 import {useNavigation} from '@react-navigation/native';
 
 const Home = () => {
   const navigation = useNavigation();
-  const [room, onChangeRoom] = useState('');
+  const [room, onChangeRoom] = useState('meeting');
 
   return (
     <View
