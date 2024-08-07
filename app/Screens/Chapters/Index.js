@@ -15,12 +15,12 @@ import {ROUTES} from '../../Constants/routes';
 const DATA = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    chapter: 'Greetings',
+    chapter: 'Chapter 1',
     title: 'First Item',
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    chapter: 'Chapter2',
+    chapter: 'Chapter 2',
     title: 'Second Item',
   },
   {
@@ -51,8 +51,8 @@ const Index = () => {
             </View>
             {/* Text */}
             <View style={styles.chapterMiddle}>
-              <Text style={styles.title}>{item.title}</Text>
               <Text style={styles.chapterName}>{item.chapter}</Text>
+              <Text style={styles.title}>{item.title}</Text>
             </View>
           </View>
           {/* Continue */}
@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-
     alignItems: 'center',
   },
 
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
 
     borderBottomWidth: 10,
-    borderColor: '#AAA',
+    borderColor: color.lowPrimary,
   },
   continue: {
     borderWidth: 1,
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   title: {
-    fontSize: 22,
+    fontSize: 18,
     color: 'white',
     fontWeight: '300',
   },

@@ -13,3 +13,4 @@ export {default as ProfileSetting} from './ProfileSetting/Index';
 export {default as ReadingMaterial} from '../Components/ReadingMaterial/Index';
 export {default as Chapters} from './Chapters/Index';
 export {default as Meeting} from './Meeting/Index';
+export {default as Package} from './Package/Index';

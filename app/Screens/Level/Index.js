@@ -52,7 +52,7 @@ const Index = () => {
     return (
       <TouchableOpacity
         style={styles.level}
-        onPress={() => navigation.navigate(ROUTES.CHAPTERS)}>
+        onPress={() => navigation.navigate(ROUTES.PACKAGE)}>
         <View style={styles.levelCard}>
           {/* Top card */}
           <View style={styles.upperLevel}>
@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-
     alignItems: 'center',
   },
   levelCard: {

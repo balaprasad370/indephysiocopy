@@ -17,7 +17,7 @@ const LanguageComponent = ({route}) => {
       </View>
       <View style={styles.bottomLanaguage}>
         <Text style={styles.bottomText}>Learn German</Text>
-        <Text style={styles.level}>Level: A1 A2 B1 B2</Text>
+        <Text style={styles.level}>Level: A1 A2 B1 B2 C1 C2</Text>
       </View>
     </TouchableOpacity>
   );

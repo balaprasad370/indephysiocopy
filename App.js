@@ -143,7 +143,7 @@ const App = () => {
   // };
 
   useEffect(() => {
-    // verifyToken();
+    verifyToken();
     // getDatFunc();
     fetchToken();
   }, []);

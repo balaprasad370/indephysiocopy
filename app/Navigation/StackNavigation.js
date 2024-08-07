@@ -11,6 +11,7 @@ import {
   SelfLearnScreen,
   ReadingMaterial,
   Meeting,
+  Package,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -49,6 +50,11 @@ const StackNavigation = () => {
         name={ROUTES.MEETING}
         options={{headerShown: false}}
         component={Meeting}
+      />
+      <Stack.Screen
+        name={ROUTES.PACKAGE}
+        options={{headerTitle: 'Packages', headerLeftLabelVisible: false}}
+        component={Package}
       />
       <Stack.Screen
         name={ROUTES.CHAPTERS}

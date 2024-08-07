@@ -8,7 +8,7 @@ const Meeting = ({route}) => {
   const jitsiMeeting = useRef(null);
   const navigation = useNavigation();
 
-  const {room} = route.params;
+  // const {room} = route.params;
 
   const onReadyToClose = useCallback(() => {
     // @ts-ignore

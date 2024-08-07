@@ -111,11 +111,13 @@ const Index = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.1.4:4000/login', {
+      const response = await axios.post('https://server.indephysio.com/login', {
         email,
         password,
+        usertype: 'students',
       });
       if (response.status === 200) {
+        console.log(response);
         Alert.alert('Success', 'Logged in successfully', [{text: 'OK'}]);
         await storage.setStringAsync('token', response.headers.authorization);
         await storage.setBoolAsync('isLoggedIn', true);
