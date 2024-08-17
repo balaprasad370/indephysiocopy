@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {Alert, FlatList, View, StyleSheet} from 'react-native';
+import {Alert, FlatList, View, StyleSheet, Text} from 'react-native';
 import AuthTitle from '../../Components/CommonLines/AuthTitle';
 import AuthLine from '../../Components/CommonLines/AuthLine';
 import AuthInput from '../../Components/InputFields/AuthInput';
@@ -12,36 +12,49 @@ import {ROUTES} from '../../Constants/routes';
 import {AppContext} from '../../theme/AppContext';
 import {useNavigation} from '@react-navigation/native';
 import storage from '../../Constants/storage';
+import LoadComponent from '../../Components/Loading/Index';
+import color from '../../Constants/color';
 
 const Index = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const {setLoading} = useContext(AppContext);
+  const {setLoading, loadTime, setLoadTIme} = useContext(AppContext);
   const navigation = useNavigation();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('https://server.indephysio.com/login', {
+      setLoadTIme(true);
+      // const response = await axios.post('https://server.indephysio.com/login', {
+      const response = await axios.post('http://192.168.1.5:4000/signin', {
         email,
         password,
-        usertype: 'students',
+        userType: 'student',
       });
       if (response.status === 200) {
-        console.log(response);
         Alert.alert('Success', 'Logged in successfully', [{text: 'OK'}]);
-        await storage.setStringAsync('token', response.headers.authorization);
+        await storage.setStringAsync('token', response.data.token);
         await storage.setBoolAsync('isLoggedIn', true);
         setLoading(true);
-
         setEmail('');
         setPassword('');
         navigation.navigate(ROUTES.DASHBOARD);
+        setLoadTIme(false);
       } else {
         Alert.alert('Error', 'Unexpected response status', [{text: 'OK'}]);
+        setLoadTIme(false);
       }
     } catch (error) {
-      Alert.alert('Error', error.message, [{text: 'OK'}]);
+      if (error.response && error.response.status === 400) {
+        setLoadTIme(false);
+        Alert.alert('Error', 'Error code 400: Bad Request', [{text: 'OK'}]);
+      } else if (error.response && error.response.status === 401) {
+        setLoadTIme(false);
+        Alert.alert('Error', 'Invalid email and password', [{text: 'OK'}]);
+      } else {
+        setLoadTIme(false);
+        Alert.alert('Error', error.message, [{text: 'OK'}]);
+      }
     }
   };
 
@@ -50,6 +63,7 @@ const Index = () => {
       id: '1',
       component: <View style={{marginTop: '10%'}}></View>,
     },
+
     {
       id: '2',
       component: (
@@ -59,12 +73,6 @@ const Index = () => {
         </>
       ),
     },
-    // {
-    //   id: '2',
-    //   component: (
-
-    //   ),
-    // },
     {
       id: '3',
       component: (
@@ -111,24 +119,28 @@ const Index = () => {
   ];
 
   return (
-    <FlatList
-      data={data}
-      renderItem={({item}) => (
-        <View style={styles.itemContainer}>{item.component}</View>
-      )}
-      keyExtractor={item => item.id}
-      contentContainerStyle={styles.contentContainer}
-    />
+    <View style={{flex: 1}}>
+      <FlatList
+        data={data}
+        renderItem={({item}) => (
+          <View style={styles.itemContainer}>{item.component}</View>
+        )}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.contentContainer}
+      />
+      {loadTime && <LoadComponent />}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   contentContainer: {
-    flexGrow: 1,
+    flex: 1,
     justifyContent: 'space-between',
+    position: 'relative',
   },
   itemContainer: {
-    marginBottom: 10, // Adjust spacing as needed
+    marginBottom: 10,
   },
 });
 

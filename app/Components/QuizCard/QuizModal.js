@@ -478,6 +478,7 @@ const styled = StyleSheet.create({
   modalQuizText: {
     fontSize: 20,
     marginLeft: 8,
+    color: 'black',
     fontWeight: 'bold',
   },
   quizContent: {
@@ -495,6 +496,7 @@ const styled = StyleSheet.create({
   quiztitle: {
     fontSize: 17,
     textAlign: 'justify',
+    color: 'black',
     fontWeight: '600',
   },
   linearBox: {

@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 const dashboardCss = StyleSheet.create({
   textstyle: {
     fontSize: 27,
+    paddingTop: 5,
   },
   documentContainer: {
     paddingRight: '3%',

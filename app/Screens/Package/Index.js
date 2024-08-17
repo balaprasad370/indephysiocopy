@@ -81,13 +81,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   packageCard: {
-    marginBottom: 20,
+    marginBottom: 8,
     backgroundColor: '#293748',
     // padding: 10,
     borderRadius: 10,
   },
   lockIcon: {
-    fontSize: 26,
+    fontSize: 22,
     color: 'white',
   },
   packageName: {
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
 
   packageText: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '400',
     color: 'white',
   },
@@ -109,16 +109,16 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 5,
+    marginBottom: 5,
   },
   durationIcon: {
-    fontSize: 24,
+    fontSize: 22,
     color: 'white',
     fontWeight: '300',
   },
   durationText: {
-    fontSize: 18,
+    fontSize: 16,
     marginLeft: 10,
     fontWeight: '300',
     color: 'white',

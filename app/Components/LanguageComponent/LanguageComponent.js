@@ -17,7 +17,10 @@ const LanguageComponent = ({route}) => {
       </View>
       <View style={styles.bottomLanaguage}>
         <Text style={styles.bottomText}>Learn German</Text>
-        <Text style={styles.level}>Level: A1 A2 B1 B2 C1 C2</Text>
+        <Text style={styles.level}>
+          Committed individuals seeking to attain fluency and proficiency in the
+          German language.
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -27,7 +30,7 @@ export default LanguageComponent;
 
 const styles = StyleSheet.create({
   languageCard: {
-    width: '50%',
+    // width: '50%',
     borderRadius: 12,
     backgroundColor: color.lowPrimary,
     marginTop: 20,

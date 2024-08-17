@@ -15,7 +15,8 @@ import SearchComponent from '../../Components/SearchComponent/Index';
 import {AppContext} from '../../theme/AppContext';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
-import {Calendar} from 'react-native-big-calendar';
+import Calender from '../../Components/Calender/Index';
+// import {Calendar} from 'react-native-big-calendar';
 
 const Index = () => {
   const appContext = useContext(AppContext);
@@ -106,6 +107,7 @@ const Index = () => {
 
   return (
     <ScrollView style={style.documentBody}>
+      <Calender />
       {/* <Modal
         animationType="slide"
         transparent={true}
@@ -134,28 +136,32 @@ const Index = () => {
           </View>
         </View>
       </Modal> */}
-      <View>
-        <View>
-          <Text style={style.documentText}>Document Name</Text>
-          <Text style={style.documentStatus}>Status: Attested</Text>
-        </View>
-      </View>
       <View
         style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: 20,
+        }}>
+        <View style={{marginBottom: 8}}>
+          <Text style={style.documentText}>Document Name</Text>
+          <Text style={style.documentStatus}>Status: Attested</Text>
+        </View>
+        <View style={style.documentPage}></View>
+      </View>
+      <View
+        style={{
+          display: 'flex',
+          // justifyContent: 'center',
+          // alignItems: 'center',
+          marginTop: 10,
           marginBottom: 20,
         }}>
-        <View style={style.documentPage}></View>
         <View
           style={{
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-between',
-            marginTop: 20,
-            marginBottom: 20,
+            marginTop: 10,
           }}>
           <TouchableOpacity
             style={{
@@ -163,30 +169,29 @@ const Index = () => {
               justifyContent: 'space-evenly',
               flexDirection: 'row',
               alignItems: 'center',
-              // paddingLeft: 10,
-              paddingRight: 10,
+              padding: 5,
               backgroundColor: '#4daffc',
-              marginRight: '15%',
               borderRadius: 50,
             }}>
             <View
               style={{
-                width: 45,
+                width: 30,
                 backgroundColor: 'white',
-                height: 45,
+                height: 30,
                 borderRadius: 50,
                 borderWidth: 1,
+                borderColor: '#4daffc',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Upload name="arrowup" style={{fontSize: 40}} />
+              <Upload name="arrowup" style={{fontSize: 20, color: 'black'}} />
             </View>
             <Text
               style={{
                 fontSize: 16,
                 color: 'white',
-                padding: 10,
+                // padding: 10,
                 fontWeight: '600',
               }}>
               Upload
@@ -198,9 +203,7 @@ const Index = () => {
               justifyContent: 'space-evenly',
               flexDirection: 'row',
               alignItems: 'center',
-              // paddingLeft: 10,
-              // paddingRight: 10,
-              padding: 10,
+              padding: 5,
               backgroundColor: '#4daffc',
               borderRadius: 50,
             }}>
@@ -212,8 +215,6 @@ const Index = () => {
               style={{
                 fontSize: 16,
                 color: 'white',
-                // paddingLeft: 20,
-                // paddingRight: 20,
                 paddingTop: 5,
                 paddingBottom: 5,
                 fontWeight: '700',

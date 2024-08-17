@@ -50,6 +50,7 @@ const AuthInput = ({
         onChangeText={onChangeText}
         style={styles.authInputField}
         secureTextEntry={secureTextEntry}
+        autoCapitalize="none"
       />
 
       {/* {wrong ? (

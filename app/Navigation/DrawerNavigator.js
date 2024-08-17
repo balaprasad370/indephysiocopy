@@ -10,10 +10,10 @@ const DrawerNavigator = () => {
   return (
     <Drawer.Navigator initialRouteName="HomeTabs" screenOptions={{}}>
       <Drawer.Screen
-        name="Bottom tab"
+        name=" "
         // options={{headerTitle: ''}}
         options={{
-          headerShown: false,
+          headerShown: true,
         }}
         component={BottomNavigator}
       />

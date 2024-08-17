@@ -23,13 +23,14 @@ const Index = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://192.168.1.4:4000/signup', {
+      const response = await axios.post('http://192.168.35.48:4000/signup', {
         name,
         email,
         password,
       });
       console.log('signpdata ', response.data);
       Alert.alert('Success', 'Registered successfully', [{text: 'OK'}]);
+      await storage.setStringAsync('token', response.data.token);
       await storage.setBoolAsync('isLoggedIn', true);
       setLoading(true);
       setEmail('');
@@ -37,8 +38,12 @@ const Index = () => {
       setPassword('');
       navigation.navigate(ROUTES.DASHBOARD);
     } catch (error) {
-      Alert.alert('Error', error.message, [{text: 'OK'}]);
-      console.log('error', error);
+      if (error.response && error.response.status === 400) {
+        Alert.alert('Error', 'User is already exist', [{text: 'OK'}]);
+      } else {
+        Alert.alert('Error', error.message, [{text: 'OK'}]);
+        console.log('error', error);
+      }
     }
   };
 

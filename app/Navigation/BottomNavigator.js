@@ -7,6 +7,7 @@ import {ROUTES} from '../Constants/routes';
 import {AppContext} from '../theme/AppContext';
 import LighTheme from '../theme/LighTheme';
 import DarkTheme from '../theme/Darktheme';
+import color from '../Constants/color';
 const Tab = createBottomTabNavigator();
 
 const CustomTabBar = ({state, descriptors, navigation}) => {
@@ -45,10 +46,11 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
     <View style={style.bottomTab}>
       <View
         style={{
-          backgroundColor: '#4daffc',
+          backgroundColor: color.darkPrimary,
           borderRadius: 50,
           alignItems: 'center',
-          marginLeft: 10,
+          marginLeft: 6,
+          marginRight: 6,
           marginBottom: 8,
           paddingTop: 6,
           paddingBottom: 6,
@@ -58,45 +60,84 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
         <TouchableOpacity
           onPress={() => handleNavigateScreen(0)}
           style={index === 0 ? styles.activeTabButton : {}}>
-          <Ionicons name="view-dashboard" size={40} color="white" />
+          <Ionicons
+            name="view-dashboard"
+            style={{marginLeft: 8}}
+            size={30}
+            color="white"
+          />
           {index === 0 && (
             <Text
               style={{
-                fontSize: 22,
+                fontSize: 16,
                 color: 'white',
+                fontWeight: '600',
                 marginLeft: 10,
               }}>
-              Dashboard
+              DASHBOARD
             </Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
           style={index === 1 ? styles.activeTabButton : {}}
           onPress={() => handleNavigateScreen(1)}>
-          <Ionicons name="monitor-dashboard" size={40} color="white" />
+          <Ionicons
+            name="monitor-dashboard"
+            size={30}
+            style={{marginLeft: 8}}
+            color="white"
+          />
           {index === 1 && (
-            <Text style={{fontSize: 22, color: 'white', marginLeft: 10}}>
-              Live Class
+            <Text
+              style={{
+                fontSize: 16,
+                color: 'white',
+                fontWeight: '600',
+                marginLeft: 10,
+              }}>
+              LIVE CLASS
             </Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
           style={index === 2 ? styles.activeTabButton : {}}
           onPress={() => handleNavigateScreen(2)}>
-          <Ionicons name="folder-open" size={40} color="white" />
+          <Ionicons
+            name="folder-open"
+            size={30}
+            style={{marginLeft: 8}}
+            color="white"
+          />
           {index === 2 && (
-            <Text style={{fontSize: 22, color: 'white', marginLeft: 10}}>
-              Documents
+            <Text
+              style={{
+                fontSize: 16,
+                color: 'white',
+                fontWeight: '600',
+                marginLeft: 10,
+              }}>
+              DOCUMENTS
             </Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
           style={index === 3 ? styles.activeTabButton : {}}
           onPress={() => handleNavigateScreen(3)}>
-          <Ionicons name="book-open-blank-variant" size={40} color="white" />
+          <Ionicons
+            name="book-open-blank-variant"
+            style={{marginLeft: 8}}
+            size={30}
+            color="white"
+          />
           {index === 3 && (
-            <Text style={{fontSize: 22, color: 'white', marginLeft: 10}}>
-              Self Learn
+            <Text
+              style={{
+                fontSize: 16,
+                color: 'white',
+                fontWeight: '600',
+                marginLeft: 10,
+              }}>
+              SELF LEARN
             </Text>
           )}
         </TouchableOpacity>
@@ -128,10 +169,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
     borderColor: 'white',
     borderRadius: 50,
-    // paddingLeft: 8,
     padding: 6,
-    // paddingBottom: 5,
-    width: '55%',
+    width: '50%',
     paddingRight: 8,
     flexDirection: 'row',
     alignItems: 'center',

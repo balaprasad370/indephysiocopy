@@ -16,9 +16,10 @@ import color from '../../Constants/color';
 import QuizCard from '../../Components/QuizCard/Index';
 import ReadingMaterial from '../../Components/ReadingMaterial/Index';
 import {ROUTES} from '../../Constants/routes';
-const Index = () => {
+const Index = ({route}) => {
   const appContext = useContext(AppContext);
 
+  const {chapter} = route.params;
   const {isDark, setIsDark} = appContext;
 
   const style = isDark ? DarkTheme : LighTheme;
@@ -34,10 +35,8 @@ const Index = () => {
     'https://img.freepik.com/free-vector/webinar-concept-illustration_114360-4764.jpg?t=st=1722600187~exp=1722603787~hmac=49c8a2fca946a7539814bad7ce28e02bf4eda92df68525a46b6565e4c808f0ee&w=1800';
   return (
     <ScrollView style={style.selfLearn}>
-      <SearchComponent />
-      <View style={{marginTop: 20}}>
-        <Text style={style.selfHeading}>Welcome back</Text>
-        <Text style={style.selfChapter}>Chapter 1</Text>
+      <View style={{}}>
+        <Text style={style.selfChapter}>{chapter}</Text>
       </View>
       <View style={styles.quizzes}>
         <QuizCard

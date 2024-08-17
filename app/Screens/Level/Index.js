@@ -18,32 +18,12 @@ const DATA = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
     level: 'A1 Level',
-    title: 'First Item',
+    title: 'Beginner',
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
     level: 'A2 Level',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    level: 'B1 Level',
-    title: 'Third Item',
-  },
-  {
-    id: '52694a0f-3da1-471fd-bd96-145571e29d72',
-    level: 'B2 Level',
-    title: 'Fourth Item',
-  },
-  {
-    id: '58694a0f-3da1-471sf-bd96-145571e29d72',
-    level: 'C1 Level',
-    title: 'Third Item',
-  },
-  {
-    id: '52694a0f-3da1-471f-bd96-145571e29d72',
-    level: 'C2 Level',
-    title: 'Fourth Item',
+    title: 'Medium',
   },
 ];
 const Index = () => {
@@ -52,7 +32,7 @@ const Index = () => {
     return (
       <TouchableOpacity
         style={styles.level}
-        onPress={() => navigation.navigate(ROUTES.PACKAGE)}>
+        onPress={() => navigation.navigate(ROUTES.CHAPTERS)}>
         <View style={styles.levelCard}>
           {/* Top card */}
           <View style={styles.upperLevel}>
@@ -83,10 +63,7 @@ const Index = () => {
           </View>
           {/* Description */}
           <View style={styles.description}>
-            <Text style={styles.descriptionText}>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's
-            </Text>
+            <Text style={styles.descriptionText}>{item.title}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -119,8 +96,6 @@ const styles = StyleSheet.create({
   },
   levelCard: {
     width: '93%',
-    borderWidth: 4,
-    borderColor: color.black,
     backgroundColor: '#293748',
     borderRadius: 12,
     padding: 15,
@@ -133,49 +108,48 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   levelText: {
-    fontSize: 20,
-    color: 'white',
+    fontSize: 18,
+    color: color.white,
     fontWeight: '600',
     marginLeft: 10,
   },
   levelIcon: {
-    fontSize: 22,
-    color: 'white',
+    fontSize: 18,
+    color: color.white,
   },
   middleLevel: {
-    marginTop: 8,
+    marginTop: 5,
     display: 'flex',
-    marginBottom: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   roundLevel: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#CAD0DD',
+    width: 25,
+    height: 25,
+    backgroundColor: color.white,
     borderRadius: 50,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
   levelNumber: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '700',
-    color: '#586678',
+    color: '#293748',
   },
   description: {
     marginTop: 8,
   },
   descriptionText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '400',
-    color: '#CAD0DD',
+    color: color.white,
   },
   dot: {
-    width: 15,
-    height: 15,
-    backgroundColor: '#CAD0DD',
+    width: 12,
+    height: 12,
+    backgroundColor: color.white,
     borderRadius: 50,
   },
 });

@@ -66,7 +66,7 @@ const StackNavigation = () => {
       />
       <Stack.Screen
         name={ROUTES.SELF_LEARN_SCREEN}
-        options={{headerLeftLabelVisible: false, title: ''}}
+        options={{headerLeftLabelVisible: false, title: 'Chapter 1'}}
         component={SelfLearnScreen}
       />
       <Stack.Screen

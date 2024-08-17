@@ -1,17 +1,20 @@
 import {StyleSheet} from 'react-native';
 import COLOR from '../Constants/color';
+import color from '../Constants/color';
 
 const LighTheme = StyleSheet.create({
   dashBoard: {
     paddingRight: '5%',
     backgroundColor: COLOR.white,
+    paddingTop: 10,
     paddingLeft: '5%',
   },
   livClass: {
     // flex: 1,
-    paddingRight: '5%',
+    paddingTop: 10,
+    paddingRight: '3%',
     backgroundColor: COLOR.white,
-    paddingLeft: '5%',
+    paddingLeft: '3%',
   },
   uppDash: {
     display: 'flex',
@@ -20,9 +23,10 @@ const LighTheme = StyleSheet.create({
     backgroundColor: COLOR.white,
   },
   candName: {
-    fontSize: 22,
+    fontSize: 18,
     marginTop: 3,
     fontWeight: 'bold',
+    color: COLOR.black,
     letterSpacing: 2,
   },
   textWel: {
@@ -31,7 +35,7 @@ const LighTheme = StyleSheet.create({
   },
   appColor: {
     flex: 1,
-    backgroundCOLOR: COLOR.white,
+    backgroundColor: COLOR.white,
   },
   userImage: {
     width: 80,
@@ -47,23 +51,31 @@ const LighTheme = StyleSheet.create({
     justifyContent: 'center',
     borderColor: COLOR.darkPrimary,
     borderWidth: 1,
-    width: '28%',
+    // width: '50%',
     paddingLeft: 10,
     paddingRight: 10,
     borderRadius: 10,
     height: 200,
     marginRight: 10,
   },
+  crown: {
+    color: COLOR.black,
+    fontSize: 20,
+  },
+  registered: {marginLeft: 5, fontSize: 14, color: COLOR.black},
   registeredText: {
     color: COLOR.darkPrimary,
     fontWeight: 'bold',
+    textAlign: 'center',
     marginTop: 10,
     fontSize: 16,
   },
   courseLockCard: {
     backgroundColor: COLOR.unlockGrey,
+    padding: 5,
     height: '80%',
-    width: '100%',
+    width: 125,
+    // width: '100%',
     borderRadius: 5,
     display: 'flex',
     flexDirection: 'column',
@@ -75,7 +87,8 @@ const LighTheme = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: 'transparent',
     height: '80%',
-    width: '100%',
+    width: 125,
+    // width: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-evenly',
@@ -109,32 +122,32 @@ const LighTheme = StyleSheet.create({
     paddingLeft: '5%',
   },
   documentText: {
-    fontSize: 35,
-    color: COLOR.white,
-    fontWeight: '700',
+    fontSize: 24,
+    color: COLOR.black,
+    fontWeight: '600',
     textAlign: 'center',
   },
-  documentStatus: {textAlign: 'center', fontSize: 18, color: COLOR.white},
+  documentStatus: {textAlign: 'center', fontSize: 18, color: COLOR.black},
   menuIcon: {fontSize: 40, color: COLOR.white, fontWeight: '800'},
   menuBtn: {
     ...Platform.select({
       ios: {
-        width: 60,
+        width: 50,
         height: 45,
         borderRadius: 10,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#D4D0D0',
+        backgroundColor: '#777',
       },
       android: {
-        width: 60,
+        width: 50,
         height: 45,
         borderRadius: 10,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#D4D0D0',
+        backgroundColor: '#777',
       },
     }),
   },
@@ -157,12 +170,13 @@ const LighTheme = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLOR.lightSecondary,
-    borderRadius: 20,
+    borderRadius: 8,
+    borderBottomRightRadius: 20,
     borderRightColor: COLOR.darkPrimary,
     borderRightWidth: 7,
-    borderBlockColor: COLOR.darkPrimary,
+    borderBottomColor: COLOR.darkPrimary,
     borderBottomWidth: 7,
-    width: '45%',
+    width: '48%',
     height: 200,
     position: 'relative',
   },
@@ -226,7 +240,8 @@ const LighTheme = StyleSheet.create({
     borderRightWidth: 7,
     borderBlockColor: COLOR.darkPrimary,
     borderBottomWidth: 7,
-    borderRadius: 20,
+    borderBottomRightRadius: 20,
+    borderRadius: 8,
     width: '45%',
     height: 200,
   },
@@ -234,7 +249,6 @@ const LighTheme = StyleSheet.create({
     width: '50%',
     height: 300,
     borderRadius: 20,
-
     backgroundColor: COLOR.lightSecondary,
   },
   documentModalText: {
@@ -373,11 +387,11 @@ const LighTheme = StyleSheet.create({
   },
   markNotComplete: {
     fontSize: 40,
-    color: COLOR.black,
+    color: COLOR.lowBlack,
   },
   markComplete: {
     fontSize: 40,
-    color: 'blue',
+    color: color.lowPrimary,
   },
   levelName: {fontSize: 14, color: COLOR.black, fontWeight: '600'},
   plane: {fontSize: 40, color: COLOR.black, transform: [{rotate: '180deg'}]},
@@ -396,6 +410,18 @@ const LighTheme = StyleSheet.create({
   commonBackground: {
     borderRadius: 10,
     backgroundColor: COLOR.white,
+  },
+  commonTouchInput: {
+    marginLeft: 5,
+    paddingLeft: 7,
+    paddingRight: 15,
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 8,
+    marginBottom: 8,
   },
   commonTouch: {
     marginLeft: 5,
@@ -469,6 +495,8 @@ const LighTheme = StyleSheet.create({
   headerLeftIcon: {fontSize: 26, marginLeft: 10, color: COLOR.black},
   bottomTab: {
     backgroundColor: COLOR.white,
+    borderTopWidth: 0,
+    borderTopColor: 'white',
   },
 });
 

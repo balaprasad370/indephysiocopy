@@ -1,9 +1,11 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import GlssIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {AppContext} from '../../theme/AppContext';
 import LighTheme from '../../theme/LighTheme';
 import DarkTheme from '../../theme/Darktheme';
+import storage from '../../Constants/storage';
+import axios from 'axios';
 
 const Index = ({name, title, isLocked}) => {
   const appContext = useContext(AppContext);
@@ -19,7 +21,7 @@ const Index = ({name, title, isLocked}) => {
         flexDirection: 'column',
         justifyContent: 'center',
         borderRadius: 10,
-        marginBottom: 20,
+        marginBottom: 0,
         alignItems: 'center',
       }}>
       <View style={style.chapterBox}>

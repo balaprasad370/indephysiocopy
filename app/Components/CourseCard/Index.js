@@ -5,7 +5,13 @@ import LighTheme from '../../theme/LighTheme';
 import DarkTheme from '../../theme/Darktheme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const index = ({locked, toggleModal, middleCourseCard, bottomCourseCard}) => {
+const index = ({
+  locked,
+  courseTitle,
+  toggleModal,
+  middleCourseCard,
+  bottomCourseCard,
+}) => {
   const appContext = useContext(AppContext);
 
   const {isDark, setIsDark} = appContext;
@@ -19,7 +25,7 @@ const index = ({locked, toggleModal, middleCourseCard, bottomCourseCard}) => {
             <Icon name="lock" style={{fontSize: 50, color: 'white'}} />
           </View>
         ) : null}
-        <Text style={style.registeredText}>Registered</Text>
+        <Text style={style.registeredText}>{courseTitle}</Text>
         <Text
           style={
             !locked ? style.courseBottomText : style.courselockedBottomText

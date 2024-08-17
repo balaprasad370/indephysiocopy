@@ -31,11 +31,11 @@ export const styles = StyleSheet.create({
       },
     }),
   },
-  searchIcon: {fontSize: 30, color: '#898A89', fontWeight: '800'},
+  searchIcon: {fontSize: 26, color: '#898A89', fontWeight: '800'},
   searchInput: {
     ...Platform.select({
       ios: {
-        width: '80%',
+        width: '85%',
         backgroundColor: 'transparent',
         paddingLeft: 12,
         paddingRight: 12,
@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
         paddingTop: 10,
       },
       android: {
-        width: '80%',
+        width: '85%',
         backgroundColor: 'transparent',
         paddingLeft: 10,
         paddingRight: 10,

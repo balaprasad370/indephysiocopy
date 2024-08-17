@@ -6649,6 +6649,7 @@ __metadata:
     react-native-immersive-mode: 2.0.1
     react-native-keep-awake: 4.0.0
     react-native-linear-gradient: ^2.8.3
+    react-native-loader-kit: ^2.0.8
     react-native-mmkv-storage: 0.10.2
     react-native-orientation-locker: 1.6.0
     react-native-pager-view: 6.2.0
@@ -9732,6 +9733,16 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: f980d324e551bbc475c6406bdc5250a08242020cbe653412fa169bbdf51e28a502e225de105b4d696d6a1a1b733d44782469020f4936d8b3ce0e2c78e51cf58f
+  languageName: node
+  linkType: hard
+
+"react-native-loader-kit@npm:^2.0.8":
+  version: 2.0.8
+  resolution: "react-native-loader-kit@npm:2.0.8"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 98af152be0c6b9990a03b415437e2c0969ebdfdd564be6fddfd4090093cfc93d7a79d479ab376d83f3cb4912a950bdb171fd9540a5c14121a1629b4052d3ff1a
   languageName: node
   linkType: hard
 
