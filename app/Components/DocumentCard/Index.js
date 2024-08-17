@@ -33,7 +33,7 @@ const Index = ({isDone}) => {
       <TouchableOpacity
         onPress={toggleModal}
         style={isDone ? style.documentCard : style.documentLockCard}>
-        <Text style={style.documentCardText}>Indephysio documents</Text>
+        <Text style={style.documentCardText}>Meduniverse documents</Text>
         <View style={style.documentImage}></View>
       </TouchableOpacity>
       <Modal
