@@ -22,9 +22,7 @@ const Index = ({isDone}) => {
     setModalVisible(!modalVisible);
   };
 
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark} = appContext;
+  const {isDark, setIsDark} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 

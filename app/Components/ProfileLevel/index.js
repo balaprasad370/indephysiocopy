@@ -6,185 +6,98 @@ import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import {AppContext} from '../../theme/AppContext';
 import axios from 'axios';
+import storage from '../../Constants/storage';
+import scale from '../../utils/utils';
 
-const index = () => {
+const Index = () => {
+  const {isDark, userData} = useContext(AppContext);
   const [profileStatus, setProfileStatus] = useState([]);
 
-  const getProfileStatus = async () => {
-    try {
-      const response = await axios.post(
-        'http://192.168.1.5:4000/profile/status',
-        {
-          student_id: '2',
-        },
-      );
-
-      setProfileStatus(response.data);
-    } catch (error) {
-      console.log(error?.response?.status);
-    }
-  };
-
+  // Example Profile Status Data
   const profileStatusData = [
-    {
-      label: 'A1 Status',
-      key: 'candidate_a1_status',
-    },
-    {
-      label: 'A2 Status',
-      key: 'candidate_a2_status',
-    },
-
-    {
-      label: 'B1 Status',
-      key: 'candidate_b1_status',
-    },
-    {
-      label: 'B2 Status',
-      key: 'candidate_b2_status',
-    },
-    {
-      label: 'Application Status',
-      key: 'candidate_application_status',
-    },
-    {
-      label: 'Contract Status',
-      key: 'candidate_contract_status',
-    },
-    {
-      label: 'Document Status',
-      key: 'candidate_document_status',
-    },
-    {
-      label: 'Evaluation Status',
-      key: 'candidate_evaluation_status',
-    },
-    {
-      label: 'Interview Status',
-      key: 'candidate_interview_status',
-    },
-    {
-      label: 'Recognition Status',
-      key: 'candidate_recognition_status',
-    },
-    {
-      label: 'Relocation Status',
-      key: 'candidate_relocation_status',
-    },
-    {
-      label: 'Translation Status',
-      key: 'candidate_translation_status',
-    },
-    {
-      label: 'Visa Status',
-      key: 'candidate_visa_status',
-    },
+    {label: 'A1 German level', key: 'candidate_a1_status'},
+    {label: 'A2 German level', key: 'candidate_a2_status'},
+    {label: 'B1 German level', key: 'candidate_b1_status'},
+    {label: 'B2 German level', key: 'candidate_b2_status'},
+    {label: 'Application Status', key: 'candidate_application_status'},
+    {label: 'Contract Status', key: 'candidate_contract_status'},
+    {label: 'Document Status', key: 'candidate_document_status'},
+    {label: 'Evaluation Status', key: 'candidate_evaluation_status'},
+    {label: 'Interview Status', key: 'candidate_interview_status'},
+    {label: 'Recognition Status', key: 'candidate_recognition_status'},
+    {label: 'Relocation Status', key: 'candidate_relocation_status'},
+    {label: 'Translation Status', key: 'candidate_translation_status'},
+    {label: 'Visa Status', key: 'candidate_visa_status'},
   ];
 
-  // Assume response.data is stored in profileStatus
-  // const profile = profileStatus[0];
+  // Sorting the profileStatusData based on completion status
+  const sortedProfileStatusData = [...profileStatusData].sort((a, b) => {
+    const statusA = profileStatus[a.key];
+    const statusB = profileStatus[b.key];
+
+    // If both are complete, maintain order
+    if (statusA === 1 && statusB === 1) return 0;
+
+    // Completed first, then incomplete
+    if (statusA === 1) return -1;
+    if (statusB === 1) return 1;
+
+    // Both are incomplete, maintain order
+    return 0;
+  });
 
   const lastCompletedIndex =
-    profileStatusData.findIndex(item => profileStatus[item.key] === 0) - 1;
-
-  useEffect(() => {
-    getProfileStatus();
-  }, []);
-
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark} = appContext;
+    sortedProfileStatusData.findIndex(item => profileStatus[item.key] === 0) -
+    1;
 
   const style = isDark ? DarkTheme : LighTheme;
 
   const dots = Array.from({length: 19});
-
   const deviceWidth = Dimensions.get('window').width;
-  const dotSize = 4; // Adjust this size as needed
-  const dotSpacing = 7; // Adjust this spacing as needed
-  const dotsCount = Math.floor((deviceWidth * 0.5) / (dotSize + dotSpacing)); // 50% of device width
+  const dotSize = 4;
+  const dotSpacing = 7;
+  const dotsCount = Math.floor((deviceWidth * 0.5) / (dotSize + dotSpacing));
+
+  useEffect(() => {
+    const fetchProfileStatus = async () => {
+      const token = await storage.getStringAsync('token');
+
+      if (token) {
+        try {
+          const response = await axios.post(
+            `https://server.indephysio.com/profile/status`,
+            {
+              student_id: userData?.student_id,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token,
+              },
+            },
+          );
+          setProfileStatus(response.data.result);
+        } catch (error) {
+          console.log(error?.response?.status);
+        }
+      }
+    };
+
+    // Fetch data initially
+    fetchProfileStatus();
+
+    // Set up polling interval
+    const intervalId = setInterval(fetchProfileStatus, 5000); // Poll every 5 seconds
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [userData]); // Re-run if userData changes
 
   const ProfileComponent = ({item}) => {
     return (
       <>
-        {/* {profileStatus.map((data, index) => (
-          <View style={styles.dotContainer} key={index}>
-            {index % 2 === 0 ? (
-              <View style={styles.leftBox}>
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'flex-end',
-                  }}>
-                  <Icon
-                    name="location-pin"
-                    style={
-                      data.completed
-                        ? style.markComplete
-                        : style.markNotComplete
-                    }
-                  />
-                  <Text style={style.levelName}>{data.levelName}</Text>
-                </View>
-                <View style={styles.leftContainer}>
-                  {Array.from({length: dotsCount}).map((_, index) => (
-                    <View
-                      key={index}
-                      style={data.completed ? style.darkDot : style.dot}></View>
-                  ))}
-                </View>
-              </View>
-            ) : (
-              <View style={styles.rightBox}>
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'flex-end',
-                  }}>
-                  <Text style={style.levelName}>{data.levelName}</Text>
-                  <Icon
-                    name="location-pin"
-                    style={
-                      data.completed
-                        ? style.markComplete
-                        : style.markNotComplete
-                    }
-                  />
-                </View>
-                <View style={styles.rightContainer}>
-                  {Array.from({length: dotsCount}).map((_, index) => (
-                    <View
-                      key={index}
-                      style={data.completed ? style.darkDot : style.dot}></View>
-                  ))}
-                </View>
-              </View>
-            )}
-
-            <View
-              style={{
-                position: 'absolute',
-                left: '49%',
-                top: 12,
-              }}>
-              {Array.from({length: dotsCount}).map((_, index) => (
-                <View
-                  key={index}
-                  style={data.completed ? style.darkDot : style.dot}></View>
-              ))}
-            </View>
-            {index === lastCompletedIndex ? (
-              <View style={{position: 'absolute', left: '45%', top: 55}}>
-                <Plane name="plane" style={style.plane} />
-              </View>
-            ) : null}
-          </View>
-        ))} */}
-        {profileStatusData.map((status, index) => {
+        {sortedProfileStatusData.map((status, index) => {
           const isCompleted = profileStatus[status.key] === 1;
-
           return (
             <View style={styles.dotContainer} key={index}>
               {index % 2 === 0 ? (
@@ -241,7 +154,7 @@ const index = () => {
                 style={{
                   position: 'absolute',
                   left: '49%',
-                  top: 12,
+                  top: scale(12),
                 }}>
                 {Array.from({length: dotsCount}).map((_, index) => (
                   <View
@@ -250,8 +163,14 @@ const index = () => {
                 ))}
               </View>
 
-              {index === lastCompletedIndex ? (
-                <View style={{position: 'absolute', left: '45%', top: 55}}>
+              {index === 0 && lastCompletedIndex === -1 ? (
+                <View
+                  style={{position: 'absolute', left: '45%', top: scale(10)}}>
+                  <Plane name="plane" style={style.plane} />
+                </View>
+              ) : index === lastCompletedIndex ? (
+                <View
+                  style={{position: 'absolute', left: '45%', top: scale(50)}}>
                   <Plane name="plane" style={style.plane} />
                 </View>
               ) : null}
@@ -263,29 +182,26 @@ const index = () => {
   };
 
   return (
-    // <View>
     <FlatList
       data={[{key: 'renderItem'}]}
       renderItem={ProfileComponent}
       keyExtractor={item => item.key}
     />
-    // </View>
   );
 };
 
-export default index;
+export default Index;
 
 const styles = StyleSheet.create({
   dotContainer: {
     position: 'relative',
     flexDirection: 'row',
-    // paddingBottom: 30,
     width: '100%',
   },
   leftBox: {
     flex: 1,
     flexWrap: 'wrap',
-    paddingTop: 20,
+    paddingTop: scale(18),
     justifyContent: 'flex-start',
     width: '100%',
   },
@@ -295,7 +211,7 @@ const styles = StyleSheet.create({
   },
   rightBox: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: scale(18),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     width: '100%',

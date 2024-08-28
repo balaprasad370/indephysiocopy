@@ -1,6 +1,7 @@
 export default COLORS = {
   white: '#FFF',
   black: '#000',
+  // darkPrimary: '#6FA7DB',
   darkPrimary: '#3898FF',
   lightPrimary: '#9AC9FF',
   lightSecondary: '#e4f2fc',

@@ -13,9 +13,7 @@ import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import {styles} from './SearchComponent';
 const Index = () => {
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark} = appContext;
+  const {isDark, setIsDark} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
   return (

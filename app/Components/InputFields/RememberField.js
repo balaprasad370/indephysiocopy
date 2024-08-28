@@ -5,16 +5,25 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import color from '../../Constants/color';
 import {useNavigation} from '@react-navigation/native';
+import {Checkbox} from 'react-native-paper';
+import scale from '../../utils/utils';
 
 const RememberField = ({route}) => {
+  const [isChecked, setIsChecked] = useState(false);
   const navigation = useNavigation();
 
   return (
     <View style={styles.forgot}>
-      <Text style={styles.remember}>Remember me</Text>
+      <View style={styles.checkBox}>
+        <Checkbox
+          status={isChecked ? 'checked' : 'unchecked'}
+          onPress={() => setIsChecked(!isChecked)}
+        />
+        <Text style={styles.remember}>Remember me</Text>
+      </View>
       <TouchableOpacity onPress={() => navigation.navigate(route)}>
         <Text style={styles.forgotPassword}>Forgot Password?</Text>
       </TouchableOpacity>
@@ -28,6 +37,11 @@ const styles = StyleSheet.create({
   remember: {
     fontSize: 18,
   },
+  checkBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   forgotPassword: {
     fontSize: 18,
     color: color.darkPrimary,
@@ -35,7 +49,8 @@ const styles = StyleSheet.create({
   forgot: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
 });

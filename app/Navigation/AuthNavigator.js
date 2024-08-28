@@ -1,7 +1,7 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {ROUTES} from '../Constants/routes';
-import {Login, OTP, Recovery, ResetPassword, Signup} from '../Screens';
+import {Login, OTP, Recovery, ResetPassword, Signup, Welcome} from '../Screens';
 import DrawerNavigator from './DrawerNavigator';
 import {StyleSheet, View} from 'react-native';
 
@@ -15,20 +15,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: '5%',
   },
 });
 
 const AuthNavigator = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
-    <Stack.Screen name={ROUTES.LOGIN}>
+  <Stack.Navigator>
+    {/* <Stack.Navigator screenOptions={{headerShown: false}}> */}
+    <Stack.Screen name={ROUTES.WELCOME} options={{headerShown: false}}>
+      {props => (
+        <ScreenWrapper>
+          <Welcome {...props} />
+        </ScreenWrapper>
+      )}
+    </Stack.Screen>
+
+    <Stack.Screen name={ROUTES.LOGIN} options={{headerTitle: 'Login'}}>
       {props => (
         <ScreenWrapper>
           <Login {...props} />
         </ScreenWrapper>
       )}
     </Stack.Screen>
-    <Stack.Screen name={ROUTES.SIGNUP}>
+    <Stack.Screen name={ROUTES.SIGNUP} options={{headerTitle: 'Signup'}}>
       {props => (
         <ScreenWrapper>
           <Signup {...props} />

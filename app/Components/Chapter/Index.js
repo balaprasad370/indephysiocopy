@@ -8,9 +8,7 @@ import storage from '../../Constants/storage';
 import axios from 'axios';
 
 const Index = ({name, title, isLocked}) => {
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark} = appContext;
+  const {isDark, setIsDark} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 

@@ -1,9 +1,7 @@
 import {StyleSheet, Text, TextInput, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import Icon from 'react-native-vector-icons/Entypo';
+import React from 'react';
 import color from '../../Constants/color';
-import Check from 'react-native-vector-icons/AntDesign';
-import axios from 'axios';
+import scale from '../../utils/utils';
 
 const AuthInput = ({
   value,
@@ -11,100 +9,94 @@ const AuthInput = ({
   placeholder,
   wrong,
   secureTextEntry,
+  errorMessage,
+  isSmall,
 }) => {
-  // const handleLogin = async () => {
-  //   try {
-  //     const response = await axios.post('http://localhost:4000/login', {
-  //       email,
-  //       password,
-  //     });
-  //     Alert.alert('Success', 'Logged in successfully', [{text: 'OK'}]);
-  //     console.log('Token:', response.headers.authorization);
-  //   } catch (error) {
-  //     setIsWrong(true);
-  //     Alert.alert('Error', 'Invalid credentials', [{text: 'OK'}]);
-  //     console.error('Error:', error.response?.data);
-  //   }
-  // };
-
-  // const handleSignup = async () => {
-  //   try {
-  //     const response = await axios.post('http://localhost:4000/signup', {
-  //       email,
-  //       password,
-  //     });
-  //     Alert.alert('Success', 'Registered successfully', [{text: 'OK'}]);
-  //     console.log('Token:', response.headers.authorization);
-  //   } catch (error) {
-  //     setIsWrong(true);
-  //     Alert.alert('Error', 'Signup failed', [{text: 'OK'}]);
-  //     console.error('Error:', error.response?.data);
-  //   }
-  // };
-
   return (
-    <View style={wrong ? styles.authInputAlert : styles.authInput}>
-      <TextInput
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
-        style={styles.authInputField}
-        secureTextEntry={secureTextEntry}
-        autoCapitalize="none"
-      />
-
-      {/* {wrong ? (
-        <Icon name="circle-with-cross" style={styles.authIconAlert} />
-      ) : (
-        <Check name="checkcircle" style={styles.authIcon} />
-      )} */}
-      {/* <Icon name="check" style={styles.authIcon} />
-      <Icon name="eye" style={styles.authIcon} />
-      <Icon name="eye-with-line" style={styles.authIcon} /> */}
+    <View style={styles.inputContainer}>
+      <View
+        style={
+          !isSmall
+            ? wrong
+              ? styles.authInputAlert
+              : styles.authInput
+            : wrong
+            ? styles.authsmallInputAlert
+            : styles.authSmallInput
+        }>
+        <TextInput
+          placeholder={placeholder}
+          value={value}
+          onChangeText={onChangeText}
+          style={styles.authInputField}
+          secureTextEntry={secureTextEntry}
+          autoCapitalize="none"
+        />
+      </View>
+      {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
     </View>
   );
 };
 
 export default AuthInput;
-
 const styles = StyleSheet.create({
-  authInput: {
-    marginTop: 10,
+  inputContainer: {
     marginBottom: 10,
-    display: 'flex',
+  },
+  authInput: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderColor: color.inputColor,
     alignItems: 'center',
     borderWidth: 1,
-    padding: 12,
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: color.inputColor,
+  },
+  authSmallInput: {
+    width: scale(160),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderColor: color.inputColor,
+    alignItems: 'center',
+    borderWidth: 1,
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: color.inputColor,
+  },
+  authsmallInputAlert: {
+    width: scale(160),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderColor: color.inputColor,
+    alignItems: 'center',
+    borderWidth: 1,
+    padding: 8,
     borderRadius: 8,
     backgroundColor: color.inputColor,
   },
   authInputAlert: {
-    marginTop: 10,
-    marginBottom: 10,
-    display: 'flex',
+    flex: 1, // Let the input take full available width
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderColor: color.danger,
     alignItems: 'center',
     borderWidth: 1,
-    padding: 12,
+    padding: 8,
     borderRadius: 8,
     backgroundColor: color.inputColor,
   },
   authInputField: {
     fontSize: 18,
-    padding: 5,
-    width: '90%',
+    padding: 4,
+    width: '100%',
   },
-  authIconAlert: {
-    fontSize: 26,
+  errorText: {
     color: color.danger,
-  },
-  authIcon: {
-    fontSize: 26,
-    color: color.safe,
+    fontSize: 14,
+    marginTop: 5,
   },
 });

@@ -1,6 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import color from '../../Constants/color';
+import scale from '../../utils/utils';
 
 const AuthTitle = ({authTitle}) => {
   return (
@@ -14,12 +15,9 @@ export default AuthTitle;
 
 const styles = StyleSheet.create({
   AuthTitleText: {
-    fontSize: 30,
+    fontSize: 28,
     letterSpacing: 1.3,
-    marginTop: '5%',
+    color: color.black,
     fontWeight: '700',
   },
-  //   nameHighlight: {
-  //     color: color.darkPrimary,
-  //   },
 });

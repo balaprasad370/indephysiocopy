@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import SearchComponent from '../../Components/SearchComponent/Index';
 import {AppContext} from '../../theme/AppContext';
 import DarkTheme from '../../theme/Darktheme';
@@ -16,13 +16,44 @@ import color from '../../Constants/color';
 import QuizCard from '../../Components/QuizCard/Index';
 import ReadingMaterial from '../../Components/ReadingMaterial/Index';
 import {ROUTES} from '../../Constants/routes';
+import axios from 'axios';
 const Index = ({route}) => {
-  const appContext = useContext(AppContext);
-
-  const {chapter} = route.params;
-  const {isDark, setIsDark} = appContext;
+  const {chapterId} = route.params;
+  const {isDark, setIsDark, path} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
+
+  const [assessments, setAssessments] = useState();
+
+  const getAssessements = async () => {
+    try {
+      const response = await axios.get(
+        `http://${path}:4000/assessments/${chapterId}`,
+      );
+      setAssessments(response.data[0]);
+    } catch (err) {
+      console.error('Error fetching assessments:', err);
+    }
+  };
+
+  const [flashCard, setFlashCard] = useState();
+
+  const getFlashCard = async () => {
+    try {
+      const response = await axios.get(
+        `http://${path}:4000/flashcard/${chapterId}`,
+      );
+      setFlashCard(response.data[0]);
+    } catch (err) {
+      console.error('Error fetching assessments:', err);
+    }
+  };
+
+  useEffect(() => {
+    getFlashCard();
+    getAssessements();
+  }, []);
+
   const Assessement =
     'https://img.freepik.com/free-vector/abstract-illustration-person-giving-feedback_52683-62410.jpg?t=st=1722599417~exp=1722603017~hmac=dcc7e1649302b8178155bbbe8c04a5cf43da13e9d9470b98fb43a09f6c397684&w=1060';
   const ReadingMaterial =
@@ -36,50 +67,37 @@ const Index = ({route}) => {
   return (
     <ScrollView style={style.selfLearn}>
       <View style={{}}>
-        <Text style={style.selfChapter}>{chapter}</Text>
+        {/* <Text style={style.selfChapter}>Chapter Id - {chapterId}</Text> */}
       </View>
       <View style={styles.quizzes}>
         <QuizCard
-          Title="Assessment"
-          secondOption="Day 1"
+          Title={`${assessments?.title}`}
+          // Title="Assessment"
+          secondOption={`${assessments?.description}`}
           cardURL={Assessement}
           optionClick="Assessement"
         />
         <QuizCard
           Title="Reading Material"
           secondOption="Articles"
+          chapterId={chapterId}
           cardURL={ReadingMaterial}
-          optionClick="Reading"
+          optionClick="Reading Material"
         />
         <QuizCard
-          Title="Assessment"
-          secondOption="Day 1"
-          cardURL={Assessement}
-          optionClick="Assessement"
-        />
-        <QuizCard
-          Title="Assessment"
-          secondOption="Day 1"
-          cardURL={Assessement}
-          optionClick="Assessement"
-        />
-        <QuizCard
-          Title="Flash Cards"
-          secondOption="Day 1"
+          Title={`${flashCard?.flashcard_name}`}
+          // Title="Flash Cards"
+          chapterId={chapterId}
+          secondOption={`${flashCard?.flashcard_description}`}
+          // secondOption="Day 1"
           cardURL={FlashCard}
-          optionClick="Flash"
+          optionClick="Flash Card"
         />
         <QuizCard
           Title="Quiz"
           secondOption="Welcome"
           cardURL={Quiz}
           optionClick="Quiz"
-        />
-        <QuizCard
-          Title="Live Class"
-          secondOption="Biology class"
-          optionClick="Live"
-          cardURL={LiveClass}
         />
       </View>
     </ScrollView>
@@ -93,7 +111,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
   },
   modalView: {
     margin: 20,
@@ -137,8 +154,6 @@ const styles = StyleSheet.create({
   },
   quizzes: {
     display: 'flex',
-    flexWrap: 'wrap',
-    flexDirection: 'row',
   },
   quizsText: {
     fontSize: 24,

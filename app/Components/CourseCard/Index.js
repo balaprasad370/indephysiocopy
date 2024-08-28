@@ -1,9 +1,12 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useContext} from 'react';
 import {AppContext} from '../../theme/AppContext';
 import LighTheme from '../../theme/LighTheme';
 import DarkTheme from '../../theme/Darktheme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import plan from '../../assets/plan.png';
+import referral from '../../assets/referral.png';
+import scale from '../../utils/utils';
 
 const index = ({
   locked,
@@ -11,17 +14,23 @@ const index = ({
   toggleModal,
   middleCourseCard,
   bottomCourseCard,
+  plane,
+  refer,
 }) => {
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark} = appContext;
+  const {isDark, setIsDark} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
   return (
-    <TouchableOpacity onPress={toggleModal} style={style.courseCard}>
+    <TouchableOpacity style={style.courseCard}>
       <View style={locked ? style.courseLockCard : style.courseUnlockCard}>
         {locked ? (
-          <View style={{position: 'absolute', left: 40, top: 50}}>
+          <View
+            style={{
+              position: 'absolute',
+              left: scale(36),
+              top: scale(50),
+              zIndex: 9999,
+            }}>
             <Icon name="lock" style={{fontSize: 50, color: 'white'}} />
           </View>
         ) : null}
@@ -32,6 +41,13 @@ const index = ({
           }>
           {middleCourseCard}
         </Text>
+        {plane && <Image source={plan} style={{width: scale(65)}} />}
+        {refer && (
+          <Image
+            source={referral}
+            style={{width: scale(30), height: scale(30)}}
+          />
+        )}
         <TouchableOpacity>
           <Text style={style.courseBottomBtn}>{bottomCourseCard}</Text>
         </TouchableOpacity>

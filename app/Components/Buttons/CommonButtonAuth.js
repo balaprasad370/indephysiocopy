@@ -1,6 +1,7 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import color from '../../Constants/color';
+import scale from '../../utils/utils';
 
 const CommonButtonAuth = ({handleData, buttonTitle}) => {
   return (
@@ -14,11 +15,10 @@ export default CommonButtonAuth;
 
 const styles = StyleSheet.create({
   commonBtn: {
-    marginTop: 10,
-    marginBottom: 20,
+    marginBottom: scale(8),
     backgroundColor: color.darkPrimary,
-    padding: 16,
-    borderRadius: 10,
+    padding: scale(8),
+    borderRadius: scale(8),
     justifyContent: 'center',
     alignItems: 'center',
   },

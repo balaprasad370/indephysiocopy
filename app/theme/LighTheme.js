@@ -20,6 +20,7 @@ const LighTheme = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: COLOR.white,
   },
   candName: {
@@ -110,7 +111,7 @@ const LighTheme = StyleSheet.create({
   courselockedBottomText: {
     // marginTop: 20,
     // marginBottom: 20,
-    color: COLOR.grey,
+    color: COLOR.black,
     opacity: 0.5,
     textAlign: 'center',
     // width: '60%',
@@ -152,10 +153,8 @@ const LighTheme = StyleSheet.create({
     }),
   },
   selfLearn: {
-    paddingRight: '3%',
     backgroundColor: COLOR.white,
     flex: 1,
-    paddingLeft: '3%',
   },
   selfHeading: {fontSize: 18, color: COLOR.black},
   selfChapter: {fontSize: 26, fontWeight: 'bold', color: COLOR.black},
@@ -382,7 +381,7 @@ const LighTheme = StyleSheet.create({
   darkDot: {
     width: 6,
     height: 6,
-    backgroundColor: COLOR.black,
+    backgroundColor: color.black,
     margin: 2,
   },
   markNotComplete: {
@@ -391,7 +390,7 @@ const LighTheme = StyleSheet.create({
   },
   markComplete: {
     fontSize: 40,
-    color: color.lowPrimary,
+    color: color.darkPrimary,
   },
   levelName: {fontSize: 14, color: COLOR.black, fontWeight: '600'},
   plane: {fontSize: 40, color: COLOR.black, transform: [{rotate: '180deg'}]},

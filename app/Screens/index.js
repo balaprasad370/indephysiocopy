@@ -14,3 +14,6 @@ export {default as ReadingMaterial} from '../Components/ReadingMaterial/Index';
 export {default as Chapters} from './Chapters/Index';
 export {default as Meeting} from './Meeting/Index';
 export {default as Package} from './Package/Index';
+export {default as Flash} from './FlashCards/Index';
+export {default as Welcome} from './WelcomeScreen/Index';
+export {default as FAQ} from './FAQ/Index';

@@ -1,5 +1,6 @@
 import {
   Alert,
+  FlatList,
   Modal,
   ScrollView,
   StyleSheet,
@@ -16,39 +17,14 @@ import {AppContext} from '../../theme/AppContext';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import Calender from '../../Components/Calender/Index';
+import axios from 'axios';
 // import {Calendar} from 'react-native-big-calendar';
 
 const Index = () => {
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark} = appContext;
+  const {isDark, setIsDark, documents} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
-
-  // const events = [
-  //   {
-  //     title: 'Meeting',
-  //     start: new Date(2024, 6, 31, 10, 0), // Note: month is 0-indexed, so 6 is July
-  //     end: new Date(2024, 6, 31, 15, 30),
-  //   },
-  //   {
-  //     title: 'Coffee break',
-  //     start: new Date(2024, 6, 30, 10, 45),
-  //     end: new Date(2024, 6, 30, 12, 30),
-  //   },
-  // ];
-  const [events, setEvents] = useState([
-    // {
-    //   title: 'Meeting',
-    //   start: new Date(2024, 6, 31, 10, 0),
-    //   end: new Date(2024, 6, 31, 10, 30),
-    // },
-    // {
-    //   title: 'Coffee break',
-    //   start: new Date(2024, 6, 30, 15, 45),
-    //   end: new Date(2024, 6, 30, 16, 30),
-    // },
-  ]);
+  const [events, setEvents] = useState([]);
 
   const handleAddEvent = () => {
     if (eventTitle && eventEndTime) {
@@ -105,37 +81,10 @@ const Index = () => {
     setModalVisible(true);
   };
 
+  const {path} = useContext(AppContext);
+
   return (
     <ScrollView style={style.documentBody}>
-      <Calender />
-      {/* <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Add Event</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Event Title"
-              onChangeText={setEventTitle}
-              value={eventTitle}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="End Time (HH:MM)"
-              onChangeText={setEventEndTime}
-              value={eventEndTime}
-            />
-            <TouchableOpacity
-              style={[styles.button, styles.buttonClose]}
-              onPress={handleAddEvent}>
-              <Text style={styles.textStyle}>Add Event</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal> */}
       <View
         style={{
           display: 'flex',
@@ -151,8 +100,6 @@ const Index = () => {
       <View
         style={{
           display: 'flex',
-          // justifyContent: 'center',
-          // alignItems: 'center',
           marginTop: 10,
           marginBottom: 20,
         }}>
@@ -224,9 +171,6 @@ const Index = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <View>
-        <SearchComponent />
-      </View>
       <Text
         style={{
           textAlign: 'right',
@@ -237,6 +181,25 @@ const Index = () => {
         }}>
         Sort by
       </Text>
+      {documents && documents.length > 0 ? (
+        <FlatList
+          data={documents}
+          renderItem={({item}) => (
+            <View
+              style={{
+                padding: 10,
+                borderBottomWidth: 1,
+                borderBottomColor: '#ccc',
+              }}>
+              <Text>Document Name: {item.document_name}</Text>
+              <Text>Status: {item.status}</Text>
+              {/* Display other document details as needed */}
+            </View>
+          )}
+        />
+      ) : (
+        <Text>No documents found.</Text>
+      )}
     </ScrollView>
   );
 };

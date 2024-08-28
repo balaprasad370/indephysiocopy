@@ -18,7 +18,10 @@ export const ROUTES = {
   LIVE_CLASS: 'Live Classes',
   SELF_LEARN: 'Self Learn',
   DOCUMENTS: 'Documents',
+  FLASH: 'Flash',
 
   DASHBOARD: 'Dashboard',
   PROFILE_SETTING: 'Profile Setting',
+  WELCOME: 'Welcome',
+  FAQ: 'FAQ',
 };

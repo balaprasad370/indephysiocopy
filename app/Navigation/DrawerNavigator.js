@@ -11,16 +11,11 @@ const DrawerNavigator = () => {
     <Drawer.Navigator initialRouteName="HomeTabs" screenOptions={{}}>
       <Drawer.Screen
         name=" "
-        // options={{headerTitle: ''}}
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
         component={BottomNavigator}
       />
-      <Drawer.Screen name={ROUTES.DASHBOARD} component={Dashboard} />
-      <Drawer.Screen name={ROUTES.LIVE_CLASS} component={LiveClasses} />
-      <Drawer.Screen name={ROUTES.DOCUMENTS} component={Documents} />
-      <Drawer.Screen name={ROUTES.SELF_LEARN} component={SelfLearn} />
     </Drawer.Navigator>
   );
 };

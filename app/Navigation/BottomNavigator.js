@@ -36,9 +36,8 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
       navigation.navigate('Self Learn');
     }
   };
-  const appContext = useContext(AppContext);
 
-  const {isDark, setIsDark} = appContext;
+  const {isDark, setIsDark} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 

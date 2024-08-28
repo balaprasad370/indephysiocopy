@@ -12,6 +12,8 @@ import {
   ReadingMaterial,
   Meeting,
   Package,
+  Flash,
+  FAQ,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -23,14 +25,10 @@ import LighTheme from '../theme/LighTheme';
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark} = appContext;
+  const {isDark, setIsDark, isAuthenticate} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
   const navigation = useNavigation();
-
-  // const currentTheme = theme === 'light' ? LighTheme : DarkTheme;
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -75,10 +73,25 @@ const StackNavigation = () => {
         component={ReadingMaterial}
       />
       <Stack.Screen
+        name={ROUTES.FLASH}
+        options={{headerTitle: 'Flash Cards', headerLeftLabelVisible: false}}
+        // options={{headerLeftLabelVisible: false, title: ''}}
+        component={Flash}
+      />
+
+      <Stack.Screen
+        name={ROUTES.FAQ}
+        options={{
+          headerTitle: 'FAQs MedUniverse ',
+          headerLeftLabelVisible: false,
+        }}
+        component={FAQ}
+      />
+
+      <Stack.Screen
         name={ROUTES.PROFILE_SETTING}
         options={{
           headerTitle: 'Settings',
-          // headerTintColor: isDark ? 'black' : 'white',
           headerTitleStyle: {
             color: isDark ? 'white' : 'black',
           },

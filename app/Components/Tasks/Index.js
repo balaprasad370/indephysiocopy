@@ -6,9 +6,7 @@ import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 
 const Index = ({name}) => {
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark} = appContext;
+  const {isDark, setIsDark} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
   return (

@@ -183,9 +183,9 @@ const AudioComponent = ({
           <Icon name="play" style={{fontSize: 40, color: color.darkPrimary}} />
         )}
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => seekAudio('backward')}>
+      {/* <TouchableOpacity onPress={() => seekAudio('backward')}>
         <Icon name="banckward" style={styles.seekButton} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View style={styles.progressBar}>
         <View
           style={[
@@ -194,11 +194,12 @@ const AudioComponent = ({
           ]}
         />
       </View>
-      <TouchableOpacity onPress={() => seekAudio('forward')}>
+      {/* <TouchableOpacity onPress={() => seekAudio('forward')}>
         <Icon name="forward" style={styles.seekButton} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View style={styles.timeContainer}>
         <Text>{formatTime(currentPosition)}</Text>
+        <Text>:</Text>
         <Text>{formatTime(duration)}</Text>
       </View>
     </View>

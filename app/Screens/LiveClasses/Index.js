@@ -17,16 +17,27 @@ import SearchComponent from '../../Components/SearchComponent/Index';
 import {AppContext} from '../../theme/AppContext';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
+import CalendarComponent from '../../Components/Calender/Index';
+import color from '../../Constants/color';
 
 const Index = () => {
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark} = appContext;
+  const {isDark, setIsDark} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
   return (
-    <ScrollView style={style.livClass}>
+    <View style={{flex: 1, backgroundColor: color.white}}>
+      <CalendarComponent />
+    </View>
+  );
+};
+
+export default Index;
+
+const styles = StyleSheet.create({});
+
+{
+  /* <ScrollView style={style.livClass}>
       <View
         style={{
           display: 'flex',
@@ -114,10 +125,5 @@ const Index = () => {
           <Chapter title="Der, Die, Das" isLocked={(isLocked = true)} />
         </View>
       </View>
-    </ScrollView>
-  );
-};
-
-export default Index;
-
-const styles = StyleSheet.create({});
+    </ScrollView> */
+}

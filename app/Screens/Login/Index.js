@@ -1,5 +1,5 @@
-import React, {useContext, useState} from 'react';
-import {Alert, FlatList, View, StyleSheet, Text} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {Alert, FlatList, View, StyleSheet, Text, Image} from 'react-native';
 import AuthTitle from '../../Components/CommonLines/AuthTitle';
 import AuthLine from '../../Components/CommonLines/AuthLine';
 import AuthInput from '../../Components/InputFields/AuthInput';
@@ -13,108 +13,140 @@ import {AppContext} from '../../theme/AppContext';
 import {useNavigation} from '@react-navigation/native';
 import storage from '../../Constants/storage';
 import LoadComponent from '../../Components/Loading/Index';
-import color from '../../Constants/color';
+import Logo from '../../assets/logo.png';
+import scale from '../../utils/utils';
 
 const Index = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const {setLoading, loadTime, setLoadTIme} = useContext(AppContext);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const {loadTime, setLoadTime, isAuthenticate, setIsAuthenticate, path} =
+    useContext(AppContext);
   const navigation = useNavigation();
 
+  const validateEmail = email => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
   const handleLogin = async () => {
+    setEmailError('');
+    setPasswordError('');
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+      setEmailError('Email is required');
+      return;
+    } else if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    if (!password) {
+      setPasswordError('Password is required');
+      return;
+    } else if (password.length < 6) {
+      setPasswordError('Password length must be at least 6 characters');
+      return;
+    }
+
     try {
-      setLoadTIme(true);
-      // const response = await axios.post('https://server.indephysio.com/login', {
-      const response = await axios.post('http://192.168.1.5:4000/signin', {
-        email,
-        password,
-        userType: 'student',
-      });
+      setLoadTime(true);
+      const response = await axios.post(
+        `https://server.indephysio.com/portal/signin`,
+        {
+          email,
+          password,
+          userType: 'student',
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
       if (response.status === 200) {
-        Alert.alert('Success', 'Logged in successfully', [{text: 'OK'}]);
         await storage.setStringAsync('token', response.data.token);
         await storage.setBoolAsync('isLoggedIn', true);
-        setLoading(true);
+
+        setIsAuthenticate(true);
         setEmail('');
         setPassword('');
         navigation.navigate(ROUTES.DASHBOARD);
-        setLoadTIme(false);
       } else {
         Alert.alert('Error', 'Unexpected response status', [{text: 'OK'}]);
-        setLoadTIme(false);
       }
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setLoadTIme(false);
-        Alert.alert('Error', 'Error code 400: Bad Request', [{text: 'OK'}]);
-      } else if (error.response && error.response.status === 401) {
-        setLoadTIme(false);
-        Alert.alert('Error', 'Invalid email and password', [{text: 'OK'}]);
+      if (error.response) {
+        const {status, data} = error.response;
+        if (status === 400) {
+          if (data.msg === 'User not found!') {
+            setEmailError('User not found');
+          } else if (data.msg === 'Invalid credentials') {
+            setPasswordError('Incorrect password');
+          } else if (data.msg === 'Valid email is required') {
+            setEmailError('Please enter a valid email');
+          } else {
+            Alert.alert('Error', data.msg || 'An error occurred', [
+              {text: 'OK'},
+            ]);
+          }
+        } else {
+          Alert.alert('Error', data.msg || 'An error occurred', [{text: 'OK'}]);
+        }
       } else {
-        setLoadTIme(false);
         Alert.alert('Error', error.message, [{text: 'OK'}]);
       }
+    } finally {
+      setLoadTime(false);
     }
   };
 
   const data = [
     {
       id: '1',
-      component: <View style={{marginTop: '10%'}}></View>,
-    },
-
-    {
-      id: '2',
       component: (
         <>
-          <AuthTitle authTitle="Welcome to indephysio" />
+          <AuthTitle authTitle="Welcome back!" />
           <AuthLine authLine="Please enter your info below to start using app." />
         </>
       ),
     },
     {
-      id: '3',
+      id: '2',
       component: (
         <View>
           <AuthInput
             value={email}
             onChangeText={setEmail}
             placeholder="Email"
+            wrong={!!emailError}
+            errorMessage={emailError}
           />
           <AuthInput
             value={password}
             onChangeText={setPassword}
             secureTextEntry={true}
             placeholder="Password"
+            wrong={!!passwordError}
+            errorMessage={passwordError}
           />
           <RememberField route={ROUTES.RECOVERY_PASSWORD} />
         </View>
       ),
     },
-    // {
-    //   id: '3',
-    //   component: ,
-    // },
     {
-      id: '4',
+      id: '3',
       component: (
-        <CommonButtonAuth handleData={handleLogin} buttonTitle="Sign in" />
+        <>
+          <CommonButtonAuth handleData={handleLogin} buttonTitle="Sign in" />
+          <LineAfterBtn
+            lineBefore="Not a member?"
+            secondBtn="Join Now"
+            route={ROUTES.SIGNUP}
+          />
+        </>
       ),
-    },
-    {
-      id: '5',
-      component: (
-        <LineAfterBtn
-          lineBefore="Not a member?"
-          secondBtn="Join Now"
-          route={ROUTES.SIGNUP}
-        />
-      ),
-    },
-    {
-      id: '6',
-      component: <SocialMediaButton />,
     },
   ];
 
@@ -134,13 +166,9 @@ const Index = () => {
 };
 
 const styles = StyleSheet.create({
-  contentContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-    position: 'relative',
-  },
   itemContainer: {
-    marginBottom: 10,
+    marginBottom: scale(10),
+    padding: scale(18),
   },
 });
 

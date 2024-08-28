@@ -328,7 +328,7 @@ const QuizModal = ({modalVisible, setModalVisible, toggleModal}) => {
                 <View key={item.id}>
                   <Text style={styled.quizContentCount}>
                     Question {questionIndex + 1}/{totalQuestionsCount}
-                    {/* Question {questionIndex + 1}/{question.length} */}
+                    {/* Question {quesxftionIndex + 1}/{question.length} */}
                   </Text>
                   {item.imageURL && (
                     <Image
@@ -336,8 +336,6 @@ const QuizModal = ({modalVisible, setModalVisible, toggleModal}) => {
                       style={{width: '100%', height: 200, marginBottom: 10}}
                     />
                   )}
-                  {/* {item.audioURL && <Text>{item.audioURL}</Text>} */}
-                  {/* <Text style={styled.quiztitle}>{item.question}</Text> */}
                   <View
                     style={{
                       flexDirection: 'row',
@@ -522,7 +520,7 @@ const styled = StyleSheet.create({
     padding: 8,
   },
   nextBtnText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '500',
     color: 'white',
     textAlign: 'center',
@@ -541,10 +539,10 @@ const styled = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
 
-    paddingTop: 15,
+    paddingTop: 12,
     paddingLeft: 10,
     paddingRight: 10,
-    paddingBottom: 15,
+    paddingBottom: 12,
     borderWidth: 1,
     borderColor: 'grey',
     borderRadius: 8,
@@ -555,7 +553,7 @@ const styled = StyleSheet.create({
     width: '94%',
   },
   options: {
-    marginBottom: 20,
+    marginBottom: 15,
   },
   selectedOption: {
     marginTop: 12,

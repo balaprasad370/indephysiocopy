@@ -37,10 +37,7 @@ const Index = ({navigation}) => {
     setModalVisible(!modalVisible);
   };
 
-  const appContext = useContext(AppContext);
-
-  const {isDark, setIsDark, userData} = appContext;
-
+  const {isDark, setIsDark, userData} = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
 
   let locked = true;
@@ -50,12 +47,14 @@ const Index = ({navigation}) => {
       locked: false,
       courseTitle: 'Registered',
       middleCourseCard: 'Approx D.O.R',
+      plane: true,
       bottomCourseCard: '000€',
     },
     {
       locked: false,
       courseTitle: 'Referral Portal',
       middleCourseCard: 'My Euro Bank',
+      refer: true,
       bottomCourseCard: '116🏚️',
     },
     {
@@ -78,9 +77,7 @@ const Index = ({navigation}) => {
         <View style={style.uppDash}>
           <View style={styles.textstyle}>
             <Text style={style.textWel}>Welcome back</Text>
-            {/* <Text style={style.candName}>Candidate Name</Text> */}
             <Text style={style.candName}>
-              {/* S. Ram Prakash */}
               {userData
                 ? `${userData?.first_name} ${userData?.last_name} `
                 : null}
@@ -100,7 +97,7 @@ const Index = ({navigation}) => {
             style={{paddingRight: '3%'}}>
             <Image
               source={require('../../Constants/person.jpg')}
-              style={{width: 45, height: 45, borderRadius: 50}}
+              style={{width: 55, height: 55, borderRadius: 50}}
             />
           </TouchableOpacity>
         </View>
@@ -114,6 +111,8 @@ const Index = ({navigation}) => {
               courseTitle={item.courseTitle}
               toggleModal={toggleModal}
               middleCourseCard={item.middleCourseCard}
+              plane={item.plane}
+              refer={item.refer}
               bottomCourseCard={item.bottomCourseCard}
             />
           )}

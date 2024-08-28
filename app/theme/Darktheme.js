@@ -37,6 +37,7 @@ const DarkTheme = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: COLOR.black,
     // paddingLeft: '5%',
   },
@@ -128,10 +129,8 @@ const DarkTheme = StyleSheet.create({
     }),
   },
   selfLearn: {
-    paddingRight: '3%',
     backgroundColor: '#000',
     flex: 1,
-    paddingLeft: '3%',
   },
   selfHeading: {fontSize: 18, color: COLOR.white},
   selfChapter: {fontSize: 26, fontWeight: 'bold', color: COLOR.white},
