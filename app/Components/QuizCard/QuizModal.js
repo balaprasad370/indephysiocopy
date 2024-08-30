@@ -25,6 +25,7 @@ import {TextInput} from 'react-native-gesture-handler';
 import WebView from 'react-native-webview';
 import AudioComponent from './AudioComponent';
 import {AppContext} from '../../theme/AppContext';
+import scale from '../../utils/utils';
 
 const QuizModal = ({modalVisible, setModalVisible, toggleModal}) => {
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -414,14 +415,21 @@ const QuizModal = ({modalVisible, setModalVisible, toggleModal}) => {
             </ScrollView>
             {question.length >= 2 ? (
               <View style={styled.bottomButton}>
-                <TouchableOpacity style={styled.nextBtn} onPress={handlePrev}>
+                <TouchableOpacity
+                  style={
+                    questionIndex === 0 ? styled.nextBtnLeft : styled.nextBtn
+                  }
+                  onPress={handlePrev}>
                   <Text style={styled.nextBtnText}>Prev</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styled.nextBtn} onPress={handleNext}>
-                  <Text style={styled.nextBtnText}>
-                    Next
-                    {/* {questionIndex < question.length - 1 ? 'Next' : 'Submit'} */}
-                  </Text>
+                <TouchableOpacity
+                  style={
+                    questionIndex + 1 === totalQuestionsCount
+                      ? styled.nextBtnLeft
+                      : styled.nextBtn
+                  }
+                  onPress={handleNext}>
+                  <Text style={styled.nextBtnText}>Next</Text>
                 </TouchableOpacity>
               </View>
             ) : null}
@@ -455,51 +463,51 @@ const styled = StyleSheet.create({
     justifyContent: 'space-between',
   },
   leftQuestion: {
-    fontSize: 16,
+    fontSize: scale(14),
     fontWeight: '600',
     color: color.darkPrimary,
   },
   completeStatus: {
     width: '100%',
-    height: 4,
-    borderRadius: 10,
+    height: scale(2),
+    borderRadius: scale(10),
   },
   leftIcon: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 35,
-    height: 35,
+    width: scale(28),
+    height: scale(28),
     backgroundColor: color.lowPrimary,
-    borderRadius: 8,
+    borderRadius: scale(8),
   },
   modalQuizText: {
-    fontSize: 20,
-    marginLeft: 8,
+    fontSize: scale(18),
+    marginLeft: scale(7),
     color: 'black',
     fontWeight: 'bold',
   },
   quizContent: {
-    height: '90%',
+    height: '92%',
     padding: '3%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
   quizContentCount: {
-    fontSize: 15,
+    fontSize: scale(13),
     fontWeight: '400',
-    marginBottom: 8,
+    marginBottom: scale(6),
   },
   quiztitle: {
-    fontSize: 17,
+    fontSize: scale(14),
     textAlign: 'justify',
     color: 'black',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   linearBox: {
-    padding: 10,
-    borderRadius: 8,
+    padding: scale(8),
+    borderRadius: scale(8),
   },
   bottomButton: {
     display: 'flex',
@@ -510,73 +518,78 @@ const styled = StyleSheet.create({
   nextBtn: {
     width: '45%',
     backgroundColor: color.darkPrimary,
-    borderRadius: 10,
-    padding: 8,
+    borderRadius: scale(10),
+    padding: scale(6),
+  },
+  nextBtnLeft: {
+    width: '45%',
+    backgroundColor: color.grey,
+    borderRadius: scale(10),
+    padding: scale(6),
   },
   submittBtn: {
-    marginTop: 8,
+    marginTop: scale(8),
     backgroundColor: color.darkPrimary,
-    borderRadius: 10,
-    padding: 8,
+    borderRadius: scale(10),
+    padding: scale(6),
   },
   nextBtnText: {
-    fontSize: 20,
+    fontSize: scale(16),
     fontWeight: '500',
     color: 'white',
     textAlign: 'center',
   },
   optionRound: {
-    width: 25,
-    height: 25,
-    borderRadius: 50,
+    width: scale(21),
+    height: scale(21),
+    borderRadius: scale(50),
     borderWidth: 1,
     borderColor: 'grey',
   },
   optionBtn: {
-    marginTop: 12,
+    marginTop: scale(10),
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-
-    paddingTop: 12,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingBottom: 12,
+    paddingTop: scale(10),
+    paddingLeft: scale(8),
+    paddingRight: scale(8),
+    paddingBottom: scale(10),
     borderWidth: 1,
     borderColor: 'grey',
-    borderRadius: 8,
+    borderRadius: scale(8),
   },
   optionText: {
-    fontSize: 17,
+    fontSize: scale(15),
     fontWeight: '500',
     width: '94%',
   },
   options: {
-    marginBottom: 15,
+    marginBottom: scale(12),
   },
   selectedOption: {
-    marginTop: 12,
+    marginTop: scale(10),
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    paddingTop: 15,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingBottom: 15,
+    paddingTop: scale(10),
+    paddingLeft: scale(8),
+    paddingRight: scale(8),
+    paddingBottom: scale(10),
     borderWidth: 1,
-    borderColor: 'grey',
-    borderRadius: 8,
+    borderColor: color.grey,
+    borderRadius: scale(8),
     backgroundColor: color.lowPrimary,
   },
   selectOptionRound: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 25,
-    height: 25,
-    borderRadius: 50,
+    width: scale(21),
+    height: scale(21),
+    borderRadius: scale(50),
     borderWidth: 1,
     borderColor: color.darkPrimary,
     backgroundColor: color.darkPrimary,

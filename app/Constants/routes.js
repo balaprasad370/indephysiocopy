@@ -24,4 +24,8 @@ export const ROUTES = {
   PROFILE_SETTING: 'Profile Setting',
   WELCOME: 'Welcome',
   FAQ: 'FAQ',
+  REGULAR: 'Regular Pathway',
+  PORTAL: 'Referral Portal',
+  PRICING: 'Pricing',
+  Installement: 'Instalment',
 };

@@ -14,6 +14,11 @@ import {
   Package,
   Flash,
   FAQ,
+  Gernal,
+  Regular,
+  Portal,
+  Pricing,
+  Installment,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -44,6 +49,39 @@ const StackNavigation = () => {
         }}
         component={Level}
       />
+      <Stack.Screen
+        name={ROUTES.REGULAR}
+        options={{
+          headerTitle: 'Regular Pathway',
+          headerLeftLabelVisible: false,
+        }}
+        component={Regular}
+      />
+      <Stack.Screen
+        name={ROUTES.PRICING}
+        options={{
+          headerTitle: 'Our Package',
+          headerLeftLabelVisible: false,
+        }}
+        component={Pricing}
+      />
+      <Stack.Screen
+        name={ROUTES.Installement}
+        options={{
+          headerTitle: 'Instalment Plans',
+          headerLeftLabelVisible: false,
+        }}
+        component={Installment}
+      />
+      <Stack.Screen
+        name={ROUTES.PORTAL}
+        options={{
+          headerTitle: 'Referral Portal',
+          headerLeftLabelVisible: false,
+        }}
+        component={Portal}
+      />
+
       <Stack.Screen
         name={ROUTES.MEETING}
         options={{headerShown: false}}

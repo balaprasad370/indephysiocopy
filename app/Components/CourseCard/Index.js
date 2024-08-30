@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import plan from '../../assets/plan.png';
 import referral from '../../assets/referral.png';
 import scale from '../../utils/utils';
+import {useNavigation} from '@react-navigation/native';
+import {ROUTES} from '../../Constants/routes';
 
 const index = ({
   locked,
@@ -20,8 +22,17 @@ const index = ({
   const {isDark, setIsDark} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
+
+  const navigation = useNavigation();
+
+  const handleScreen = () => {
+    if (courseTitle === 'Referral Portal') {
+      navigation.navigate(ROUTES.PORTAL);
+    }
+  };
+
   return (
-    <TouchableOpacity style={style.courseCard}>
+    <TouchableOpacity style={style.courseCard} onPress={handleScreen}>
       <View style={locked ? style.courseLockCard : style.courseUnlockCard}>
         {locked ? (
           <View

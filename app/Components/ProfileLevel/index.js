@@ -1,4 +1,11 @@
-import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/Entypo';
 import Plane from 'react-native-vector-icons/Fontisto';
@@ -8,10 +15,15 @@ import {AppContext} from '../../theme/AppContext';
 import axios from 'axios';
 import storage from '../../Constants/storage';
 import scale from '../../utils/utils';
+import color from '../../Constants/color';
+import {useNavigation} from '@react-navigation/native';
+import {ROUTES} from '../../Constants/routes';
 
 const Index = () => {
   const {isDark, userData} = useContext(AppContext);
   const [profileStatus, setProfileStatus] = useState([]);
+
+  const navigation = useNavigation();
 
   // Example Profile Status Data
   const profileStatusData = [
@@ -180,12 +192,13 @@ const Index = () => {
       </>
     );
   };
-
+  // Looks good, try adding colours to the location icons and for each name like A1 German level etc
   return (
     <FlatList
       data={[{key: 'renderItem'}]}
       renderItem={ProfileComponent}
       keyExtractor={item => item.key}
+      style={{padding: scale(4)}}
     />
   );
 };
@@ -197,6 +210,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     flexDirection: 'row',
     width: '100%',
+    paddingBottom: 20,
   },
   leftBox: {
     flex: 1,

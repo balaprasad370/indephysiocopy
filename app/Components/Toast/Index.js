@@ -47,7 +47,7 @@ const Toast = ({visible, onClose}) => {
         navigation.navigate(ROUTES.DASHBOARD);
         setShow(false);
       } catch (error) {
-        setTitle(`Email not verified. Check your inbox or spam folder.`);
+        setTitle(`Email not verify yet!. Check your inbox or spam folder.`);
         setChanged(true);
         console.log('error', error);
         console.log('error', error?.response?.data?.msg);

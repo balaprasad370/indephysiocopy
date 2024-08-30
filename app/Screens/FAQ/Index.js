@@ -13,6 +13,8 @@ import color from '../../Constants/color';
 import scale from '../../utils/utils';
 import TableComponent from './TableComponent';
 import PlansComponents from './PlansComponent';
+import {useNavigation} from '@react-navigation/native';
+import {ROUTES} from '../../Constants/routes';
 const FAQ = () => {
   const [expandedIndex, setExpandedIndex] = useState(null);
 
@@ -107,6 +109,8 @@ const FAQ = () => {
     },
   ];
 
+  const navigation = useNavigation();
+
   const renderItem = ({item, index}) => {
     const paragraphs = item.answer
       .split('\n')
@@ -132,8 +136,25 @@ const FAQ = () => {
               </Text>
             ))}
 
-            {item.Installment && <TableComponent />}
-            {item.plans && <PlansComponents />}
+            {item.Installment && (
+              <TouchableOpacity
+                onPress={() => navigation.navigate(ROUTES.Installement)}>
+                <Text style={{color: color.darkPrimary, fontSize: 18}}>
+                  Check our installments
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {item.plans && (
+              <TouchableOpacity
+                onPress={() => navigation.navigate(ROUTES.PRICING)}>
+                <Text style={{color: color.darkPrimary, fontSize: 18}}>
+                  Check Our Packages
+                </Text>
+              </TouchableOpacity>
+            )}
+            {/* Installement */}
+            {/* {item.plans && <PlansComponents />} */}
           </View>
         )}
       </View>

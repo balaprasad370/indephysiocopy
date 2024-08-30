@@ -17,3 +17,7 @@ export {default as Package} from './Package/Index';
 export {default as Flash} from './FlashCards/Index';
 export {default as Welcome} from './WelcomeScreen/Index';
 export {default as FAQ} from './FAQ/Index';
+export {default as Regular} from './GernalFlow/Index';
+export {default as Portal} from './Portal/Index';
+export {default as Pricing} from './Pricing/Index';
+export {default as Installment} from './Installements/Index';

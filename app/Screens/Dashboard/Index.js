@@ -20,7 +20,7 @@ import Tasks from '../../Components/Tasks/Index';
 import DocumentCard from '../../Components/DocumentCard/Index';
 import ProfileLevel from '../../Components/ProfileLevel/index';
 import {AppContext} from '../../theme/AppContext';
-
+import scale from '../../utils/utils';
 import LighTheme from '../../theme/LighTheme';
 import DarkTheme from '../../theme/Darktheme';
 
@@ -28,6 +28,7 @@ import styles from './dashboardCss';
 import {ROUTES} from '../../Constants/routes';
 
 import {MMKVLoader, useMMKVStorage} from 'react-native-mmkv-storage';
+import color from '../../Constants/color';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
@@ -45,7 +46,7 @@ const Index = ({navigation}) => {
   const courseData = [
     {
       locked: false,
-      courseTitle: 'Registered',
+      courseTitle: 'Not Registered',
       middleCourseCard: 'Approx D.O.R',
       plane: true,
       bottomCourseCard: '000€',
@@ -138,8 +139,8 @@ const Index = ({navigation}) => {
           <Menu
             name="Live class"
             iconName="monitor-screenshot"
-            isLocked={true}
-            ROUTE="Live"
+            isLocked={false}
+            // ROUTE="Live"
           />
           <Menu name="Docs" iconName="folder-open" isLocked={false} />
           <Menu name="Scorecard" iconName="scoreboard" isLocked={false} />
@@ -179,6 +180,19 @@ const Index = ({navigation}) => {
           </ScrollView>
         </Modal>
         <View style={{marginBottom: '20%'}}>
+          <View style={{display: 'flex', alignItems: 'flex-end'}}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(ROUTES.REGULAR)}
+              style={{
+                backgroundColor: color.darkPrimary,
+                padding: scale(8),
+                borderRadius: scale(8),
+              }}>
+              <Text style={{color: 'white', textAlign: 'center'}}>
+                Check Regular Pathway
+              </Text>
+            </TouchableOpacity>
+          </View>
           <ProfileLevel />
         </View>
       </>

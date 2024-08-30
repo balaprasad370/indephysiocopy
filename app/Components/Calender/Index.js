@@ -59,7 +59,7 @@ const Index = () => {
           // `https://server.indephysio.com/app/schedule`,
           {
             params: {
-              package_id: '1',
+              package_id: '3',
             },
             headers: {
               'Content-Type': 'application/json',
@@ -183,7 +183,7 @@ const Index = () => {
 
         setEvents(weekFilteredEvents);
       } catch (err) {
-        console.log('Error fetching schedule:', err.message);
+        console.log('Error fetching schedule:', err);
       }
     }
   };
