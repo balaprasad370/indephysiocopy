@@ -54,19 +54,15 @@ const Index = () => {
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
-        const response = await axios.get(
-          `http://${path}:4000/app/schedule`,
-          // `https://server.indephysio.com/app/schedule`,
-          {
-            params: {
-              package_id: '3',
-            },
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + token,
-            },
+        const response = await axios.get(`http://${path}:4000/app/schedule`, {
+          params: {
+            package_id: '1',
           },
-        );
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
+        });
 
         let fetchedEvents = [];
 
@@ -170,7 +166,7 @@ const Index = () => {
                   });
                 }
 
-                currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+                currentDate.setDate(currentDate.getDate() + 1);
               }
             }
           }
@@ -183,7 +179,25 @@ const Index = () => {
 
         setEvents(weekFilteredEvents);
       } catch (err) {
-        console.log('Error fetching schedule:', err);
+        setEvents([]);
+        if (err.response) {
+          const status = err.response.status;
+          if (status === 404) {
+            console.log('No schedules found for the provided criteria.');
+          } else if (status === 500) {
+            console.log(
+              'An error occurred while fetching the schedule. Please try again later.',
+            );
+          } else {
+            console.log('An unexpected error occurred.');
+          }
+        } else if (err.request) {
+          console.log(
+            'No response received from the server. Please check your network connection.',
+          );
+        } else {
+          console.log('Error in setting up the request:', err.message);
+        }
       }
     }
   };
@@ -204,81 +218,98 @@ const Index = () => {
         setModalVisible(true);
       }}>
       <View style={styles.cardHeader}>
-        <Text style={styles.cardTime}>
-          {`0${item.start.getHours()}-0${item.end.getHours()} ${
-            item.start.getHours() >= 12 ? 'PM' : 'AM'
-          }`}
-        </Text>
+        <Text style={styles.mainHeaderLevel}>A2 German</Text>
+        <View style={styles.cardTimeDiv}>
+          <Text style={styles.cardTime}>
+            {`0${item.start.getHours()}-0${item.end.getHours()} ${
+              item.start.getHours() >= 12 ? 'PM' : 'AM'
+            }`}
+          </Text>
+          <Text style={styles.pathway}>Superfast Pathway</Text>
+        </View>
       </View>
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.title}</Text>
-        <Text style={styles.cardDescription}>{item.description}</Text>
+
+        <View style={{marginTop: scale(5)}}>
+          <Text style={styles.medium}>GERMAN - English Medium</Text>
+        </View>
+        <View style={styles.cardTimeDiv}>
+          <Text style={styles.medium}>Dependent Task : Quiz 14</Text>
+          <Text style={styles.medium}>Teach Name : Swathi</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity
-          style={[
-            styles.toggleButton,
-            !isNextWeek && styles.activeToggleButton,
-          ]}
-          onPress={() => {
-            setIsNextWeek(false);
-            fetchSchedule();
-          }}>
-          <Text style={styles.toggleText}>This Week</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.toggleButton, isNextWeek && styles.activeToggleButton]}
-          onPress={() => {
-            setIsNextWeek(true);
-            fetchSchedule();
-          }}>
-          <Text style={styles.toggleText}>Next Week</Text>
-        </TouchableOpacity>
+      <View style={{height: '18%'}}>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              !isNextWeek && styles.activeToggleButton,
+            ]}
+            onPress={() => {
+              setIsNextWeek(false);
+              fetchSchedule();
+            }}>
+            <Text style={styles.toggleText}>This Week</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              isNextWeek && styles.activeToggleButton,
+            ]}
+            onPress={() => {
+              setIsNextWeek(true);
+              fetchSchedule();
+            }}>
+            <Text style={styles.toggleText}>Next Week</Text>
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          horizontal
+          data={daysOfWeek}
+          renderItem={({item: day}) => (
+            <TouchableOpacity
+              key={day}
+              onPress={() => setSelectedDay(day)}
+              style={[
+                styles.dayButton,
+                selectedDay === day && styles.selectedDayButton,
+              ]}>
+              <Text
+                style={[
+                  styles.dayText,
+                  selectedDay === day && styles.selectedDayText,
+                ]}>
+                {day}
+              </Text>
+            </TouchableOpacity>
+          )}
+          keyExtractor={day => day}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.daySelector}
+        />
       </View>
 
-      <FlatList
-        horizontal
-        data={daysOfWeek}
-        renderItem={({item: day}) => (
-          <TouchableOpacity
-            key={day}
-            onPress={() => setSelectedDay(day)}
-            style={[
-              styles.dayButton,
-              selectedDay === day && styles.selectedDayButton,
-            ]}>
-            <Text
-              style={[
-                styles.dayText,
-                selectedDay === day && styles.selectedDayText,
-              ]}>
-              {day}
-            </Text>
-          </TouchableOpacity>
+      <View style={{height: '83%'}}>
+        {filteredEvents.length === 0 ? (
+          <View style={styles.noEventsContainer}>
+            <Text style={styles.noEventsText}>No classes on {selectedDay}</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredEvents}
+            renderItem={renderEventCard}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.eventList}
+          />
         )}
-        keyExtractor={day => day}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.daySelector}
-      />
-
-      {filteredEvents.length === 0 ? (
-        <View style={styles.noEventsContainer}>
-          <Text style={styles.noEventsText}>No classes on {selectedDay}</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filteredEvents}
-          renderItem={renderEventCard}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={2}
-          contentContainerStyle={styles.eventList}
-        />
-      )}
+      </View>
 
       {selectedEvent && (
         <Modal
@@ -331,6 +362,7 @@ const Index = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: '#fff',
   },
   toggleContainer: {
@@ -358,15 +390,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: scale(1),
     borderBottomColor: color.grey,
     paddingBottom: scale(6),
+    height: scale(50),
   },
   dayButton: {
     paddingVertical: scale(10),
+    height: scale(40),
     paddingHorizontal: scale(15),
     borderRadius: scale(10),
     backgroundColor: '#f0f0f0',
     marginHorizontal: scale(5),
   },
   selectedDayButton: {
+    height: scale(40),
+    paddingVertical: scale(10),
+    paddingHorizontal: scale(15),
+    borderRadius: scale(10),
+    marginHorizontal: scale(5),
     backgroundColor: color.lowPrimary,
   },
   dayText: {
@@ -389,10 +428,9 @@ const styles = StyleSheet.create({
     color: color.black,
   },
   card: {
-    flex: 1,
     margin: scale(5),
-    maxWidth: '50%',
-    borderRadius: scale(5),
+    width: '99%',
+    borderRadius: scale(15),
     backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
@@ -402,23 +440,47 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     backgroundColor: color.lightPrimary,
-    padding: scale(10),
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4,
+    padding: scale(8),
+    borderTopLeftRadius: scale(15),
+    borderTopRightRadius: scale(15),
   },
   cardTime: {
     color: color.black,
     fontWeight: 'bold',
-    fontSize: scale(13),
+    fontSize: scale(15),
+  },
+  mainHeaderLevel: {
+    textAlign: 'center',
+    fontSize: scale(14),
+    fontWeight: '700',
+    color: color.black,
+  },
+  cardTimeDiv: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  pathway: {
+    fontSize: scale(14),
+    fontWeight: '600',
+    color: color.black,
   },
   cardContent: {
     padding: scale(10),
   },
+  medium: {
+    textAlign: 'center',
+    marginTop: scale(4),
+    marginBottom: scale(8),
+    fontSize: scale(12),
+    color: color.black,
+  },
   cardTitle: {
     fontSize: scale(15),
+    textAlign: 'center',
     fontWeight: 'bold',
     color: color.black,
-    marginBottom: scale(5),
   },
   cardDescription: {
     fontSize: scale(13),
@@ -476,60 +538,3 @@ const styles = StyleSheet.create({
 });
 
 export default Index;
-
-const data = [
-  {
-    client_id: 7,
-    created_date: '2024-08-27T05:09:57.000Z',
-    description: '',
-    modified_date: '2024-08-27T05:09:57.000Z',
-    package_id: 1,
-    schdeule_recur_type: 'weekdays',
-    schedule_end_date: '2024-08-26T18:30:00.000Z',
-    schedule_end_time: '07:35:00',
-    schedule_id: 65,
-    schedule_is_recurring: 1,
-    schedule_recur_week_index: '1,2,3,4,5',
-    schedule_recurring_date_end: '2024-09-09T18:30:00.000Z',
-    schedule_recurring_date_start: '2024-08-26T18:30:00.000Z',
-    schedule_start_date: '2024-08-26T18:30:00.000Z',
-    schedule_start_time: '07:30:00',
-    title: 'Weekdays (Paaras)',
-  },
-  {
-    client_id: 7,
-    created_date: '2024-08-27T05:11:12.000Z',
-    description: '',
-    modified_date: '2024-08-27T05:11:12.000Z',
-    package_id: 1,
-    schdeule_recur_type: '',
-    schedule_end_date: '2024-08-26T18:30:00.000Z',
-    schedule_end_time: '07:55:00',
-    schedule_id: 66,
-    schedule_is_recurring: 0,
-    schedule_recur_week_index: '',
-    schedule_recurring_date_end: '0000-00-00',
-    schedule_recurring_date_start: '0000-00-00',
-    schedule_start_date: '2024-08-26T18:30:00.000Z',
-    schedule_start_time: '07:50:00',
-    title: 'Do not recur(Paaras)',
-  },
-  {
-    client_id: 7,
-    created_date: '2024-08-27T05:12:36.000Z',
-    description: '',
-    modified_date: '2024-08-27T05:12:36.000Z',
-    package_id: 1,
-    schdeule_recur_type: 'daily',
-    schedule_end_date: '2024-08-27T18:30:00.000Z',
-    schedule_end_time: '08:00:00',
-    schedule_id: 67,
-    schedule_is_recurring: 1,
-    schedule_recur_week_index: '0,1,2,3,4,5,6',
-    schedule_recurring_date_end: '2024-08-29T18:30:00.000Z',
-    schedule_recurring_date_start: '2024-08-26T18:30:00.000Z',
-    schedule_start_date: '2024-08-27T18:30:00.000Z',
-    schedule_start_time: '07:55:00',
-    title: 'daily',
-  },
-];

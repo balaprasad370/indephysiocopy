@@ -6658,6 +6658,7 @@ __metadata:
     react-native-pager-view: 6.2.0
     react-native-paper: 5.10.3
     react-native-performance: 5.0.0
+    react-native-push-notification: ^8.1.1
     react-native-reanimated: ^3.14.0
     react-native-safe-area-context: 4.10.8
     react-native-screens: 3.33.0
@@ -9823,6 +9824,16 @@ __metadata:
   peerDependencies:
     react-native: "*"
   checksum: 674129d03b8551fa01994f52d99247c3e57ad8084efd1855ee3f71d8af055a18a470111d6414299cc204ad101dd04e42f22d2d16657e243f230828fb9d13160c
+  languageName: node
+  linkType: hard
+
+"react-native-push-notification@npm:^8.1.1":
+  version: 8.1.1
+  resolution: "react-native-push-notification@npm:8.1.1"
+  peerDependencies:
+    "@react-native-community/push-notification-ios": ^1.10.1
+    react-native: ">=0.33"
+  checksum: 64d500c1163eaa4eee549e6e2f8204cac643f91ae918a227e9d93f8261afdebbdaa7ba5d12da0039155cbf6a599032dd15be4ebe53737cbeeadec4469893f00d
   languageName: node
   linkType: hard
 

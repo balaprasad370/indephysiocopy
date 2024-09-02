@@ -68,6 +68,39 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  const [documentStatus, setDocumentStatus] = useState('Not initialized');
+
+  const fetchDocumentStatus = async () => {
+    const token = await storage.getStringAsync('token');
+    if (userData?.student_id) {
+      try {
+        const response = await axios.get(
+          'https://server.indephysio.com/student/documentStatus',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        setDocumentStatus(response.data.status);
+      } catch (error) {
+        console.error('Error fetching document status:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Fetch document status initially
+    fetchDocumentStatus();
+
+    // Set up an interval to fetch document status every 10 seconds
+    const intervalId = setInterval(fetchDocumentStatus, 10000); // 10000 milliseconds = 10 seconds
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
+
   useEffect(() => {
     getDatFunc();
     // Set up polling interval
@@ -93,25 +126,28 @@ export const AuthProvider = ({children}) => {
 
   useEffect(() => {
     const fetchDocumentData = async () => {
-      try {
-        const student_id = '355'; // Replace with actual student_id
-        const response = await axios.get(`http://${path}:4000/documentData`, {
-          params: {student_id},
-        });
+      if (userData?.student_id) {
+        try {
+          const response = await axios.get(`http://${path}:4000/documentData`, {
+            params: {student_id},
+          });
 
-        if (response.status === 200) {
-          const {status, documents} = response.data;
-          setDocuments(documents);
-          console.log(documents);
-        } else {
-          throw new Error('Unexpected response status');
+          console.log(first);
+
+          if (response.status === 200) {
+            const {status, documents} = response.data;
+            setDocuments(documents);
+            console.log(documents);
+          } else {
+            throw new Error('Unexpected response status');
+          }
+        } catch (error) {
+          console.error('Error fetching document data:', error);
+          Alert.alert(
+            'Error',
+            'Unable to fetch document data. Please try again later.',
+          );
         }
-      } catch (error) {
-        console.error('Error fetching document data:', error);
-        Alert.alert(
-          'Error',
-          'Unable to fetch document data. Please try again later.',
-        );
       }
     };
 
@@ -138,6 +174,8 @@ export const AuthProvider = ({children}) => {
     isAuthenticate,
     setIsAuthenticate,
     documents,
+    documentStatus,
+    setDocumentStatus,
   };
 
   const style = isDark ? DarkTheme : LighTheme;

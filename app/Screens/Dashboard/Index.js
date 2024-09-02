@@ -13,6 +13,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Cross from 'react-native-vector-icons/Entypo';
+import UserIcon from 'react-native-vector-icons/FontAwesome';
 // import user from '../../Constants';
 import CourseCard from '../../Components/CourseCard/Index';
 import Menu from '../../Components/Menu/Index';
@@ -29,6 +30,7 @@ import {ROUTES} from '../../Constants/routes';
 
 import {MMKVLoader, useMMKVStorage} from 'react-native-mmkv-storage';
 import color from '../../Constants/color';
+import axios from 'axios';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
@@ -38,7 +40,7 @@ const Index = ({navigation}) => {
     setModalVisible(!modalVisible);
   };
 
-  const {isDark, setIsDark, userData} = useContext(AppContext);
+  const {isDark, setIsDark, userData, documentStatus} = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
 
   let locked = true;
@@ -90,15 +92,33 @@ const Index = ({navigation}) => {
                 alignItems: 'center',
               }}>
               <Icon name="crown-outline" style={style.crown} size={22} />
-              <Text style={style.registered}>Registered</Text>
+              <Text style={style.registered}>
+                {documentStatus && documentStatus
+                  ? 'Registered'
+                  : 'Not Registred'}
+                <Text>{documentStatus}</Text>
+              </Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
             style={{paddingRight: '3%'}}>
-            <Image
+            {/* <Image
               source={require('../../Constants/person.jpg')}
               style={{width: 55, height: 55, borderRadius: 50}}
+            /> */}
+            <UserIcon
+              name="user"
+              style={{
+                color: 'black',
+                paddingLeft: 15,
+                paddingRight: 15,
+                paddingTop: 12,
+                paddingBottom: 12,
+                borderRadius: 100,
+                fontSize: 30,
+                backgroundColor: 'white',
+              }}
             />
           </TouchableOpacity>
         </View>
