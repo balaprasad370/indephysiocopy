@@ -98,6 +98,7 @@ const Index = () => {
       renderItem={({item}) => <PricingCard item={item} />}
       keyExtractor={item => item.packageName}
       contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

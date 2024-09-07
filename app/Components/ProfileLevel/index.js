@@ -1,6 +1,7 @@
 import {
   Dimensions,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -18,10 +19,11 @@ import scale from '../../utils/utils';
 import color from '../../Constants/color';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
+import planeImage from '../../assets/plane.png';
 
 const Index = () => {
-  const {isDark, userData} = useContext(AppContext);
-  const [profileStatus, setProfileStatus] = useState([]);
+  const {path, isDark, userData, profileStatus, setProfileStatus} =
+    useContext(AppContext);
 
   const navigation = useNavigation();
 
@@ -77,7 +79,7 @@ const Index = () => {
       if (token) {
         try {
           const response = await axios.post(
-            `https://server.indephysio.com/profile/status`,
+            `http://${path}:4000/profile/status`,
             {
               student_id: userData?.student_id,
             },
@@ -88,7 +90,7 @@ const Index = () => {
               },
             },
           );
-          setProfileStatus(response.data.result);
+          setProfileStatus(response.data);
         } catch (error) {
           console.log(error?.response?.status);
         }
@@ -177,13 +179,25 @@ const Index = () => {
 
               {index === 0 && lastCompletedIndex === -1 ? (
                 <View
-                  style={{position: 'absolute', left: '45%', top: scale(10)}}>
-                  <Plane name="plane" style={style.plane} />
+                  style={{
+                    position: 'absolute',
+                    // left: scale(142),
+                    left: '43.5%',
+                    top: scale(10),
+                  }}>
+                  {/* <Plane name="plane" style={style.plane} /> */}
+                  <Image source={planeImage} style={style.plane} />
                 </View>
               ) : index === lastCompletedIndex ? (
                 <View
-                  style={{position: 'absolute', left: '45%', top: scale(50)}}>
-                  <Plane name="plane" style={style.plane} />
+                  style={{
+                    position: 'absolute',
+                    // left: scale(142),
+                    left: '43.5%',
+                    top: scale(40),
+                  }}>
+                  {/* <Plane name="plane" style={style.plane} /> */}
+                  <Image source={planeImage} style={style.plane} />
                 </View>
               ) : null}
             </View>
@@ -199,6 +213,7 @@ const Index = () => {
       renderItem={ProfileComponent}
       keyExtractor={item => item.key}
       style={{padding: scale(4)}}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

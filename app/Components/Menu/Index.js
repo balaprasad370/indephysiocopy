@@ -3,8 +3,9 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
+import {Image} from 'react-native';
 // import { Platform } from 'react-native';
-const Index = ({name, iconName, isLocked, ROUTE}) => {
+const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
   const navigation = useNavigation();
 
   const changeRoute = option => {
@@ -35,17 +36,24 @@ const Index = ({name, iconName, isLocked, ROUTE}) => {
           alignItems: 'center',
           borderRadius: 10,
           padding: 8,
-          backgroundColor: isLocked ? '#E4F2FC' : '#8A8A8A',
+          backgroundColor: isLocked ? '#8A8A8A' : '#E4F2FC',
+          position: 'relative',
         }}>
-        <Icon
-          name={isLocked ? `${iconName}` : `${'lock'}`}
+        <Image source={iconImage} style={{width: 45, height: 40}} />
+        {/* <Icon
+          name={iconName}
           style={{fontSize: 34, color: isLocked ? '#3898ff' : '#FFF'}}
-        />
+        /> */}
+        {isLocked ? (
+          <View style={{position: 'absolute', bottom: 6}}>
+            <Image source={lock} style={{width: 20, height: 20}} />
+          </View>
+        ) : null}
       </View>
       <Text
         style={{
           marginTop: 8,
-          color: isLocked ? '#3898ff' : '#8A8A8A',
+          color: isLocked ? '#8A8A8A' : '#3898ff',
           fontWeight: 'bold',
           fontSize: 12,
         }}>

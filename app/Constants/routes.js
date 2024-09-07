@@ -28,4 +28,5 @@ export const ROUTES = {
   PORTAL: 'Referral Portal',
   PRICING: 'Pricing',
   Installement: 'Instalment',
+  QUIZ: 'Quiz',
 };

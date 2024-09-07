@@ -167,6 +167,7 @@ const FAQ = () => {
         data={faqData}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );

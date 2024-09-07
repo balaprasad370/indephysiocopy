@@ -88,7 +88,7 @@ const Index = () => {
       <Text style={styles.price}>Duration: {item.duration}</Text>
       <Text style={styles.detailsText}>Note: {item.note}</Text>
       <TouchableOpacity style={styles.buyButton} onPress={handlePress}>
-        <Text style={styles.buyButtonText}>Buy Now</Text>
+        <Text style={styles.buyButtonText}>Upgrade Now</Text>
         <Text style={styles.arrow}>➔</Text>
       </TouchableOpacity>
     </TouchableOpacity>

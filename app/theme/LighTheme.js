@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 import COLOR from '../Constants/color';
 import color from '../Constants/color';
+import scale from '../utils/utils';
 
 const LighTheme = StyleSheet.create({
   dashBoard: {
@@ -393,7 +394,13 @@ const LighTheme = StyleSheet.create({
     color: color.darkPrimary,
   },
   levelName: {fontSize: 14, color: COLOR.black, fontWeight: '600'},
-  plane: {fontSize: 40, color: COLOR.black, transform: [{rotate: '180deg'}]},
+  plane: {
+    width: scale(48),
+    height: scale(48),
+    zIndex: 999,
+    color: COLOR.black,
+    transform: [{rotate: '360deg'}],
+  },
 
   // Setting page
   settingScreen: {

@@ -17,20 +17,32 @@ import QuizCard from '../../Components/QuizCard/Index';
 import ReadingMaterial from '../../Components/ReadingMaterial/Index';
 import {ROUTES} from '../../Constants/routes';
 import axios from 'axios';
+import storage from '../../Constants/storage';
 const Index = ({route}) => {
-  const {chapterId} = route.params;
-  const {isDark, setIsDark, path} = useContext(AppContext);
+  const {parent_module_id} = route.params;
+  const {isDark, setIsDark, path, clientId} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
   const [assessments, setAssessments] = useState();
+  const [readingMaterials, setReadingMaterials] = useState([]);
 
-  const getAssessements = async () => {
+  const getAssessments = async () => {
     try {
-      const response = await axios.get(
-        `http://${path}:4000/assessments/${chapterId}`,
-      );
-      setAssessments(response.data[0]);
+      const token = await storage.getStringAsync('token');
+
+      if (token) {
+        const response = await axios.get(`http://${path}:4000/assessments/0`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setAssessments(response.data[0]);
+      } else {
+        console.error('No token found');
+      }
     } catch (err) {
       console.error('Error fetching assessments:', err);
     }
@@ -40,65 +52,146 @@ const Index = ({route}) => {
 
   const getFlashCard = async () => {
     try {
-      const response = await axios.get(
-        `http://${path}:4000/flashcard/${chapterId}`,
-      );
-      setFlashCard(response.data[0]);
+      const token = await storage.getStringAsync('token');
+
+      if (token) {
+        const response = await axios.get(
+          `http://${path}:4000/flashcard/${parent_module_id}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        // Extract the relevant data from the response
+        const materials = response.data.map(item => ({
+          flash_id: item.flash_id,
+          title: item.flashcard_name,
+          description: item.flashcard_description,
+        }));
+
+        // console.log(response.data);
+        setFlashCard(materials);
+      } else {
+        console.error('No token found');
+      }
     } catch (err) {
-      console.error('Error fetching assessments:', err);
+      console.error('Error fetching flashcard:', err);
+    }
+  };
+
+  const [modules, setModules] = useState();
+
+  const getModules = async () => {
+    const token = await storage.getStringAsync('token');
+    if (token) {
+      try {
+        const response = await axios.get(`http://${path}:4000/modules`, {
+          params: {
+            client_id: clientId,
+            module_id: parent_module_id,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const materials = response.data.data.map(item => ({
+          module_id: item.id,
+          title: item.name,
+          description: item.description,
+        }));
+        setModules(materials);
+      } catch (error) {
+        console.log('Error fetching data from modules', error.message);
+      }
+    }
+  };
+
+  const readingMaterial = async () => {
+    const token = await storage.getStringAsync('token');
+    if (token) {
+      try {
+        const response = await axios.get(
+          // `http://${path}:4000/reading/44`,
+          `http://${path}:4000/reading/${parent_module_id}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + token,
+            },
+          },
+        );
+
+        // Extract the relevant data from the response
+        const materials = response.data.map(item => ({
+          read_id: item.read_id,
+          title: item.title,
+          description: item.description,
+        }));
+
+        // Store the extracted data in the state
+        setReadingMaterials(materials);
+      } catch (error) {
+        console.log('Error from reading material:', error);
+      }
     }
   };
 
   useEffect(() => {
-    getFlashCard();
-    getAssessements();
+    getModules();
+    readingMaterial();
   }, []);
 
-  const Assessement =
-    'https://img.freepik.com/free-vector/abstract-illustration-person-giving-feedback_52683-62410.jpg?t=st=1722599417~exp=1722603017~hmac=dcc7e1649302b8178155bbbe8c04a5cf43da13e9d9470b98fb43a09f6c397684&w=1060';
-  const ReadingMaterial =
-    'https://img.freepik.com/free-vector/study-abroad-concept-illustration_114360-7493.jpg?t=st=1722599457~exp=1722603057~hmac=2d6dd329b37fbf60aa493996fa246319e338bfa78c7fa0ef4904e14618b16b9f&w=1060';
-  const FlashCard =
-    'https://img.freepik.com/free-vector/modern-people-doing-cultural-activities_52683-42186.jpg?t=st=1722600084~exp=1722603684~hmac=9016ecac5129dd8efd2d5ea46eaf1140ee6241653fd3a0c67ea48d7bd77b4416&w=1800';
-  const Quiz =
-    'https://img.freepik.com/free-vector/flat-people-asking-questions-illustration_23-2148910626.jpg?t=st=1722600164~exp=1722603764~hmac=f25b5570b545fad7e80c593baa8bfe417a87cb2fe7e9828b26272589cf2551c5&w=1060';
-  const LiveClass =
-    'https://img.freepik.com/free-vector/webinar-concept-illustration_114360-4764.jpg?t=st=1722600187~exp=1722603787~hmac=49c8a2fca946a7539814bad7ce28e02bf4eda92df68525a46b6565e4c808f0ee&w=1800';
+  useEffect(() => {
+    getFlashCard();
+    getAssessments();
+  }, []);
+
   return (
-    <ScrollView style={style.selfLearn}>
-      <View style={{}}>
-        {/* <Text style={style.selfChapter}>Chapter Id - {chapterId}</Text> */}
-      </View>
+    <ScrollView style={style.selfLearn} showsVerticalScrollIndicator={false}>
+      <View style={{}}></View>
       <View style={styles.quizzes}>
         <QuizCard
           Title={`${assessments?.title}`}
-          // Title="Assessment"
           secondOption={`${assessments?.description}`}
-          cardURL={Assessement}
           optionClick="Assessement"
         />
-        <QuizCard
-          Title="Reading Material"
-          secondOption="Articles"
-          chapterId={chapterId}
-          cardURL={ReadingMaterial}
-          optionClick="Reading Material"
-        />
-        <QuizCard
-          Title={`${flashCard?.flashcard_name}`}
-          // Title="Flash Cards"
-          chapterId={chapterId}
-          secondOption={`${flashCard?.flashcard_description}`}
-          // secondOption="Day 1"
-          cardURL={FlashCard}
-          optionClick="Flash Card"
-        />
-        <QuizCard
-          Title="Quiz"
-          secondOption="Welcome"
-          cardURL={Quiz}
-          optionClick="Quiz"
-        />
+        {readingMaterials.map(material => (
+          <QuizCard
+            key={material.read_id}
+            Title={material.title}
+            secondOption="Articles"
+            parent_module_id={parent_module_id}
+            optionClick="Reading Material"
+            unique_id={material.read_id}
+          />
+        ))}
+        {flashCard &&
+          flashCard.map(material => (
+            <QuizCard
+              key={material.flash_id}
+              Title={`${material.title}`}
+              parent_module_id={parent_module_id}
+              secondOption={`${material.description}`}
+              optionClick="Flash Card"
+              unique_id={material.flash_id}
+            />
+          ))}
+        {modules &&
+          modules.map(material => (
+            <QuizCard
+              key={material.module_id}
+              Title={`${material.title}`}
+              parent_module_id={parent_module_id}
+              secondOption={`${material.description}`}
+              optionClick="Quiz"
+              unique_id={material.module_id}
+            />
+          ))}
+        {/* <QuizCard Title="Quiz" secondOption="Welcome" optionClick="Quiz" /> */}
       </View>
     </ScrollView>
   );
@@ -161,3 +254,56 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+
+const data = [
+  {
+    chapter_id: 14,
+    client_id: 8,
+    flash_created_date: '2024-08-08T00:56:10.000Z',
+    flash_id: 8,
+    flash_modified_date: '2024-08-08T00:56:10.000Z',
+    flashcard_description: 'Greetings and Farewell',
+    flashcard_name: 'Introduction',
+    order_id: 2,
+  },
+  {
+    chapter_id: 14,
+    client_id: 8,
+    flash_created_date: '2024-08-08T00:56:57.000Z',
+    flash_id: 10,
+    flash_modified_date: '2024-08-08T00:56:57.000Z',
+    flashcard_description: 'short self inroduction',
+    flashcard_name: 'Introduction',
+    order_id: 4,
+  },
+  {
+    chapter_id: 14,
+    client_id: 8,
+    flash_created_date: '2024-08-08T00:56:58.000Z',
+    flash_id: 11,
+    flash_modified_date: '2024-08-08T00:56:58.000Z',
+    flashcard_description: "names of countries and it's citizens",
+    flashcard_name: 'Countries',
+    order_id: 7,
+  },
+  {
+    chapter_id: 14,
+    client_id: 8,
+    flash_created_date: '2024-08-08T00:56:59.000Z',
+    flash_id: 12,
+    flash_modified_date: '2024-08-08T00:56:59.000Z',
+    flashcard_description: 'Flashcard description',
+    flashcard_name: 'Flashcard title',
+    order_id: 10,
+  },
+  {
+    chapter_id: 14,
+    client_id: 8,
+    flash_created_date: '2024-08-17T09:26:54.000Z',
+    flash_id: 15,
+    flash_modified_date: '2024-08-17T09:26:54.000Z',
+    flashcard_description: 'Flashcard description',
+    flashcard_name: 'Flashcard title',
+    order_id: 22,
+  },
+];

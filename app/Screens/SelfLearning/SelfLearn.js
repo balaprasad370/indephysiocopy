@@ -1,17 +1,20 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import SearchComponent from '../../Components/SearchComponent/Index';
 import LanguageComponent from '../../Components/LanguageComponent/LanguageComponent';
 import {ROUTES} from '../../Constants/routes';
 import Example from './LanguageCard';
+import {AppContext} from '../../theme/AppContext';
 
 const SelfLearn = () => {
+  const {langCode} = useContext(AppContext);
+
   return (
     <View style={styles.selfLearn}>
       <Example
         route={ROUTES.LEVEL}
+        langCode={langCode}
         id="2"
-        // img="https://d2c9u2e33z36pz.cloudfront.net/uploads/1722684549ndephysio App Icon draft 3 (1).png"
         img="https://app.indephysio.com/assets/de-DW6ic9wV.jpg"
         name="German Language"
         description="Committed individuals seeking to attain fluency and proficiency in the German language."

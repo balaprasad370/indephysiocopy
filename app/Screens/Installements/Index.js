@@ -107,6 +107,7 @@ const Index = () => {
       renderItem={({item}) => <InstallmentCard item={item} />}
       keyExtractor={item => item.packageName}
       contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

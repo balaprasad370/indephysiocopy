@@ -16,26 +16,24 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import color from '../../Constants/color';
+
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {styles} from './QuizStyle';
+import {styles} from '../../Components/QuizCard/QuizStyle';
 import {TextInput} from 'react-native-gesture-handler';
 import WebView from 'react-native-webview';
-import AudioComponent from './AudioComponent';
-import {AppContext} from '../../theme/AppContext';
+import AudioComponent from '../../Components/QuizCard/AudioComponent';
 import scale from '../../utils/utils';
+import color from '../../Constants/color';
+import {AppContext} from '../../theme/AppContext';
+import {useNavigation} from '@react-navigation/native';
+import {goBack} from '@jitsi/react-native-sdk/react/features/mobile/navigation/rootNavigationContainerRef';
 
-const QuizModal = ({
-  modalVisible,
-  setModalVisible,
-  toggleModal,
-  module_id,
-  quizModal,
-  title,
-}) => {
+const Index = ({route}) => {
+  const {module_id, title} = route.params;
   const {path, grandScore, setGrandScore} = useContext(AppContext);
+  const navigation = useNavigation();
 
   const [questionIndex, setQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -55,7 +53,7 @@ const QuizModal = ({
             setSelectedOption(null);
             setQuestionIndex(0);
             setScore(0);
-            setModalVisible(false);
+            navigation.goBack();
           },
         },
       ],
@@ -73,7 +71,6 @@ const QuizModal = ({
         module_id: module_id,
       })
       .then(res => {
-        console.log(res.data);
         setQuestion(res.data);
       })
 
@@ -81,11 +78,8 @@ const QuizModal = ({
   };
 
   useEffect(() => {
-    if (quizModal) {
-      console.log('called');
-      getDetails();
-    }
-  }, [quizModal]);
+    getDetails();
+  }, []);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const handleNext = () => {
@@ -96,26 +90,24 @@ const QuizModal = ({
     if (sound) {
       sound.pause();
     }
+    console.log('Score', score);
     setSelectedOption(null);
     setIsPlaying(false);
     setQuestionIndex(prevIndex => prevIndex + 1);
   };
   // important if save in the database score for particular test after that score will be changed to zero
   const submitNow = () => {
-    // setSelectedOption(null);
-    // setQuestionIndex(0);
+    setSelectedOption(null);
+    setQuestionIndex(0);
     if (sound) {
       sound.pause();
     }
 
     setGrandScore(score);
     setScore(0);
-
     setIsPlaying(false);
-    Alert.alert(
-      'Quiz Completed',
-      `You have completed the quiz! ${score}  ${grandScore}`,
-    );
+    Alert.alert('Quiz Completed', `You have completed the quiz! ${score}`);
+    navigation.goBack();
     // setModalVisible(false);
   };
   const handlePrev = () => {
@@ -134,10 +126,9 @@ const QuizModal = ({
   const [selectedOption, setSelectedOption] = useState(null);
   const handleOptionSelect = (option, optionKeys, correctAnswerIndex) => {
     const result = optionKeys.replace(/\D/g, '');
-    console.log(selectedOption);
+    setSelectedOption(option);
     if (result === correctAnswerIndex) {
-      setScore(score => score + 1);
-      console.log(grandScore, score);
+      setScore(score + 1);
     }
   };
 
@@ -163,7 +154,6 @@ const QuizModal = ({
                   )
                 }>
                 <Text style={styled.optionText}>{options[key]}</Text>
-                <Text></Text>
                 <View
                   style={
                     isSelected ? styled.selectOptionRound : styled.optionRound
@@ -200,18 +190,17 @@ const QuizModal = ({
       cancelAnimationFrame(animationFrameRef.current);
       setSelectedOption(null);
       setQuestionIndex(0);
-      setModalVisible(false);
     } else {
       animationFrameRef.current = requestAnimationFrame(updateCountdown);
     }
-  }, [setSelectedOption, setQuestionIndex, setModalVisible]);
+  }, [setSelectedOption, setQuestionIndex]);
 
   const startCountdown = () => {
     endTimeRef.current = Date.now() + 200 * 1000;
     animationFrameRef.current = requestAnimationFrame(updateCountdown);
   };
 
-  if (modalVisible && !endTimeRef.current) {
+  if (!endTimeRef.current) {
     startCountdown();
   }
 
@@ -236,28 +225,32 @@ const QuizModal = ({
     return (
       <>
         <Text style={styled.quiztitle}>{parts[0]}</Text>
-        <TextInput
-          style={{
-            // width: 90,
-            marginLeft: scale(4),
-            marginRight: scale(4),
-            borderBottomWidth: scale(1),
-            borderBlockColor: color.black,
-            paddingLeft: scale(4),
-            paddingRight: scale(4),
-            fontSize: 14,
-            textAlign: 'center',
-          }}
-          placeholder="type answer"
-          onChangeText={text =>
-            handleTextInput(text, correctAnswerIndex, index)
-          }
-          value={inputValue}
-        />
+        {parts.length > 1 && (
+          <>
+            <TextInput
+              style={{
+                marginLeft: scale(4),
+                marginRight: scale(4),
+                borderBottomWidth: scale(1),
+                borderBlockColor: color.black,
+                paddingLeft: scale(4),
+                paddingRight: scale(4),
+                fontSize: 14,
+                textAlign: 'center',
+              }}
+              placeholder="type answer"
+              onChangeText={text =>
+                handleTextInput(text, correctAnswerIndex, index)
+              }
+              value={inputValue}
+            />
 
-        <Text style={[styled.quiztitle, {marginTop: scale(4)}]}>
-          {parts[parts.length - 1]}
-        </Text>
+            {/* Render the text after the blank if it exists */}
+            <Text style={[styled.quiztitle, {marginTop: scale(4)}]}>
+              {parts[parts.length - 1]}
+            </Text>
+          </>
+        )}
       </>
     );
   };
@@ -320,13 +313,8 @@ const QuizModal = ({
   };
 
   const totalQuestionsCount = getTotalQuestionsCount(question);
-
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={toggleModal}>
+    <View style={{flex: 1, backgroundColor: '#FFF'}}>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <View style={styled.upperModal}>
@@ -359,14 +347,9 @@ const QuizModal = ({
                     Question {questionIndex + 1}/{totalQuestionsCount}
                     {/* Question {quesxftionIndex + 1}/{question.length} */}
                   </Text>
-                  <Text>
-                    {item.id}
-                    {module_id}
-                  </Text>
                   {item.imageURL && (
                     <>
                       <Image
-                        // https://d2c9u2e33z36pz.cloudfront.net/
                         src={`https://d2c9u2e33z36pz.cloudfront.net/${item.imageURL}`}
                         style={{width: '100%', height: 200, marginBottom: 10}}
                       />
@@ -394,7 +377,6 @@ const QuizModal = ({
                           pauseAudio={pauseAudio}
                           audioURL={item.audioURL}
                         />
-                        {/* <Text>helo</Text> */}
                       </>
                     ) : (
                       <Text style={styled.quiztitle}>{item.question}</Text>
@@ -470,11 +452,11 @@ const QuizModal = ({
           </View>
         </View>
       </View>
-    </Modal>
+    </View>
   );
 };
 
-export default QuizModal;
+export default Index;
 
 const styled = StyleSheet.create({
   upperModal: {
@@ -624,25 +606,3 @@ const styled = StyleSheet.create({
     backgroundColor: color.darkPrimary,
   },
 });
-
-const data = [
-  {
-    audioURL: null,
-    correctAnswerIndex: null,
-    id: 492,
-    imageCredits: 'cornelson',
-    imageURL: 'uploads/1719883034SCR-20240702-luvk.png',
-    jumbledAnswerOrder: null,
-    jumbledQuestionOrder: null,
-    moduleId: 77,
-    option1: null,
-    option2: null,
-    option3: null,
-    option4: null,
-    question: 'Welches Wort ist richtig?',
-    questionCreatedDate: '0000-00-00 00:00:00',
-    questionModifiedDate: '0000-00-00 00:00:00',
-    subQuestions: [[Object], [Object], [Object], [Object], [Object]],
-    type: 'MultiQuestionsImage',
-  },
-];

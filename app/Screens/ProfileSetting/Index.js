@@ -102,15 +102,6 @@ const Index = () => {
           </TouchableOpacity>
           <TouchableOpacity style={style.commonTouch}>
             <View style={style.settingLeft}>
-              <TextIcon name="format-text" style={style.settingIcon} />
-              <Text style={style.commonText}>Text Size</Text>
-            </View>
-            <View>
-              <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.commonTouch}>
-            <View style={style.settingLeft}>
               <FontAwesome name="moon-o" style={style.settingIcon} />
               <Text style={style.commonText}>Dark Theme</Text>
             </View>
@@ -189,6 +180,7 @@ const Index = () => {
       data={[{key: 'renderItem'}]} // Single dummy item to trigger RenderItem
       renderItem={RenderItem}
       keyExtractor={item => item.key}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

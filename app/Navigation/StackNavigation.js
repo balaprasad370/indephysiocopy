@@ -19,6 +19,7 @@ import {
   Portal,
   Pricing,
   Installment,
+  Quiz,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -64,6 +65,15 @@ const StackNavigation = () => {
           headerLeftLabelVisible: false,
         }}
         component={Pricing}
+      />
+      <Stack.Screen
+        name={ROUTES.QUIZ}
+        options={{
+          headerTitle: 'Quiz',
+          headerLeftLabelVisible: false,
+          headerShown: false,
+        }}
+        component={Quiz}
       />
       <Stack.Screen
         name={ROUTES.Installement}

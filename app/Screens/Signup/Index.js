@@ -112,6 +112,7 @@ const Signup = () => {
         setMessageError('Unexpected response status');
       }
     } catch (error) {
+      console.log(error.message);
       setLoadTime(false);
       if (error.response) {
         const {status, data} = error.response;
@@ -241,6 +242,7 @@ const Signup = () => {
         )}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
       />
       {loadTime && <LoadComponent />}
     </View>

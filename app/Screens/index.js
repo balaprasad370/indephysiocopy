@@ -21,3 +21,4 @@ export {default as Regular} from './GernalFlow/Index';
 export {default as Portal} from './Portal/Index';
 export {default as Pricing} from './Pricing/Index';
 export {default as Installment} from './Installements/Index';
+export {default as Quiz} from './Quiz/Index';

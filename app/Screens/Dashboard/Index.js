@@ -30,7 +30,14 @@ import {ROUTES} from '../../Constants/routes';
 
 import {MMKVLoader, useMMKVStorage} from 'react-native-mmkv-storage';
 import color from '../../Constants/color';
+import registerImage from '../../assets/registeredIcon.png';
 import axios from 'axios';
+import iconImage from '../../assets/scorecard.png';
+import lockImage from '../../assets/lock.png';
+import liveclass from '../../assets/live.png';
+import mock from '../../assets/mock.png';
+import docs from '../../assets/doc.png';
+import book from '../../assets/book.png';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
@@ -40,7 +47,8 @@ const Index = ({navigation}) => {
     setModalVisible(!modalVisible);
   };
 
-  const {isDark, setIsDark, userData, documentStatus} = useContext(AppContext);
+  const {isDark, setIsDark, userData, documentStatus, path, setDocumentStatus} =
+    useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
 
   let locked = true;
@@ -48,7 +56,7 @@ const Index = ({navigation}) => {
   const courseData = [
     {
       locked: false,
-      courseTitle: 'Not Registered',
+      courseTitle: documentStatus === 2 ? 'Registered' : 'Not Registered',
       middleCourseCard: 'Approx D.O.R',
       plane: true,
       bottomCourseCard: '000€',
@@ -91,12 +99,12 @@ const Index = ({navigation}) => {
                 flexDirection: 'row',
                 alignItems: 'center',
               }}>
-              <Icon name="crown-outline" style={style.crown} size={22} />
+              <Image source={registerImage} />
+              {/* <Icon name="crown-outline" style={style.crown} size={22} /> */}
               <Text style={style.registered}>
-                {documentStatus && documentStatus
+                {documentStatus && documentStatus === 2
                   ? 'Registered'
-                  : 'Not Registred'}
-                <Text>{documentStatus}</Text>
+                  : 'Not Registered'}
               </Text>
             </View>
           </View>
@@ -125,6 +133,7 @@ const Index = ({navigation}) => {
         <FlatList
           data={courseData}
           horizontal
+          showsHorizontalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => (
             <CourseCard
@@ -147,23 +156,36 @@ const Index = ({navigation}) => {
           }}>
           <Menu
             name="Self Learn"
-            iconName="book-open-blank-variant"
-            isLocked={true}
+            iconImage={book}
+            lock={lockImage}
+            isLocked={false}
             ROUTE="Self learn"
           />
           <Menu
             name="Mock test"
-            iconName="check-circle-outline"
-            isLocked={false}
+            iconImage={mock}
+            lock={lockImage}
+            isLocked={true}
           />
           <Menu
             name="Live class"
-            iconName="monitor-screenshot"
-            isLocked={false}
+            iconImage={liveclass}
+            lock={lockImage}
+            isLocked={true}
             // ROUTE="Live"
           />
-          <Menu name="Docs" iconName="folder-open" isLocked={false} />
-          <Menu name="Scorecard" iconName="scoreboard" isLocked={false} />
+          <Menu
+            name="Docs"
+            iconImage={docs}
+            lock={lockImage}
+            isLocked={false}
+          />
+          <Menu
+            name="Scorecard"
+            iconImage={iconImage}
+            lock={lockImage}
+            isLocked={true}
+          />
         </View>
         <Modal
           animationType="slide"
@@ -225,6 +247,7 @@ const Index = ({navigation}) => {
       renderItem={renderItem}
       keyExtractor={item => item.key}
       style={style.dashBoard}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

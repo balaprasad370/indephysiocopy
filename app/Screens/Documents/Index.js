@@ -147,6 +147,7 @@ const Index = () => {
           </View>
         )}
         ListEmptyComponent={<Text>No documents found.</Text>}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );

@@ -68,6 +68,7 @@ const Index = () => {
       data={DATA}
       renderItem={renderItem}
       keyExtractor={item => item.id}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

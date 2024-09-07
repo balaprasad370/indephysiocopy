@@ -34,7 +34,7 @@ const Index = () => {
   const [isNextWeek, setIsNextWeek] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const {isDark, path} = useContext(AppContext);
+  const {isDark, path, packageId, clientId} = useContext(AppContext);
 
   const getStartOfWeek = () => {
     const now = new Date();
@@ -56,7 +56,8 @@ const Index = () => {
       try {
         const response = await axios.get(`http://${path}:4000/app/schedule`, {
           params: {
-            package_id: '1',
+            package_id: packageId,
+            // client_id: clientId,
           },
           headers: {
             'Content-Type': 'application/json',
@@ -305,6 +306,7 @@ const Index = () => {
           <FlatList
             data={filteredEvents}
             renderItem={renderEventCard}
+            showsVerticalScrollIndicator={false}
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={styles.eventList}
           />

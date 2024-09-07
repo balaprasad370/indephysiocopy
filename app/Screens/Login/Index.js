@@ -54,14 +54,12 @@ const Index = () => {
     try {
       setLoadTime(true);
       const response = await axios.post(
-        `https://server.indephysio.com/portal/signin`,
+        `http://${path}:4000/portal/signin`,
+        // `https://server.indephysio.com/portal/signin`,
         {
           email,
           password,
           userType: 'student',
-        },
-        {
-          withCredentials: true,
         },
       );
 
@@ -78,6 +76,7 @@ const Index = () => {
       }
     } catch (error) {
       if (error.response) {
+        console.log(error.response);
         const {status, data} = error.response;
         if (status === 400) {
           if (data.msg === 'User not found!') {
@@ -159,6 +158,7 @@ const Index = () => {
         )}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
       />
       {loadTime && <LoadComponent />}
     </View>

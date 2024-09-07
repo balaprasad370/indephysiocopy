@@ -96,6 +96,7 @@ const Recovery = () => {
         )}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );

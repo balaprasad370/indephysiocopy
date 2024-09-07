@@ -1,100 +1,3 @@
-// import {
-//   Image,
-//   TouchableOpacity,
-//   View,
-//   Text,
-//   StyleSheet,
-//   Modal,
-// } from 'react-native';
-// import React, {useState} from 'react';
-// import {useNavigation} from '@react-navigation/native';
-// import {ROUTES} from '../../Constants/routes';
-// import CustomModal from './QuizModal';
-// import color from '../../Constants/color';
-
-// const Index = ({Title, secondOption, cardURL, optionClick, chapterId}) => {
-//   const [modalVisible, setModalVisible] = useState(false);
-//   const navigation = useNavigation();
-
-//   const toggleModal = option => {
-//     if (option === 'Quiz') {
-//       setModalVisible(!modalVisible);
-//     } else if (option === 'Reading') {
-//       navigation.navigate(ROUTES.READING, {chapterId: chapterId});
-//     } else if (option === 'Live') {
-//       navigation.navigate('Meeting', {room: 'checkpaaras'});
-//     } else if (option === 'Flash') {
-//       navigation.navigate(ROUTES.FLASH, {chapterId: chapterId});
-//     }
-//   };
-
-//   return (
-//     <View style={styles.quizs}>
-//       <TouchableOpacity
-//         style={styles.quizBox}
-//         onPress={() => toggleModal(optionClick)}>
-//         <Image
-//           style={styles.quizImage}
-//           source={{uri: cardURL}}
-//           resizeMode="cover"
-//         />
-//         <View style={styles.textContainer}>
-//           <Text style={styles.quizTitle}>{Title}</Text>
-//           <Text style={styles.quizSubtitle}>{secondOption}</Text>
-//         </View>
-//       </TouchableOpacity>
-
-//       <CustomModal
-//         modalVisible={modalVisible}
-//         setModalVisible={setModalVisible}
-//         toggleModal={toggleModal}
-//       />
-//     </View>
-//   );
-// };
-
-// export default Index;
-
-// const styles = StyleSheet.create({
-//   quizs: {
-//     flex: 1,
-//     marginVertical: 8,
-//   },
-//   quizBox: {
-//     width: '100%',
-//     borderRadius: 12,
-//     overflow: 'hidden',
-//     borderWidth: 1,
-//     borderColor: '#AAA',
-//     backgroundColor: '#FFF',
-//     shadowColor: '#000',
-//     shadowOffset: {width: 0, height: 4},
-//     shadowOpacity: 0.3,
-//     shadowRadius: 5,
-//     elevation: 6,
-//   },
-//   quizImage: {
-//     width: '100%',
-//     height: 140,
-//   },
-//   textContainer: {
-//     padding: 16,
-//     backgroundColor: color.lightPrimary,
-//     borderBottomLeftRadius: 12,
-//     borderBottomRightRadius: 12,
-//   },
-//   quizTitle: {
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//     textTransform: 'uppercase',
-//     color: color.black,
-//     marginBottom: 4,
-//   },
-//   quizSubtitle: {
-//     fontSize: 14,
-//     color: color.black,
-//   },
-// });
 import {
   Image,
   TouchableOpacity,
@@ -109,19 +12,28 @@ import {ROUTES} from '../../Constants/routes';
 import CustomModal from './QuizModal';
 import color from '../../Constants/color';
 
-const Index = ({Title, secondOption, cardURL, optionClick, chapterId}) => {
+const Index = ({
+  Title,
+  secondOption,
+  optionClick,
+  parent_module_id,
+  unique_id,
+}) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [quizModal, setQuizModal] = useState(false);
   const navigation = useNavigation();
 
   const toggleModal = option => {
     if (option === 'Quiz') {
-      setModalVisible(!modalVisible);
+      navigation.navigate(ROUTES.QUIZ, {module_id: unique_id, title: Title});
+      // setQuizModal(true);
+      // setModalVisible(!modalVisible);
     } else if (option === 'Reading Material') {
-      navigation.navigate(ROUTES.READING, {chapterId: chapterId});
+      navigation.navigate(ROUTES.READING, {read_id: unique_id});
     } else if (option === 'Live') {
       navigation.navigate('Meeting', {room: 'checkpaaras'});
     } else if (option === 'Flash Card') {
-      navigation.navigate(ROUTES.FLASH, {chapterId: chapterId});
+      navigation.navigate(ROUTES.FLASH, {flash_id: unique_id});
     }
   };
 
@@ -143,11 +55,14 @@ const Index = ({Title, secondOption, cardURL, optionClick, chapterId}) => {
         </View>
       </TouchableOpacity>
 
-      <CustomModal
+      {/* <CustomModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         toggleModal={toggleModal}
-      />
+        module_id={unique_id}
+        quizModal={quizModal}
+        title={Title}
+      /> */}
     </View>
   );
 };
