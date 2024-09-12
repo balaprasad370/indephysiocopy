@@ -21,6 +21,7 @@
     "@react-native-community/clipboard": "1.5.1",
     "@react-native-community/netinfo": "11.1.0",
     "@react-native-community/slider": "4.4.3",
+    "@react-native-community/voice": "^1.1.9",
     "@react-native-google-signin/google-signin": "10.1.0",
     "@react-native/metro-config": "0.72.9",
     "@react-navigation/bottom-tabs": "^6.6.1",
@@ -90,6 +91,5 @@
   "packageManager": "yarn@3.6.4",
   "overrides": {
     "@xmldom/xmldom": "0.8.7"
-  },
-  "proxy": "http://localhost:4000"
+  }
 }

@@ -80,7 +80,7 @@ const Index = () => {
       if (token) {
         try {
           const response = await axios.post(
-            `http://${path}:4000/profile/status`,
+            `${path}/profile/status`,
             {
               student_id: userData?.student_id,
             },

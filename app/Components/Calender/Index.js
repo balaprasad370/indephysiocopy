@@ -54,9 +54,10 @@ const Index = () => {
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
-        const response = await axios.get(`http://${path}:4000/app/schedule`, {
+        const response = await axios.get(`${path}/app/schedule`, {
           params: {
             package_id: packageId,
+            client_id: clientId,
             // client_id: clientId,
           },
           headers: {

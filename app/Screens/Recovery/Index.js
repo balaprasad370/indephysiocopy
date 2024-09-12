@@ -33,10 +33,9 @@ const Recovery = () => {
     setEmail('');
 
     try {
-      const response = await axios.post(
-        `http://${path}:4000/api/forgot-password`,
-        {email},
-      );
+      const response = await axios.post(`${path}/api/forgot-password`, {
+        email,
+      });
       setMessage('Your request has been submitted. Please check your email.');
     } catch (error) {
       console.error('Error:', error.message);

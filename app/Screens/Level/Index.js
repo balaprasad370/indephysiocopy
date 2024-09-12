@@ -27,15 +27,12 @@ const Index = () => {
       try {
         const token = await storage.getStringAsync('token');
         if (token) {
-          const response = await axios.get(
-            `http://${path}:4000/levels/${langId}`,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
+          const response = await axios.get(`${path}/levels/${langId}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
             },
-          );
+          });
 
           if (response.data.status) {
             setLevels(response.data.data);

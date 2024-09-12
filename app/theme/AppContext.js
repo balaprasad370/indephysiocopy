@@ -13,7 +13,8 @@ export const AppContext = createContext();
 export const AuthProvider = ({children}) => {
   // const path = '192.168.1.3';
   // const path = '192.168.162.48';
-  const path = '192.168.154.48';
+  // const path = 'https://mobile.indephysio.com';
+  const path = 'http://192.168.154.48:4000';
   // http://192.168.1.5
   // 192.168.1.5
 
@@ -23,7 +24,7 @@ export const AuthProvider = ({children}) => {
   const [langId, setLangId] = useState(1); // 0 // 1
   const [levelId, setLevelId] = useState(6); //6  // 7
   const [packageId, setPackageId] = useState(3); // 3 // 1
-  const [clientId, setClientId] = useState(8); // 8 // 7
+  const [clientId, setClientId] = useState(7); // 8 // 7
   const [student_id, setStudentId] = useState(null);
   const [grandScore, setGrandScore] = useState(0);
   const [profileStatus, setProfileStatus] = useState([]);
@@ -42,7 +43,7 @@ export const AuthProvider = ({children}) => {
       const token = await storage.getStringAsync('token');
 
       if (token) {
-        const response = await axios.get(`http://${path}:4000/chapters`, {
+        const response = await axios.get(`${path}/chapters`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -61,7 +62,7 @@ export const AuthProvider = ({children}) => {
       const token = await storage.getStringAsync('token');
 
       if (isLoggedIn && token) {
-        const res = await axios.get(`http://${path}:4000/student/getDetails`, {
+        const res = await axios.get(`${path}/student/getDetails`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -71,7 +72,7 @@ export const AuthProvider = ({children}) => {
         setUserData(res.data);
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error fetching user data:', error.message);
       if (error.response?.status === 403) {
         console.warn('Token expired or invalid');
         await storage.setBoolAsync('isLoggedIn', false);
@@ -106,14 +107,11 @@ export const AuthProvider = ({children}) => {
     const token = await storage.getStringAsync('token');
     if (student_id) {
       try {
-        const response = await axios.get(
-          `http://${path}:4000/student/documentStatus`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await axios.get(`${path}/student/documentStatus`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
         setDocumentStatus(response.data.status);
       } catch (error) {
         console.error('Error fetching document status:', error);

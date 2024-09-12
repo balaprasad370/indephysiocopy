@@ -29,12 +29,9 @@ const Toast = ({visible, onClose}) => {
     const email = storage.getString('email');
     if (email) {
       try {
-        const response = await axios.get(
-          `http://${path}:4000/checkVerification`,
-          {
-            params: {email: email},
-          },
-        );
+        const response = await axios.get(`${path}/checkVerification`, {
+          params: {email: email},
+        });
 
         setTitle(`Processing...`);
         setChanged(false);

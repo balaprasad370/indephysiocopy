@@ -69,7 +69,7 @@ const QuizModal = ({
   // True false Module id - 72 - > Completed
   const getDetails = async () => {
     await axios
-      .post(`http://${path}:4000/questions/details`, {
+      .post(`${path}/questions/details`, {
         module_id: module_id,
       })
       .then(res => {

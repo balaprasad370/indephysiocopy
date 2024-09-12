@@ -86,7 +86,7 @@ const Signup = () => {
 
     try {
       setLoadTime(true);
-      const response = await axios.post(`http://${path}:4000/app/register`, {
+      const response = await axios.post(`${path}/app/register`, {
         firstName,
         lastName,
         email,

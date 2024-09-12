@@ -89,6 +89,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('indephysio.keystore')
+            storePassword 'indephysio'
+            keyAlias 'indephysio'
+            keyPassword 'indephysio'
+        }
     }
     buildTypes {
         debug {
@@ -99,6 +105,7 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }

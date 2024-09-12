@@ -29,6 +29,7 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {AppContext} from '../theme/AppContext';
 import DarkTheme from '../theme/Darktheme';
 import LighTheme from '../theme/LighTheme';
+import VoiceComponent from '../Screens/Quiz/VoiceComponent';
 
 const Stack = createStackNavigator();
 

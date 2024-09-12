@@ -1,49 +1,3 @@
-// import {StyleSheet, View} from 'react-native';
-// import React, {useContext, useEffect, useState} from 'react';
-// import WebView from 'react-native-webview';
-// import axios from 'axios';
-// import {AppContext} from '../../theme/AppContext';
-
-// const Index = ({route}) => {
-//   const [htmlData, setHtmlData] = useState('');
-
-//   const {path} = useContext(AppContext);
-
-//   // const {chapterId} = route.params;
-//   const {chapterId} = route.params;
-
-//   const readingMaterial = async chapterId => {
-//     try {
-//       const response = await axios.get(
-//         `http://${path}:4000/reading/${chapterId}`,
-//       );
-//       const readingText = response.data[0]?.reading_text;
-//       console.log(readingText);
-//       setHtmlData(readingText);
-//     } catch (error) {
-//       console.log('Error from reading material:', error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     // const chapterId = 44;
-//     readingMaterial(chapterId);
-//   }, []);
-
-//   return (
-//     <View style={{flex: 1, backgroundColor: 'white', padding: '3%'}}>
-//       <WebView
-//         style={{height: 500}}
-//         originWhitelist={['*']}
-//         source={{html: htmlData}}
-//       />
-//     </View>
-//   );
-// };
-
-// export default Index;
-
-// const styles = StyleSheet.create({});
 import {StyleSheet, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import WebView from 'react-native-webview';
@@ -62,7 +16,7 @@ const Index = ({route}) => {
     if (token) {
       try {
         const response = await axios.get(
-          `http://${path}:4000/reading/chapters/${read_id}`,
+          `${path}/reading/chapters/${read_id}`,
           {
             headers: {
               'Content-Type': 'application/json',

@@ -30,6 +30,7 @@ import color from '../../Constants/color';
 import {AppContext} from '../../theme/AppContext';
 import {useNavigation} from '@react-navigation/native';
 import storage from '../../Constants/storage';
+import VoiceComponent from './VoiceComponent';
 
 const Index = ({route}) => {
   const {module_id, title} = route.params;
@@ -75,8 +76,8 @@ const Index = ({route}) => {
 
   const getDetails = async () => {
     await axios
-      .post(`http://${path}:4000/questions/details`, {
-        module_id: 279,
+      .post(`${path}/questions/details`, {
+        module_id: module_id, //279
       })
       .then(res => {
         const correctAnswerIndices = {};
@@ -127,7 +128,7 @@ const Index = ({route}) => {
     const newScore = score == 0 ? 0 : score;
     try {
       await axios.post(
-        `http://${path}:4000/student/saveMarks`,
+        `${path}/student/saveMarks`,
         {
           student_id: userData?.student_id,
           module_id: module_id,
@@ -379,6 +380,7 @@ const Index = ({route}) => {
   //     </>
   //   );
   // };
+
   const renderQuestionWithBlanks = (
     questionText,
     correctAnswerIndex,
@@ -561,6 +563,16 @@ const Index = ({route}) => {
             </>
           );
 
+        case 'Match':
+        case 'JumbledSentences':
+          return (
+            <>
+              <Text style={styled.quiztitle}>
+                Q: {questionIndex + 1} {item.question}
+              </Text>
+              <Text>JumbledSentences</Text>
+            </>
+          );
         case 'Audio':
         case 'MultiQuestionsAudio':
           return (
@@ -597,7 +609,7 @@ const Index = ({route}) => {
               <Text style={styled.quiztitle}>
                 Q{questionIndex + 1}) {item.question}
               </Text>
-              <Text>Helo</Text>
+              <VoiceComponent item={item.question} />
             </>
           );
         default:

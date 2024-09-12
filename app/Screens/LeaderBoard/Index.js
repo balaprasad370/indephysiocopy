@@ -16,16 +16,13 @@ const LeaderboardScreen = ({route}) => {
     const fetchMarks = async () => {
       const token = await storage.getStringAsync('token');
       try {
-        const response = await axios.get(
-          `http://${path}:4000/student/leaderboard`,
-          {
-            params: {module_id},
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + token,
-            },
+        const response = await axios.get(`${path}/student/leaderboard`, {
+          params: {module_id},
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
           },
-        );
+        });
         setStudents(response.data);
       } catch (error) {
         console.error('Error fetching marks:', error);

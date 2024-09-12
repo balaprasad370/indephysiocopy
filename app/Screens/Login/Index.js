@@ -54,7 +54,7 @@ const Index = () => {
     try {
       setLoadTime(true);
       const response = await axios.post(
-        `http://${path}:4000/portal/signin`,
+        `${path}/portal/signin`,
         // `https://server.indephysio.com/portal/signin`,
         {
           email,

@@ -203,7 +203,7 @@ const Index = ({navigation}) => {
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
-        const response = await axios.get(`http://${path}:4000/chapters`, {
+        const response = await axios.get(`${path}/chapters`, {
           params: {
             package_id: newPackageId,
             level_id: level_id,
@@ -229,7 +229,7 @@ const Index = ({navigation}) => {
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
-        const response = await axios.get(`http://${path}:4000/packages`, {
+        const response = await axios.get(`${path}/packages`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + token,

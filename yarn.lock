@@ -2561,6 +2561,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/voice@npm:^1.1.9":
+  version: 1.1.9
+  resolution: "@react-native-community/voice@npm:1.1.9"
+  dependencies:
+    invariant: ^2.2.4
+  peerDependencies:
+    react-native: ">=0.40.0"
+  checksum: b4304e1ca9467b45a45a5da62a243f7c837bdbe723920a232cbad9c44ab739bc14ed819017262d80807858b2fd10f35b0a07e51007f09f1f338bb85332dba922
+  languageName: node
+  linkType: hard
+
 "@react-native-google-signin/google-signin@npm:10.1.0":
   version: 10.1.0
   resolution: "@react-native-google-signin/google-signin@npm:10.1.0"
@@ -6647,6 +6658,7 @@ __metadata:
     "@react-native-community/clipboard": 1.5.1
     "@react-native-community/netinfo": 11.1.0
     "@react-native-community/slider": 4.4.3
+    "@react-native-community/voice": ^1.1.9
     "@react-native-google-signin/google-signin": 10.1.0
     "@react-native/babel-preset": 0.74.85
     "@react-native/eslint-config": 0.74.85

@@ -25,7 +25,7 @@ const Certificate = ({route}) => {
     const fetchMarks = async () => {
       const token = await storage.getStringAsync('token');
       try {
-        const response = await axios.get(`http://${path}:4000/student/score`, {
+        const response = await axios.get(`${path}/student/score`, {
           params: {
             student_id,
             module_id,
