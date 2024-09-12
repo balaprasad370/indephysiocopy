@@ -38,7 +38,6 @@ const Index = () => {
           );
 
           if (response.data.status) {
-            console.log(response.data.data);
             setLevels(response.data.data);
           } else {
             console.error('No levels found for this language ID');

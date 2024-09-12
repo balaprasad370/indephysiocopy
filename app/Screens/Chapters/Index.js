@@ -214,7 +214,6 @@ const Index = ({navigation}) => {
             Authorization: 'Bearer ' + token,
           },
         });
-        console.log(response.data);
         setChapter(response.data);
       } catch (error) {
         console.log('error', error);

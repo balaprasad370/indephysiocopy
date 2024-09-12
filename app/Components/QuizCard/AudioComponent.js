@@ -105,8 +105,7 @@ const AudioComponent = ({
   pauseAudio,
   audioURL,
 }) => {
-  const newURl =
-    'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3';
+  const newURl = `https://d2c9u2e33z36pz.cloudfront.net/${audioURL}`;
 
   const [isLoading, setIsLoading] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);

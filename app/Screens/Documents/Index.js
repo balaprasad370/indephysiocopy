@@ -2,6 +2,7 @@ import {
   Alert,
   FlatList,
   Modal,
+  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -83,7 +84,7 @@ const Index = () => {
   const {path} = useContext(AppContext);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={documents}
         ListHeaderComponent={
@@ -149,7 +150,7 @@ const Index = () => {
         ListEmptyComponent={<Text>No documents found.</Text>}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

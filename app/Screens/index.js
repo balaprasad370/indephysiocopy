@@ -22,3 +22,5 @@ export {default as Portal} from './Portal/Index';
 export {default as Pricing} from './Pricing/Index';
 export {default as Installment} from './Installements/Index';
 export {default as Quiz} from './Quiz/Index';
+export {default as MarksImage} from './MarksImage/Index';
+export {default as Leaderboard} from './LeaderBoard/Index';

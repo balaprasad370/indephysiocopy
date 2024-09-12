@@ -11,9 +11,9 @@ export const AppContext = createContext();
 
 // Create the provider component
 export const AuthProvider = ({children}) => {
-  const path = '192.168.1.3';
+  // const path = '192.168.1.3';
   // const path = '192.168.162.48';
-  // const path = '192.168.35.48';
+  const path = '192.168.154.48';
   // http://192.168.1.5
   // 192.168.1.5
 
@@ -24,7 +24,7 @@ export const AuthProvider = ({children}) => {
   const [levelId, setLevelId] = useState(6); //6  // 7
   const [packageId, setPackageId] = useState(3); // 3 // 1
   const [clientId, setClientId] = useState(8); // 8 // 7
-  const [studentId, setStudentId] = useState(null);
+  const [student_id, setStudentId] = useState(null);
   const [grandScore, setGrandScore] = useState(0);
   const [profileStatus, setProfileStatus] = useState([]);
   const [isAuthenticate, setIsAuthenticate] = useState(false);
@@ -104,7 +104,7 @@ export const AuthProvider = ({children}) => {
 
   const fetchDocumentStatus = async () => {
     const token = await storage.getStringAsync('token');
-    if (studentId) {
+    if (student_id) {
       try {
         const response = await axios.get(
           `http://${path}:4000/student/documentStatus`,
@@ -159,6 +159,7 @@ export const AuthProvider = ({children}) => {
     levelId,
     setLevelId,
     packageName,
+    student_id,
   };
 
   const style = isDark ? DarkTheme : LighTheme;

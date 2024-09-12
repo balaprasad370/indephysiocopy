@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Switch,
   FlatList,
+  SafeAreaView,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -84,7 +85,7 @@ const Index = ({navigation}) => {
 
   const renderItem = ({item}) => {
     return (
-      <>
+      <SafeAreaView>
         <View style={style.uppDash}>
           <View style={styles.textstyle}>
             <Text style={style.textWel}>Welcome back</Text>
@@ -111,11 +112,11 @@ const Index = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
             style={{paddingRight: '3%'}}>
-            {/* <Image
+            <Image
               source={require('../../Constants/person.jpg')}
               style={{width: 55, height: 55, borderRadius: 50}}
-            /> */}
-            <UserIcon
+            />
+            {/* <UserIcon
               name="user"
               style={{
                 color: 'black',
@@ -127,7 +128,7 @@ const Index = ({navigation}) => {
                 fontSize: 30,
                 backgroundColor: 'white',
               }}
-            />
+            /> */}
           </TouchableOpacity>
         </View>
         <FlatList
@@ -237,7 +238,7 @@ const Index = ({navigation}) => {
           </View>
           <ProfileLevel />
         </View>
-      </>
+      </SafeAreaView>
     );
   };
 

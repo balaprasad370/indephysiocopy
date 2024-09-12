@@ -39,7 +39,6 @@ const DarkTheme = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: COLOR.black,
-    // paddingLeft: '5%',
   },
   appColor: {
     flex: 1,
@@ -411,6 +410,9 @@ const DarkTheme = StyleSheet.create({
   },
   levelName: {fontSize: 14, color: COLOR.white, fontWeight: '600'},
   plane: {fontSize: 40, color: COLOR.white, transform: [{rotate: '180deg'}]},
+  planeDark: {
+    transform: [{rotate: '0deg'}],
+  },
 
   // Setting screen
   settingScreen: {

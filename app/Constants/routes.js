@@ -29,4 +29,6 @@ export const ROUTES = {
   PRICING: 'Pricing',
   Installement: 'Instalment',
   QUIZ: 'Quiz',
+  MARKS: 'Marks',
+  LEADERBOARD: 'LeaderBoard',
 };

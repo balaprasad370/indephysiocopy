@@ -60,7 +60,7 @@ const Index = () => {
 
   const RenderItem = () => {
     return (
-      <View style={style.settingScreen}>
+      <View style={{}}>
         <View style={style.commonBackground}>
           <View style={style.commonTouchInput}>
             <Icon name="search1" style={style.settingIcon} />
@@ -176,12 +176,14 @@ const Index = () => {
   };
 
   return (
-    <FlatList
-      data={[{key: 'renderItem'}]} // Single dummy item to trigger RenderItem
-      renderItem={RenderItem}
-      keyExtractor={item => item.key}
-      showsVerticalScrollIndicator={false}
-    />
+    <View style={style.settingScreen}>
+      <FlatList
+        data={[{key: 'renderItem'}]}
+        renderItem={RenderItem}
+        keyExtractor={item => item.key}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
   );
 };
 

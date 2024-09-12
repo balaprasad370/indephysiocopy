@@ -20,6 +20,7 @@ import color from '../../Constants/color';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
 import planeImage from '../../assets/plane.png';
+import planeImage2 from '../../assets/planewhite.png';
 
 const Index = () => {
   const {path, isDark, userData, profileStatus, setProfileStatus} =
@@ -186,7 +187,12 @@ const Index = () => {
                     top: scale(10),
                   }}>
                   {/* <Plane name="plane" style={style.plane} /> */}
-                  <Image source={planeImage} style={style.plane} />
+
+                  {isDark ? (
+                    <Image source={planeImage2} style={style.planeDark} />
+                  ) : (
+                    <Image source={planeImage} style={style.plane} />
+                  )}
                 </View>
               ) : index === lastCompletedIndex ? (
                 <View
@@ -197,7 +203,11 @@ const Index = () => {
                     top: scale(40),
                   }}>
                   {/* <Plane name="plane" style={style.plane} /> */}
-                  <Image source={planeImage} style={style.plane} />
+                  {isDark ? (
+                    <Image source={planeImage2} style={style.planeDark} />
+                  ) : (
+                    <Image source={planeImage} style={style.plane} />
+                  )}
                 </View>
               ) : null}
             </View>

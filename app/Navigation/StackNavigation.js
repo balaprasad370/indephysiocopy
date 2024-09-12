@@ -20,6 +20,8 @@ import {
   Pricing,
   Installment,
   Quiz,
+  MarksImage,
+  Leaderboard,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -110,6 +112,23 @@ const StackNavigation = () => {
         }}
         component={Chapters}
       />
+      <Stack.Screen
+        name={ROUTES.LEADERBOARD}
+        options={{
+          headerTitle: 'Leader Board',
+          headerLeftLabelVisible: false,
+        }}
+        component={Leaderboard}
+      />
+      <Stack.Screen
+        name={ROUTES.MARKS}
+        options={{
+          headerTitle: 'Marks',
+          headerLeftLabelVisible: false,
+        }}
+        component={MarksImage}
+      />
+
       <Stack.Screen
         name={ROUTES.SELF_LEARN_SCREEN}
         options={{headerLeftLabelVisible: false, title: 'Chapter 1'}}
