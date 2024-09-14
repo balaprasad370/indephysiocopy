@@ -39,7 +39,6 @@ android/app/build/outputs/apk/*.apk
 android/app/build/outputs/bundle/**/*.aab
 android/app/release/*.apk
 android/app/debug/*.apk
-android/app/build/outputs
 
 # node.js
 #
