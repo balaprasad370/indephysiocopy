@@ -17,7 +17,10 @@ const {width, height} = Dimensions.get('window');
 
 const Flashcard = ({question, answer, showAnswer, onCardPress}) => {
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onCardPress}>
+    <TouchableOpacity
+      hitSlop={{x: 25, y: 15}}
+      style={styles.cardContainer}
+      onPress={onCardPress}>
       <View
         style={[styles.card, showAnswer ? styles.cardBack : styles.cardFront]}>
         <Text style={showAnswer ? styles.answerText : styles.questionText}>
@@ -110,6 +113,7 @@ const Index = ({route}) => {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
           onPress={goToPreviousCard}
           style={[styles.button, currentIndex === 0 && styles.disabledButton]}
           disabled={currentIndex === 0}>
@@ -117,6 +121,7 @@ const Index = ({route}) => {
         </TouchableOpacity>
 
         <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
           onPress={goToNextCard}
           style={[
             styles.button,

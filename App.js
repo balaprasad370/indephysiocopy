@@ -5,6 +5,7 @@ import AppNavigator from './app/Navigation/AppNavigator';
 import {useContext, useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import storage from './app/Constants/storage';
+import LoadingArea from './app/Components/Loading/Index';
 
 enableScreens();
 

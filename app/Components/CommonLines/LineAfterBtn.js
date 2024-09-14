@@ -10,7 +10,9 @@ const LineAfterBtn = ({lineBefore, secondBtn, route}) => {
   return (
     <View style={styles.member}>
       <Text style={styles.notMember}>{lineBefore}</Text>
-      <TouchableOpacity onPress={() => navigation.navigate(route)}>
+      <TouchableOpacity
+        hitSlop={{x: 25, y: 15}}
+        onPress={() => navigation.navigate(route)}>
         <Text style={styles.joinNow}>{secondBtn}</Text>
       </TouchableOpacity>
     </View>

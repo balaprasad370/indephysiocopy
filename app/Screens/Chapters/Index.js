@@ -18,11 +18,12 @@ import storage from '../../Constants/storage';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import LinearGradient from 'react-native-linear-gradient';
+import LoadingArea from '../../Components/Loading/Index';
 
 const Index = ({navigation}) => {
   const route = useRoute();
   const {level_id} = route.params;
-  const {path, clientId, packageId, packageName, isDark} =
+  const {path, clientId, packageId, loader, setLoader, packageName, isDark} =
     useContext(AppContext);
   const [chapter, setChapter] = useState([]);
   let newPackageId = packageId;
@@ -206,6 +207,7 @@ const Index = ({navigation}) => {
   }, [level_id, packageName]);
 
   const chapterData = async () => {
+    setLoader(true);
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
@@ -221,6 +223,7 @@ const Index = ({navigation}) => {
           },
         });
         setChapter(response.data);
+        setLoader(false);
       } catch (error) {
         console.log('error', error);
       }
@@ -233,6 +236,7 @@ const Index = ({navigation}) => {
 
   const renderItem = ({item}) => (
     <TouchableOpacity
+      hitSlop={{x: 25, y: 15}}
       onPress={() =>
         navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
           parent_module_id: item.id,
@@ -267,6 +271,14 @@ const Index = ({navigation}) => {
       </LinearGradient>
     </TouchableOpacity>
   );
+
+  if (loader) {
+    return (
+      <>
+        <LoadingArea />
+      </>
+    );
+  }
 
   return (
     <SafeAreaView style={style.chapterContainer}>

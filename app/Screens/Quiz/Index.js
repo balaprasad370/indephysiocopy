@@ -16,7 +16,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
+import LoadingArea from '../../Components/Loading/Index';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -36,8 +36,16 @@ import LighTheme from '../../theme/LighTheme';
 
 const Index = ({route}) => {
   const {module_id, title} = route.params;
-  const {path, grandScore, setGrandScore, userData, student_id, isDark} =
-    useContext(AppContext);
+  const {
+    path,
+    grandScore,
+    setGrandScore,
+    userData,
+    student_id,
+    isDark,
+    loader,
+    setLoader,
+  } = useContext(AppContext);
   const navigation = useNavigation();
 
   const style = isDark ? DarkTheme : LighTheme;
@@ -80,6 +88,7 @@ const Index = ({route}) => {
   const [correctAnswers, setCorrectAnswers] = useState({});
 
   const getDetails = async () => {
+    setLoader(true);
     await axios
       .post(`${path}/questions/details`, {
         module_id: module_id, //279
@@ -99,6 +108,7 @@ const Index = ({route}) => {
         console.log('Correct Answer Indices:', correctAnswerIndices);
         setCorrectAnswers(correctAnswerIndices);
         setQuestion(res.data);
+        setLoader(false);
       })
       .catch(error => console.log('error', error));
   };
@@ -229,6 +239,7 @@ const Index = ({route}) => {
             const isSelected = selectedOptions[id] === index + 1;
             return (
               <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
                 key={index}
                 style={[styled.optionBtn, isSelected && styled.selectedOption]}
                 onPress={() =>
@@ -268,6 +279,7 @@ const Index = ({route}) => {
           const isSelected = selectedOptions[id] === index + 1; // Check if the selected option matches the index (1 for True, 2 for False)
           return (
             <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
               key={index}
               style={[styled.optionBtn, isSelected && styled.selectedOption]}
               onPress={() => handleOptionTrueSelect(index + 1, id)}>
@@ -638,6 +650,14 @@ const Index = ({route}) => {
     return title;
   };
 
+  if (loader) {
+    return (
+      <>
+        <LoadingArea />
+      </>
+    );
+  }
+
   const totalQuestionsCount = getTotalQuestionsCount(question);
   return (
     <View style={style.quizScreen}>
@@ -645,7 +665,10 @@ const Index = ({route}) => {
         <View style={styles.modalContent}>
           <View style={style.upperModal}>
             <View style={styled.upperInside}>
-              <TouchableOpacity style={{}} onPress={closeModal}>
+              <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
+                style={{}}
+                onPress={closeModal}>
                 <Icon
                   name="left"
                   style={{fontSize: 20, color: 'black', fontWeight: 'bold'}}
@@ -709,6 +732,7 @@ const Index = ({route}) => {
             {question.length >= 2 ? (
               <View style={styled.bottomButton}>
                 <TouchableOpacity
+                  hitSlop={{x: 25, y: 15}}
                   style={
                     questionIndex === 0 ? styled.nextBtnLeft : styled.nextBtn
                   }
@@ -716,6 +740,7 @@ const Index = ({route}) => {
                   <Text style={styled.nextBtnText}>Prev</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  hitSlop={{x: 25, y: 15}}
                   style={
                     questionIndex + 1 === totalQuestionsCount
                       ? styled.nextBtnLeft
@@ -727,7 +752,10 @@ const Index = ({route}) => {
               </View>
             ) : null}
             <View>
-              <TouchableOpacity style={styled.submittBtn} onPress={submitNow}>
+              <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
+                style={styled.submittBtn}
+                onPress={submitNow}>
                 <Text style={styled.nextBtnText}>Submit Now</Text>
               </TouchableOpacity>
             </View>

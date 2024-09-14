@@ -5,6 +5,7 @@ import SplashScreen from 'react-native-splash-screen';
 import LighTheme from './LighTheme';
 import {DarkTheme} from '@react-navigation/native';
 import {StatusBar} from 'react-native';
+import LoadingArea from '../Components/Loading/Index';
 
 // Create the context
 export const AppContext = createContext();
@@ -181,6 +182,8 @@ export const AuthProvider = ({children}) => {
     setLevelId,
     packageName,
     student_id,
+    loader,
+    setLoader,
   };
 
   const style = isDark ? DarkTheme : LighTheme;

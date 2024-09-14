@@ -115,7 +115,9 @@ const Index = () => {
                   marginLeft: 10,
                   marginRight: 10,
                 }}>
-                <TouchableOpacity style={styles.uploadButton}>
+                <TouchableOpacity
+                  hitSlop={{x: 25, y: 15}}
+                  style={styles.uploadButton}>
                   <View style={styles.uploadIconContainer}>
                     <Upload
                       name="arrowup"
@@ -124,7 +126,9 @@ const Index = () => {
                   </View>
                   <Text style={styles.uploadText}>Upload</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.orderTransactionButton}>
+                <TouchableOpacity
+                  hitSlop={{x: 25, y: 15}}
+                  style={styles.orderTransactionButton}>
                   <Icon
                     name="wifi-tethering-error-rounded"
                     style={{fontSize: 27, marginRight: 10, color: 'white'}}

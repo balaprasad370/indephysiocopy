@@ -10,7 +10,7 @@ const Index = ({name}) => {
 
   const style = isDark ? DarkTheme : LighTheme;
   return (
-    <TouchableOpacity style={style.taskBox}>
+    <TouchableOpacity hitSlop={{x: 25, y: 15}} style={style.taskBox}>
       <View style={style.taskImage}></View>
       <Text style={style.taskText}>{name}</Text>
       <Forward name="arrow-forward-ios" style={style.taskIcon} />

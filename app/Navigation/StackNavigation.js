@@ -234,7 +234,9 @@ const StackNavigation = () => {
             backgroundColor: isDark ? 'black' : 'white',
           },
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
+              onPress={() => navigation.goBack()}>
               <Icon name="left" style={style.headerLeftIcon} />
             </TouchableOpacity>
           ),

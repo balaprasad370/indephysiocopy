@@ -17,7 +17,7 @@ const ErrorToast = ({visible, onClose}) => {
           </View>
           <Text style={styles.title}>oh snap</Text>
           <Text style={styles.message}>Something went terribly wrong.</Text>
-          <TouchableOpacity onPress={onClose}>
+          <TouchableOpacity hitSlop={{x: 25, y: 15}} onPress={onClose}>
             <Text style={styles.buttonText}>TRY AGAIN</Text>
           </TouchableOpacity>
         </View>

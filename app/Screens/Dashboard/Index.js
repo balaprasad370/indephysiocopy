@@ -110,11 +110,20 @@ const Index = ({navigation}) => {
             </View>
           </View>
           <TouchableOpacity
+            hitSlop={{x: 25, y: 15}}
             onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
-            style={{paddingRight: '3%'}}>
+            style={{
+              paddingRight: '3%',
+              width: 55,
+              height: 55,
+            }}>
             <Image
               source={require('../../Constants/person.jpg')}
-              style={{width: 55, height: 55, borderRadius: 50}}
+              style={{
+                width: 55,
+                height: 55,
+                borderRadius: 50,
+              }}
             />
             {/* <UserIcon
               name="user"
@@ -197,6 +206,7 @@ const Index = ({navigation}) => {
           <ScrollView style={style.modalDocument}>
             <View style={style.modalContent}>
               <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
                 onPress={toggleModal}
                 style={{display: 'flex', alignItems: 'flex-end'}}>
                 <Cross name="cross" style={style.cross} />
@@ -226,6 +236,7 @@ const Index = ({navigation}) => {
         <View style={{marginBottom: '20%'}}>
           <View style={{display: 'flex', alignItems: 'flex-end'}}>
             <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
               onPress={() => navigation.navigate(ROUTES.REGULAR)}
               style={{
                 backgroundColor: color.darkPrimary,

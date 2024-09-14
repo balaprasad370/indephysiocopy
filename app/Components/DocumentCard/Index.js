@@ -29,6 +29,7 @@ const Index = ({isDone}) => {
   return (
     <View>
       <TouchableOpacity
+        hitSlop={{x: 25, y: 15}}
         onPress={toggleModal}
         style={isDone ? style.documentCard : style.documentLockCard}>
         <Text style={style.documentCardText}>Indephysio documents</Text>
@@ -43,6 +44,7 @@ const Index = ({isDone}) => {
           <View>
             <TouchableOpacity
               onPress={toggleModal}
+              hitSlop={{x: 25, y: 15}}
               style={{display: 'flex', alignItems: 'flex-end'}}>
               <Cross name="cross" style={style.cross} />
             </TouchableOpacity>
@@ -74,6 +76,7 @@ const Index = ({isDone}) => {
               alignItems: 'center',
             }}>
             <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
               style={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -109,7 +112,7 @@ const Index = ({isDone}) => {
               </View>
             </TouchableOpacity>
             <Text style={style.orAnd}>Or / and</Text>
-            <TouchableOpacity style={styles.uploadBtn}>
+            <TouchableOpacity hitSlop={{x: 25, y: 15}} style={styles.uploadBtn}>
               <View style={styles.uploadBox}>
                 <Icon name="download" style={styles.rotateUpload} />
               </View>

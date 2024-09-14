@@ -37,14 +37,19 @@ const DrawerContent = props => {
     <View style={styles.container}>
       <DrawerContentScrollView {...props}>
         <View style={styles.header}>
-          <Image source={user} style={styles.image} />
+          <View style={{width: 80, height: 80}}>
+            <Image source={user} style={styles.image} />
+          </View>
           <Text style={styles.username}>
             {userData?.first_name} {userData?.last_name}
           </Text>
         </View>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-      <TouchableOpacity style={styles.logoutButton} onPress={logoutButton}>
+      <TouchableOpacity
+        hitSlop={{x: 25, y: 15}}
+        style={styles.logoutButton}
+        onPress={logoutButton}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
     </View>

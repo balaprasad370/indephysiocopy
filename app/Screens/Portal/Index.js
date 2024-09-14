@@ -104,6 +104,7 @@ const ReferralScreen = () => {
                 <Text style={styles.referralCode}>{referralCode}</Text>
               </View>
               <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
                 style={styles.copyButton}
                 onPress={handleCopyCode}>
                 <Icon name="content-copy" size={20} color="#FFF" />
@@ -112,7 +113,10 @@ const ReferralScreen = () => {
             </View>
 
             {/* Share Section */}
-            <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+            <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
+              style={styles.shareButton}
+              onPress={handleShare}>
               <Icon name="share-variant" size={24} color="#FFF" />
               <Text style={styles.shareButtonText}>Share Code</Text>
             </TouchableOpacity>
@@ -126,6 +130,7 @@ const ReferralScreen = () => {
           <>
             {/* Footer Section */}
             <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
               style={styles.visitButton}
               onPress={handleVisitWebsite}>
               <Text style={styles.visitButtonText}>Visit Our Website</Text>

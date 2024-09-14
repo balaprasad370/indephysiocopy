@@ -85,7 +85,9 @@ const Index = () => {
   };
 
   const renderPackage = ({item}) => (
-    <TouchableOpacity onPress={() => setSelectedPackage(item.packageName)}>
+    <TouchableOpacity
+      hitSlop={{x: 25, y: 15}}
+      onPress={() => setSelectedPackage(item.packageName)}>
       <LinearGradient
         colors={
           selectedPackage === item.packageName
@@ -101,7 +103,10 @@ const Index = () => {
         <Text style={styles.cardTitle}>{item.packageName}</Text>
         <Text style={styles.price}>Duration: {item.duration}</Text>
         <Text style={styles.detailsText}>Note: {item.note}</Text>
-        <TouchableOpacity style={styles.buyButton} onPress={handlePress}>
+        <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
+          style={styles.buyButton}
+          onPress={handlePress}>
           <Text style={styles.buyButtonText}>Upgrade Now</Text>
           <Text style={styles.arrow}>➔</Text>
         </TouchableOpacity>

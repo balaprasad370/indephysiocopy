@@ -32,7 +32,10 @@ const index = ({
   };
 
   return (
-    <TouchableOpacity style={style.courseCard} onPress={handleScreen}>
+    <TouchableOpacity
+      hitSlop={{x: 25, y: 15}}
+      style={style.courseCard}
+      onPress={handleScreen}>
       <View style={locked ? style.courseLockCard : style.courseUnlockCard}>
         {locked ? (
           <View
@@ -59,7 +62,7 @@ const index = ({
             style={{width: scale(30), height: scale(30)}}
           />
         )}
-        <TouchableOpacity>
+        <TouchableOpacity hitSlop={{x: 25, y: 15}}>
           <Text style={style.courseBottomBtn}>{bottomCourseCard}</Text>
         </TouchableOpacity>
       </View>

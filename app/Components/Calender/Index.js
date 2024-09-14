@@ -222,6 +222,7 @@ const Index = () => {
   const renderEventCard = ({item}) => (
     <TouchableOpacity
       style={style.liveClasscard}
+      hitSlop={{x: 25, y: 15}}
       onPress={() => {
         setSelectedEvent(item);
         setModalVisible(true);
@@ -286,6 +287,7 @@ const Index = () => {
               //   style.toggleButton,
               //   !isNextWeek && styles.activeToggleButton,
               // ]}
+              hitSlop={{x: 25, y: 15}}
               onPress={() => {
                 setIsNextWeek(false);
                 fetchSchedule();
@@ -318,6 +320,7 @@ const Index = () => {
               //   style.toggleButton,
               //   isNextWeek && styles.activeToggleButton,
               // ]}
+              hitSlop={{x: 25, y: 15}}
               onPress={() => {
                 setIsNextWeek(true);
                 fetchSchedule();
@@ -345,7 +348,10 @@ const Index = () => {
               ]}
               start={{x: 0, y: 0}} // Start from the left
               end={{x: 1, y: 0}}>
-              <TouchableOpacity key={day} onPress={() => setSelectedDay(day)}>
+              <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
+                key={day}
+                onPress={() => setSelectedDay(day)}>
                 <Text
                   style={[
                     style.dayText,
@@ -392,6 +398,7 @@ const Index = () => {
             <View style={styles.modalContent}>
               {/* Close Button */}
               <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
                 style={styles.closeButton}
                 onPress={() => setModalVisible(false)}>
                 <Icon name="times" size={18} color={color.darkGrey} />
@@ -421,6 +428,7 @@ const Index = () => {
 
               {/* Join Class Button */}
               <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
                 style={styles.joinButton}
                 onPress={() => {
                   navigation.navigate('Meeting', {

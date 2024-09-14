@@ -5,7 +5,10 @@ import scale from '../../utils/utils';
 
 const CommonButtonAuth = ({handleData, buttonTitle}) => {
   return (
-    <TouchableOpacity style={styles.commonBtn} onPress={handleData}>
+    <TouchableOpacity
+      style={styles.commonBtn}
+      hitSlop={{x: 25, y: 15}}
+      onPress={handleData}>
       <Text style={styles.commonText}>{buttonTitle}</Text>
     </TouchableOpacity>
   );

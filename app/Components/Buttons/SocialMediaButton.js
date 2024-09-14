@@ -10,11 +10,11 @@ const SocialMediaButton = () => {
         <Text style={styles.loginWith}>Or sign in with</Text>
       </View>
       <View style={styles.socialbutton}>
-        <TouchableOpacity style={styles.facebook}>
+        <TouchableOpacity style={styles.facebook} hitSlop={{x: 25, y: 15}}>
           <Icon name="facebook-square" style={styles.socialIcon} />
           <Text style={styles.facebookText}>Facebook</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.google}>
+        <TouchableOpacity style={styles.google} hitSlop={{x: 25, y: 15}}>
           <Icon name="google" style={styles.socialIcon} />
           <Text style={styles.googleText}>Google</Text>
         </TouchableOpacity>

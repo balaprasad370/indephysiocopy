@@ -26,7 +26,7 @@ const Index = () => {
         />
         <Icon name="search1" style={styles.searchIcon} />
       </View>
-      <TouchableOpacity style={style.menuBtn}>
+      <TouchableOpacity hitSlop={{x: 25, y: 15}} style={style.menuBtn}>
         <MenuIcon name="options-outline" style={style.menuIcon} />
       </TouchableOpacity>
     </View>

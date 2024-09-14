@@ -51,11 +51,12 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
         end={{x: 1, y: 0}} // End at the right
         style={styles.gradientContainer}>
         <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
           onPress={() => handleNavigateScreen(0)}
           style={index === 0 ? styles.activeTabButton : {}}>
           <Ionicons
             name="view-dashboard"
-            style={{marginLeft: 8}}
+            style={{marginLeft: 0}}
             size={30}
             color="white"
           />
@@ -63,12 +64,13 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
         </TouchableOpacity>
 
         <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
           style={index === 1 ? styles.activeTabButton : {}}
           onPress={() => handleNavigateScreen(1)}>
           <Ionicons
             name="monitor-dashboard"
             size={30}
-            style={{marginLeft: 8}}
+            style={{marginLeft: 0}}
             color="white"
           />
           {index === 1 && <Text style={styles.tabLabel}>LIVE CLASS</Text>}
@@ -87,11 +89,12 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
         </TouchableOpacity> */}
 
         <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
           style={index === 3 ? styles.activeTabButton : {}}
           onPress={() => handleNavigateScreen(3)}>
           <Ionicons
             name="book-open-blank-variant"
-            style={{marginLeft: 8}}
+            style={{marginLeft: 0}}
             size={30}
             color="white"
           />

@@ -9,6 +9,7 @@ const LanguageComponent = ({route}) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
+      hitSlop={{x: 25, y: 15}}
       style={styles.languageCard}
       onPress={() => navigation.navigate(route)}>
       <View style={styles.upperLanguage}>

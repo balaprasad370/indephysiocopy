@@ -153,6 +153,7 @@ const QuizModal = ({
             const isSelected = selectedOption === options[key];
             return (
               <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
                 key={index}
                 style={[styled.optionBtn, isSelected && styled.selectedOption]}
                 onPress={() =>
@@ -331,7 +332,10 @@ const QuizModal = ({
         <View style={styles.modalContent}>
           <View style={styled.upperModal}>
             <View style={styled.upperInside}>
-              <TouchableOpacity style={styled.leftIcon} onPress={closeModal}>
+              <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
+                style={styled.leftIcon}
+                onPress={closeModal}>
                 <Icon
                   name="left"
                   style={{fontSize: 24, color: 'white', fontWeight: '700'}}
@@ -445,6 +449,7 @@ const QuizModal = ({
             {question.length >= 2 ? (
               <View style={styled.bottomButton}>
                 <TouchableOpacity
+                  hitSlop={{x: 25, y: 15}}
                   style={
                     questionIndex === 0 ? styled.nextBtnLeft : styled.nextBtn
                   }
@@ -452,6 +457,7 @@ const QuizModal = ({
                   <Text style={styled.nextBtnText}>Prev</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  hitSlop={{x: 25, y: 15}}
                   style={
                     questionIndex + 1 === totalQuestionsCount
                       ? styled.nextBtnLeft
@@ -463,7 +469,10 @@ const QuizModal = ({
               </View>
             ) : null}
             <View>
-              <TouchableOpacity style={styled.submittBtn} onPress={submitNow}>
+              <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
+                style={styled.submittBtn}
+                onPress={submitNow}>
                 <Text style={styled.nextBtnText}>Submit Now</Text>
               </TouchableOpacity>
             </View>

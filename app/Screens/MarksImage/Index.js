@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
@@ -52,6 +53,7 @@ const Certificate = ({route}) => {
   }, [student_id, module_id]);
 
   const captureAndShareScreenshot = () => {
+    Alert.alert('');
     viewShotRef.current.capture().then(uri => {});
   };
 
@@ -114,6 +116,7 @@ const Certificate = ({route}) => {
         {/* Share Button */}
         <TouchableOpacity
           style={styles.shareButton}
+          hitSlop={{x: 25, y: 15}}
           onPress={captureAndShareScreenshot}>
           <Text style={styles.shareText}>Share Certificate</Text>
         </TouchableOpacity>

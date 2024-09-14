@@ -23,6 +23,7 @@ const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
 
   return (
     <TouchableOpacity
+      hitSlop={{x: 25, y: 15}}
       onPress={() => changeRoute(`${ROUTE}`)}
       style={{
         marginTop: 15,

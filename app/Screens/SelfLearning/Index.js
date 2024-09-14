@@ -18,11 +18,20 @@ import ReadingMaterial from '../../Components/ReadingMaterial/Index';
 import {ROUTES} from '../../Constants/routes';
 import axios from 'axios';
 import storage from '../../Constants/storage';
+import LoadingArea from '../../Components/Loading/Index';
 
 const Index = ({route}) => {
   const {parent_module_id} = route.params;
-  const {isDark, setIsDark, path, clientId, userData, student_id} =
-    useContext(AppContext);
+  const {
+    isDark,
+    setIsDark,
+    path,
+    clientId,
+    userData,
+    student_id,
+    loader,
+    setLoader,
+  } = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
@@ -32,6 +41,7 @@ const Index = ({route}) => {
   const [modules, setModules] = useState();
 
   const getAssessments = async () => {
+    setLoader(true);
     try {
       const token = await storage.getStringAsync('token');
       if (token) {
@@ -42,6 +52,7 @@ const Index = ({route}) => {
           },
         });
         setAssessments(response.data[0]);
+        setLoader(false);
       } else {
         console.error('No token found');
       }
@@ -51,6 +62,7 @@ const Index = ({route}) => {
   };
 
   const getFlashCard = async () => {
+    setLoader(true);
     try {
       const token = await storage.getStringAsync('token');
       if (token) {
@@ -70,6 +82,7 @@ const Index = ({route}) => {
           description: item.flashcard_description,
         }));
         setFlashCard(materials);
+        setLoader(false);
       } else {
         console.error('No token found');
       }
@@ -79,6 +92,7 @@ const Index = ({route}) => {
   };
 
   const getModules = async () => {
+    setLoader(true);
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
@@ -98,6 +112,7 @@ const Index = ({route}) => {
           description: item.description,
         }));
         setModules(materials);
+        setLoader(false);
       } catch (error) {
         console.log('Error fetching data from modules', error.message);
       }
@@ -105,6 +120,7 @@ const Index = ({route}) => {
   };
 
   const readingMaterial = async () => {
+    setLoader(true);
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
@@ -124,6 +140,7 @@ const Index = ({route}) => {
           description: item.description,
         }));
         setReadingMaterials(materials);
+        setLoader(false);
       } catch (error) {
         console.log('Error from reading material:', error);
       }
@@ -160,6 +177,14 @@ const Index = ({route}) => {
     ...(flashCard ?? []), // Provide an empty array if undefined
     ...(modules ?? []), // Provide an empty array if undefined
   ];
+
+  if (loader) {
+    return (
+      <>
+        <LoadingArea />
+      </>
+    );
+  }
 
   return (
     <FlatList

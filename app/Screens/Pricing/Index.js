@@ -20,7 +20,7 @@ const PricingCard = ({item}) => {
   };
 
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity hitSlop={{x: 25, y: 15}} style={styles.card}>
       <LinearGradient
         colors={['#2A89C6', '#3397CB', '#0C5CB4']}
         start={{x: 0, y: 0}} // Start from the left
@@ -39,7 +39,10 @@ const PricingCard = ({item}) => {
         <Text style={styles.placement}>Placement: {item.placement}</Text>
 
         {/* Buy Now Button */}
-        <TouchableOpacity style={styles.buyNowButton} onPress={handlePress}>
+        <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
+          style={styles.buyNowButton}
+          onPress={handlePress}>
           <Text style={styles.buyNowText}>Buy Now</Text>
         </TouchableOpacity>
       </LinearGradient>

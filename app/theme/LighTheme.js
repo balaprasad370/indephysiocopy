@@ -154,10 +154,10 @@ const LighTheme = StyleSheet.create({
       },
     }),
   },
-  selfLearn: {
-    backgroundColor: COLOR.white,
-    flex: 1,
-  },
+  // selfLearn: {
+  //   backgroundColor: color.white,
+  //   flex: 1,
+  // },
   selfHeading: {fontSize: 18, color: COLOR.black},
   selfChapter: {fontSize: 26, fontWeight: 'bold', color: COLOR.black},
   quiz: {fontSize: 18, fontWeight: '300', marginBottom: 30, color: COLOR.black},
@@ -574,6 +574,7 @@ const LighTheme = StyleSheet.create({
     flex: 1,
     paddingLeft: '3%',
     paddingRight: '3%',
+    backgroundColor: color.white,
   },
   levelcontainer: {
     flex: 1,

@@ -17,14 +17,16 @@ const RememberField = ({route}) => {
 
   return (
     <View style={styles.forgot}>
-      <View style={styles.checkBox}>
+      {/* <View style={styles.checkBox}>
         <Checkbox
           status={isChecked ? 'checked' : 'unchecked'}
           onPress={() => setIsChecked(!isChecked)}
         />
         <Text style={styles.remember}>Remember me</Text>
-      </View>
-      <TouchableOpacity onPress={() => navigation.navigate(route)}>
+      </View> */}
+      <TouchableOpacity
+        hitSlop={{x: 25, y: 15}}
+        onPress={() => navigation.navigate(route)}>
         <Text style={styles.forgotPassword}>Forgot Password?</Text>
       </TouchableOpacity>
     </View>

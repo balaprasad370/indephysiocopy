@@ -7,6 +7,7 @@ import {
   View,
   Image,
   Text,
+  ActivityIndicator,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -29,19 +30,34 @@ export default function Example({id, img, name, description, route}) {
       start={{x: 0, y: 0}} // Start from the left
       end={{x: 1, y: 0}} // End at the right
       style={{borderRadius: 10}}>
-      <TouchableOpacity key={id} onPress={() => navigation.navigate(route)}>
+      <TouchableOpacity
+        hitSlop={{x: 25, y: 15}}
+        key={id}
+        onPress={() => navigation.navigate(route)}>
         <View style={styles.card}>
           <View style={styles.cardLikeWrapper}>
-            <TouchableOpacity onPress={() => handleSave(id)}></TouchableOpacity>
+            <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
+              onPress={() => handleSave(id)}></TouchableOpacity>
           </View>
 
           <View style={styles.cardTop}>
-            <Image
-              alt=""
-              resizeMode="cover"
-              style={styles.cardImg}
-              source={{uri: img}}
-            />
+            {img ? (
+              <Image
+                alt=""
+                resizeMode="cover"
+                style={styles.cardImg}
+                source={{uri: img}}
+              />
+            ) : (
+              <View style={styles.dummycardImg}>
+                <ActivityIndicator
+                  size="large"
+                  color="#0000ff"
+                  style={styles.loader}
+                />
+              </View>
+            )}
           </View>
 
           <View style={styles.cardBody}>
@@ -129,6 +145,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
+  dummycardImg: {
+    width: '100%',
+    backgroundColor: color.lighGrey,
+    height: 160,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
   cardBody: {
     padding: 12,
   },
@@ -149,5 +172,12 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 16,
     color: '#232425',
+  },
+  loader: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginLeft: -25,
+    marginTop: -25,
   },
 });

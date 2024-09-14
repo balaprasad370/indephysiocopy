@@ -37,7 +37,10 @@ const InstallmentCard = ({item}) => {
           </View>
         ))}
       </View>
-      <TouchableOpacity style={styles.buyNowButton} onPress={handlePress}>
+      <TouchableOpacity
+        hitSlop={{x: 25, y: 15}}
+        style={styles.buyNowButton}
+        onPress={handlePress}>
         <Text style={styles.buyNowText}>Buy Now</Text>
       </TouchableOpacity>
     </LinearGradient>

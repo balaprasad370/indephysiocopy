@@ -30,11 +30,13 @@ const AuthScreen = () => {
           Create an account to get started on your journey and happiness today.
         </Text>
         <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
           style={styles.buttonPrimary}
           onPress={() => navigation.navigate(ROUTES.LOGIN)}>
           <Text style={styles.buttonTextPrimary}>Log In</Text>
         </TouchableOpacity>
         <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
           style={styles.buttonSecondary}
           onPress={() => navigation.navigate(ROUTES.SIGNUP)}>
           <Text style={styles.buttonTextSecondary}>Sign Up</Text>

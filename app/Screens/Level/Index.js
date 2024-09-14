@@ -18,9 +18,11 @@ import storage from '../../Constants/storage';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import LinearGradient from 'react-native-linear-gradient';
+import LoadingArea from '../../Components/Loading/Index';
 
 const Index = () => {
-  const {path, langId, clientId, isDark} = useContext(AppContext);
+  const {path, langId, clientId, isDark, loader, setLoader} =
+    useContext(AppContext);
   const [levels, setLevels] = useState([]);
   const navigation = useNavigation();
   const levelLangId = 1;
@@ -28,6 +30,7 @@ const Index = () => {
 
   useEffect(() => {
     const fetchLevels = async () => {
+      setLoader(true);
       try {
         const token = await storage.getStringAsync('token');
         if (token) {
@@ -43,6 +46,7 @@ const Index = () => {
           } else {
             console.error('No levels found for this language ID');
           }
+          setLoader(false);
         } else {
           console.error('No token found');
         }
@@ -60,6 +64,7 @@ const Index = () => {
 
   const renderItem = ({item}) => (
     <TouchableOpacity
+      hitSlop={{x: 25, y: 15}}
       onPress={
         item.completed
           ? null
@@ -118,6 +123,14 @@ const Index = () => {
       </LinearGradient>
     </TouchableOpacity>
   );
+
+  if (loader) {
+    return (
+      <>
+        <LoadingArea />
+      </>
+    );
+  }
 
   return (
     <SafeAreaView style={style.levelcontainer}>

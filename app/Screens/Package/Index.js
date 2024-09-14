@@ -44,6 +44,7 @@ const Index = () => {
   const renderItem = ({item}) => (
     <TouchableOpacity
       key={item.id}
+      hitSlop={{x: 25, y: 15}}
       style={styles.packageCard}
       onPress={() => navigation.navigate(ROUTES.CHAPTERS)}>
       <View style={styles.packageName}>

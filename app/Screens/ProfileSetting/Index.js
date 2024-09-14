@@ -62,18 +62,18 @@ const Index = () => {
     return (
       <View style={{}}>
         <View style={style.commonBackground}>
-          <View style={style.commonTouchInput}>
+          {/* <View style={style.commonTouchInput}>
             <Icon name="search1" style={style.settingIcon} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search"
               placeholderTextColor={isDark ? color.white : color.black}
             />
-          </View>
+          </View> */}
         </View>
         <Text style={style.upperText}>Account</Text>
         <View style={style.commonBackground}>
-          <TouchableOpacity style={style.commonTouch}>
+          <TouchableOpacity hitSlop={{x: 25, y: 15}} style={style.commonTouch}>
             <View style={style.settingLeft}>
               <Icon name="adduser" style={style.settingIcon} />
               <View style={style.userinfo}>
@@ -91,7 +91,7 @@ const Index = () => {
         {/* App Setting section */}
         <Text style={style.upperText}>App Setting</Text>
         <View style={style.commonBackground}>
-          <TouchableOpacity style={style.commonTouch}>
+          {/* <TouchableOpacity style={style.commonTouch}>
             <View style={style.settingLeft}>
               <Icon name="bells" style={style.settingIcon} />
               <Text style={style.commonText}>Notification</Text>
@@ -99,8 +99,8 @@ const Index = () => {
             <View>
               <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
             </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.commonTouch}>
+          </TouchableOpacity> */}
+          <TouchableOpacity hitSlop={{x: 25, y: 15}} style={style.commonTouch}>
             <View style={style.settingLeft}>
               <FontAwesome name="moon-o" style={style.settingIcon} />
               <Text style={style.commonText}>Dark Theme</Text>
@@ -113,7 +113,7 @@ const Index = () => {
 
         {/* Accessibility and Media Section  */}
         <Text style={style.upperText}>Accessibility and Media</Text>
-        <View style={style.commonBackground}>
+        {/* <View style={style.commonBackground}>
           <TouchableOpacity style={style.commonTouch}>
             <View style={style.settingLeft}>
               <Icon name="download" style={style.settingIcon} />
@@ -141,10 +141,11 @@ const Index = () => {
               <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
             </View>
           </TouchableOpacity>
-        </View>
+        </View> */}
         <Text style={style.upperText}>More info</Text>
         <View style={style.commonBackground}>
           <TouchableOpacity
+            hitSlop={{x: 25, y: 15}}
             style={style.commonTouch}
             onPress={() => navigation.navigate(ROUTES.FAQ)}>
             <View style={style.settingLeft}>
@@ -155,7 +156,7 @@ const Index = () => {
               <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={style.commonTouch}>
+          {/* <TouchableOpacity style={style.commonTouch}>
             <View style={style.settingLeft}>
               <Icon name="infocirlceo" style={style.settingIcon} />
               <Text style={style.commonText}>About</Text>
@@ -163,9 +164,12 @@ const Index = () => {
             <View>
               <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
-        <TouchableOpacity style={style.logoutBox} onPress={logoutButton}>
+        <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
+          style={style.logoutBox}
+          onPress={logoutButton}>
           <View style={style.logout}>
             <Icon name="infocirlceo" style={style.settingIcon} />
             <Text style={style.logoutText}>Logout</Text>

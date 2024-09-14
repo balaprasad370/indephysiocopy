@@ -69,7 +69,7 @@ const Toast = ({visible, onClose}) => {
           <Text style={changed ? styles.newMessage : styles.message}>
             {title}
           </Text>
-          <TouchableOpacity onPress={CheckStatus}>
+          <TouchableOpacity hitSlop={{x: 25, y: 15}} onPress={CheckStatus}>
             <Text style={styles.buttonText}>I've verified my email</Text>
           </TouchableOpacity>
         </View>

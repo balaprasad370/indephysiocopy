@@ -131,6 +131,7 @@ const FAQ = () => {
           end={{x: 1, y: 0}}
           style={{borderRadius: scale(15)}}>
           <TouchableOpacity
+            hitSlop={{x: 25, y: 15}}
             onPress={() => toggleExpand(index)}
             style={styles.questionContainer}>
             <Text style={styles.questionText}>{item.question}</Text>
@@ -151,6 +152,7 @@ const FAQ = () => {
 
             {item.Installment && (
               <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
                 onPress={() => navigation.navigate(ROUTES.Installement)}>
                 <Text style={{color: color.darkPrimary, fontSize: 18}}>
                   Check our installments
@@ -160,6 +162,7 @@ const FAQ = () => {
 
             {item.plans && (
               <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
                 onPress={() => navigation.navigate(ROUTES.PRICING)}>
                 <Text style={{color: color.darkPrimary, fontSize: 18}}>
                   Check Our Packages

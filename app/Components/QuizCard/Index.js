@@ -64,6 +64,7 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity
+        hitSlop={{x: 25, y: 15}}
         style={style.cardBox}
         onPress={() => toggleModal(optionClick)}>
         <View style={styles.statusContainer}>
@@ -72,6 +73,7 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
           {(optionClick === 'Quiz' || optionClick === 'Flash Card') &&
           isResultsAvailable ? (
             <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
               onPress={() =>
                 navigation.navigate(ROUTES.MARKS, {
                   module_id: unique_id,
@@ -119,6 +121,7 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
                 <Text style={styles.cardSubtitle}>{secondOption}</Text>
               </View>
               <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
                 onPress={() =>
                   navigation.navigate(ROUTES.LEADERBOARD, {
                     module_id: unique_id,
