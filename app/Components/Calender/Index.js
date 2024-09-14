@@ -16,6 +16,9 @@ import color from '../../Constants/color';
 import scale from '../../utils/utils';
 import {useNavigation} from '@react-navigation/native';
 import storage from '../../Constants/storage';
+import LighTheme from '../../theme/LighTheme';
+import DarkTheme from '../../theme/Darktheme';
+import LinearGradient from 'react-native-linear-gradient';
 
 const daysOfWeek = [
   'Monday',
@@ -35,11 +38,12 @@ const Index = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const {isDark, path, packageId, clientId} = useContext(AppContext);
+  const style = isDark ? DarkTheme : LighTheme;
 
   const getStartOfWeek = () => {
     const now = new Date();
     const day = now.getDay() || 7;
-    if (day !== 1) now.setHours(-24 * (day - 1));
+    if (day !== 1) now.setHours(-24 * day);
     if (isNextWeek) now.setDate(now.getDate() + 7);
     return new Date(now.setHours(0, 0, 0, 0));
   };
@@ -65,7 +69,6 @@ const Index = () => {
             Authorization: 'Bearer ' + token,
           },
         });
-
         let fetchedEvents = [];
 
         response.data.forEach(item => {
@@ -85,6 +88,7 @@ const Index = () => {
               start: startDate,
               end: endDate,
               day: startDate.toLocaleDateString('en-US', {weekday: 'long'}),
+              room_name: item.room_name,
             });
           } else if (item.schedule_is_recurring === 1) {
             const recurringStartDate = new Date(
@@ -109,6 +113,7 @@ const Index = () => {
                   day: eventStartDate.toLocaleDateString('en-US', {
                     weekday: 'long',
                   }),
+                  room_name: item.room_name,
                 });
 
                 currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
@@ -137,6 +142,7 @@ const Index = () => {
                     day: eventStartDate.toLocaleDateString('en-US', {
                       weekday: 'long',
                     }),
+                    room_name: item.room_name,
                   });
                 }
 
@@ -165,6 +171,7 @@ const Index = () => {
                     day: eventStartDate.toLocaleDateString('en-US', {
                       weekday: 'long',
                     }),
+                    room_name: item.room_name,
                   });
                 }
 
@@ -214,83 +221,140 @@ const Index = () => {
 
   const renderEventCard = ({item}) => (
     <TouchableOpacity
-      style={styles.card}
+      style={style.liveClasscard}
       onPress={() => {
         setSelectedEvent(item);
         setModalVisible(true);
       }}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.mainHeaderLevel}>A2 German</Text>
-        <View style={styles.cardTimeDiv}>
-          <Text style={styles.cardTime}>
-            {`0${item.start.getHours()}-0${item.end.getHours()} ${
-              item.start.getHours() >= 12 ? 'PM' : 'AM'
-            }`}
-          </Text>
-          <Text style={styles.pathway}>Superfast Pathway</Text>
+      <LinearGradient
+        colors={['#2A89C6', '#3397CB', '#0C5CB4']}
+        start={{x: 0, y: 0}} // Start from the left
+        end={{x: 1, y: 0}}
+        style={styles.cardHeader}>
+        <View>
+          <Text style={styles.mainHeaderLevel}>A2 German</Text>
+          <View style={styles.cardTimeDiv}>
+            <Text style={styles.cardTime}>
+              {`${item.start.getHours()}:${item.start
+                .getMinutes()
+                .toString()
+                .padStart(2, '0')} - ${item.end.getHours()}:${item.end
+                .getMinutes()
+                .toString()
+                .padStart(2, '0')} ${
+                item.start.getHours() >= 12 ? 'PM' : 'AM'
+              }`}
+            </Text>
+            <Text style={styles.pathway}>Superfast Pathway</Text>
+          </View>
         </View>
-      </View>
+      </LinearGradient>
       <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{item.title}</Text>
+        <Text style={style.liveClasscardTitle}>{item.title}</Text>
 
         <View style={{marginTop: scale(5)}}>
-          <Text style={styles.medium}>GERMAN - English Medium</Text>
+          <Text style={style.medium}>GERMAN - English Medium</Text>
         </View>
         <View style={styles.cardTimeDiv}>
-          <Text style={styles.medium}>Dependent Task : Quiz 14</Text>
-          <Text style={styles.medium}>Teach Name : Swathi</Text>
+          <Text style={style.medium}>Dependent Task : Quiz 14</Text>
+          <Text style={style.medium}>Teach Name : Swathi</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={style.liveClasscontainer}>
       <View style={{height: '18%'}}>
         <View style={styles.toggleContainer}>
-          <TouchableOpacity
+          <LinearGradient
+            colors={
+              !isNextWeek
+                ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
+                : isDark
+                ? ['#3B3B3B', '#3B3B3B']
+                : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
+            }
+            start={{x: 0, y: 0}} // Start from the left
+            end={{x: 1, y: 0}} // End at the right
             style={[
-              styles.toggleButton,
+              style.toggleButton,
               !isNextWeek && styles.activeToggleButton,
-            ]}
-            onPress={() => {
-              setIsNextWeek(false);
-              fetchSchedule();
-            }}>
-            <Text style={styles.toggleText}>This Week</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+            ]}>
+            <TouchableOpacity
+              // style={[
+              //   style.toggleButton,
+              //   !isNextWeek && styles.activeToggleButton,
+              // ]}
+              onPress={() => {
+                setIsNextWeek(false);
+                fetchSchedule();
+              }}>
+              <Text
+                style={[
+                  style.toggleText,
+                  !isNextWeek && style.activeToggleText,
+                ]}>
+                This Week
+              </Text>
+            </TouchableOpacity>
+          </LinearGradient>
+          <LinearGradient
+            colors={
+              isNextWeek
+                ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
+                : isDark
+                ? ['#3B3B3B', '#3B3B3B']
+                : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
+            }
+            start={{x: 0, y: 0}} // Start from the left
+            end={{x: 1, y: 0}} // End at the right
             style={[
-              styles.toggleButton,
-              isNextWeek && styles.activeToggleButton,
-            ]}
-            onPress={() => {
-              setIsNextWeek(true);
-              fetchSchedule();
-            }}>
-            <Text style={styles.toggleText}>Next Week</Text>
-          </TouchableOpacity>
+              style.toggleButton,
+              !isNextWeek && styles.activeToggleButton,
+            ]}>
+            <TouchableOpacity
+              // style={[
+              //   style.toggleButton,
+              //   isNextWeek && styles.activeToggleButton,
+              // ]}
+              onPress={() => {
+                setIsNextWeek(true);
+                fetchSchedule();
+              }}>
+              <Text style={style.toggleText}>Next Week</Text>
+            </TouchableOpacity>
+          </LinearGradient>
         </View>
 
         <FlatList
           horizontal
           data={daysOfWeek}
           renderItem={({item: day}) => (
-            <TouchableOpacity
-              key={day}
-              onPress={() => setSelectedDay(day)}
+            <LinearGradient
+              colors={
+                selectedDay === day
+                  ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
+                  : isDark
+                  ? ['#3B3B3B', '#3B3B3B']
+                  : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
+              }
               style={[
-                styles.dayButton,
+                style.dayButton,
                 selectedDay === day && styles.selectedDayButton,
-              ]}>
-              <Text
-                style={[
-                  styles.dayText,
-                  selectedDay === day && styles.selectedDayText,
-                ]}>
-                {day}
-              </Text>
-            </TouchableOpacity>
+              ]}
+              start={{x: 0, y: 0}} // Start from the left
+              end={{x: 1, y: 0}}>
+              <TouchableOpacity key={day} onPress={() => setSelectedDay(day)}>
+                <Text
+                  style={[
+                    style.dayText,
+                    selectedDay === day && styles.selectedDayText,
+                  ]}>
+                  {day}
+                </Text>
+              </TouchableOpacity>
+            </LinearGradient>
           )}
           keyExtractor={day => day}
           showsHorizontalScrollIndicator={false}
@@ -335,7 +399,16 @@ const Index = () => {
 
               {/* Time at the Top */}
               <Text style={styles.modalTime}>
-                {`${selectedEvent.start.getHours()}:${selectedEvent.start.getMinutes()} - ${selectedEvent.end.getHours()}:${selectedEvent.end.getMinutes()} ${
+                {`${selectedEvent.start.getHours()}:${selectedEvent.start
+                  .getMinutes()
+                  .toString()
+                  .padStart(
+                    2,
+                    '0',
+                  )} - ${selectedEvent.end.getHours()}:${selectedEvent.end
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, '0')} ${
                   selectedEvent.start.getHours() >= 12 ? 'PM' : 'AM'
                 }`}
               </Text>
@@ -350,7 +423,10 @@ const Index = () => {
               <TouchableOpacity
                 style={styles.joinButton}
                 onPress={() => {
-                  navigation.navigate('Meeting', {room: 'checkpaaras'});
+                  navigation.navigate('Meeting', {
+                    // room: selectedEvent.room_name,
+                    room: 'ic2wYAPi7sqlUZKi',
+                  });
                   setModalVisible(false);
                 }}>
                 <Text style={styles.joinButtonText}>Join Class</Text>
@@ -373,20 +449,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: scale(10),
   },
-  toggleButton: {
-    paddingVertical: scale(10),
-    paddingHorizontal: scale(20),
-    borderRadius: scale(20),
-    backgroundColor: '#f0f0f0',
-    marginHorizontal: scale(5),
-  },
+
   activeToggleButton: {
     backgroundColor: color.lowPrimary,
   },
-  toggleText: {
-    color: '#000',
-    fontWeight: 'bold',
-  },
+
   daySelector: {
     marginVertical: scale(10),
     paddingHorizontal: scale(10),
@@ -430,17 +497,7 @@ const styles = StyleSheet.create({
     fontSize: scale(17),
     color: color.black,
   },
-  card: {
-    margin: scale(5),
-    width: '99%',
-    borderRadius: scale(15),
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: scale(5),
-    elevation: 3,
-  },
+
   cardHeader: {
     backgroundColor: color.lightPrimary,
     padding: scale(8),
@@ -472,19 +529,7 @@ const styles = StyleSheet.create({
   cardContent: {
     padding: scale(10),
   },
-  medium: {
-    textAlign: 'center',
-    marginTop: scale(4),
-    marginBottom: scale(8),
-    fontSize: scale(12),
-    color: color.black,
-  },
-  cardTitle: {
-    fontSize: scale(15),
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: color.black,
-  },
+
   cardDescription: {
     fontSize: scale(13),
     color: color.grey,

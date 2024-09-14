@@ -12,11 +12,17 @@ import Share from 'react-native-share';
 import axios from 'axios';
 import {AppContext} from '../../theme/AppContext';
 import storage from '../../Constants/storage';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
+import LinearGradient from 'react-native-linear-gradient';
+import logo from '../../assets/logo.png';
 
 const Certificate = ({route}) => {
   const viewShotRef = useRef();
   const {module_id} = route.params;
-  const {path, student_id} = useContext(AppContext);
+  const {path, student_id, isDark} = useContext(AppContext);
+
+  const style = isDark ? DarkTheme : LighTheme;
 
   const [marks, setMarks] = useState(null);
   const [total, setTotal] = useState(0);
@@ -51,16 +57,18 @@ const Certificate = ({route}) => {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
+      <View style={style.marksContainer}>
         <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.9}}>
-          <View style={styles.certificateCard}>
+          {/* <View style={styles.certificateCard}> */}
+          <LinearGradient
+            colors={['#2A89C6', '#3397CB', '#0C5CB4']}
+            start={{x: 0, y: 0}} // Start from the left
+            end={{x: 1, y: 0}}
+            style={styles.certificateCard}>
             {/* Certificate Border */}
             <View style={styles.border}>
               {/* Logo at the top */}
-              <Image
-                source={{uri: 'https://via.placeholder.com/150'}}
-                style={styles.logo}
-              />
+              <Image source={logo} style={styles.logo} />
 
               {/* Certificate Title */}
               <Text style={styles.certificateTitle}>
@@ -99,7 +107,8 @@ const Certificate = ({route}) => {
                 <Text style={styles.signatureText}>Authorized Signature</Text>
               </View>
             </View>
-          </View>
+            {/* </View> */}
+          </LinearGradient>
         </ViewShot>
 
         {/* Share Button */}
@@ -116,13 +125,6 @@ const Certificate = ({route}) => {
 export default Certificate;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#eef2f5',
-    paddingHorizontal: 20,
-  },
   certificateCard: {
     backgroundColor: '#fff',
     padding: 30,

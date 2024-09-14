@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,9 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import color from '../../Constants/color';
 import scale from '../../utils/utils';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
+import {AppContext} from '../../theme/AppContext';
 
 const InstallmentCard = ({item}) => {
   const handlePress = () => {
@@ -20,9 +23,9 @@ const InstallmentCard = ({item}) => {
 
   return (
     <LinearGradient
-      colors={['#667eea', '#764ba2']} // Gradient colors
-      start={{x: 0, y: 0}}
-      end={{x: 1, y: 1}}
+      colors={['#2A89C6', '#3397CB', '#0C5CB4']}
+      start={{x: 0, y: 0}} // Start from the left
+      end={{x: 1, y: 0}}
       style={styles.card}>
       <Text style={styles.packageName}>{item.packageName}</Text>
       <Text style={styles.installmentTitle}>Installments</Text>
@@ -101,12 +104,15 @@ const Index = () => {
     },
   ];
 
+  const {isDark} = useContext(AppContext);
+  const style = isDark ? DarkTheme : LighTheme;
+
   return (
     <FlatList
       data={packages}
       renderItem={({item}) => <InstallmentCard item={item} />}
       keyExtractor={item => item.packageName}
-      contentContainerStyle={styles.container}
+      contentContainerStyle={style.packageContainer}
       showsVerticalScrollIndicator={false}
     />
   );

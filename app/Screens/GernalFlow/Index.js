@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,6 +12,10 @@ import color from '../../Constants/color';
 import scale from '../../utils/utils';
 import ProfileLevel from '../../Components/ProfileLevel/index';
 import {useNavigation} from '@react-navigation/native';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
+import {AppContext} from '../../theme/AppContext';
+import LinearGradient from 'react-native-linear-gradient';
 
 const packages = [
   {
@@ -71,6 +75,9 @@ const {height} = Dimensions.get('window');
 const Index = () => {
   const [selectedPackage, setSelectedPackage] = useState('Superfast');
   const navigation = useNavigation();
+  const {isDark} = useContext(AppContext);
+
+  const style = isDark ? DarkTheme : LighTheme;
 
   const handlePress = () => {
     // Replace with your website URL
@@ -78,24 +85,32 @@ const Index = () => {
   };
 
   const renderPackage = ({item}) => (
-    <TouchableOpacity
-      style={[
-        styles.card,
-        selectedPackage === item.packageName && styles.selectedCard,
-      ]}
-      onPress={() => setSelectedPackage(item.packageName)}>
-      <Text style={styles.cardTitle}>{item.packageName}</Text>
-      <Text style={styles.price}>Duration: {item.duration}</Text>
-      <Text style={styles.detailsText}>Note: {item.note}</Text>
-      <TouchableOpacity style={styles.buyButton} onPress={handlePress}>
-        <Text style={styles.buyButtonText}>Upgrade Now</Text>
-        <Text style={styles.arrow}>➔</Text>
-      </TouchableOpacity>
+    <TouchableOpacity onPress={() => setSelectedPackage(item.packageName)}>
+      <LinearGradient
+        colors={
+          selectedPackage === item.packageName
+            ? ['#2A89C6', '#3397CB', '#0C5CB4']
+            : ['#3397CB', '#3397CB', '#3397CB']
+        }
+        start={{x: 0, y: 0}} // Start from the left
+        end={{x: 1, y: 0}}
+        style={[
+          styles.card,
+          selectedPackage === item.packageName && styles.selectedCard,
+        ]}>
+        <Text style={styles.cardTitle}>{item.packageName}</Text>
+        <Text style={styles.price}>Duration: {item.duration}</Text>
+        <Text style={styles.detailsText}>Note: {item.note}</Text>
+        <TouchableOpacity style={styles.buyButton} onPress={handlePress}>
+          <Text style={styles.buyButtonText}>Upgrade Now</Text>
+          <Text style={styles.arrow}>➔</Text>
+        </TouchableOpacity>
+      </LinearGradient>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={style.regularContainer}>
       <View style={styles.cardsContainer}>
         <FlatList
           data={packages}
@@ -106,9 +121,9 @@ const Index = () => {
           contentContainerStyle={styles.flatListContent}
         />
       </View>
-      <View style={styles.detailsContainer}>
+      <View style={style.detailsContainer}>
         {selectedPackage === 'Express' && (
-          <Text style={{color: color.black}}>
+          <Text style={isDark ? {color: color.white} : {color: color.black}}>
             Note: Upgrade to Superfast for quicker processing with your existing
             documents. Express is cost-effective, but Superfast delivers faster,
             premium service.
@@ -127,10 +142,6 @@ const Index = () => {
 export default Index;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f1f4f8',
-  },
   cardsContainer: {
     height: height * 0.24,
     paddingVertical: scale(10),
@@ -145,15 +156,11 @@ const styles = StyleSheet.create({
     borderRadius: scale(10),
     padding: scale(10),
     justifyContent: 'space-between',
-    backgroundColor: '#5b9df9',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
-  },
-  selectedCard: {
-    backgroundColor: '#3a7bd5',
   },
   iconPlaceholder: {
     width: scale(26),
@@ -193,13 +200,7 @@ const styles = StyleSheet.create({
     marginLeft: scale(8),
     fontSize: scale(14),
   },
-  detailsContainer: {
-    height: height * scale(0.63),
-    padding: scale(10),
-    backgroundColor: '#FFF',
-    borderTopLeftRadius: scale(18),
-    borderTopRightRadius: scale(18),
-  },
+
   detailsText: {
     fontSize: scale(11),
     color: '#F1f1f1',

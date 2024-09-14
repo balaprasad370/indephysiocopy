@@ -13,8 +13,8 @@ export const AppContext = createContext();
 export const AuthProvider = ({children}) => {
   // const path = '192.168.1.3';
   // const path = '192.168.162.48';
-  // const path = 'https://mobile.indephysio.com';
-  const path = 'http://192.168.154.48:4000';
+  const path = 'https://mobile.indephysio.com';
+  // const path = 'http://192.168.154.48:4000';
   // http://192.168.1.5
   // 192.168.1.5
 
@@ -23,8 +23,8 @@ export const AuthProvider = ({children}) => {
   const [isDark, setIsDark] = useState(storage.getBool('theme'));
   const [langId, setLangId] = useState(1); // 0 // 1
   const [levelId, setLevelId] = useState(6); //6  // 7
-  const [packageId, setPackageId] = useState(3); // 3 // 1
-  const [clientId, setClientId] = useState(7); // 8 // 7
+  const [packageId, setPackageId] = useState(1); // 3 // 1
+  const [clientId, setClientId] = useState(8); // 8 // 7
   const [student_id, setStudentId] = useState(null);
   const [grandScore, setGrandScore] = useState(0);
   const [profileStatus, setProfileStatus] = useState([]);
@@ -69,6 +69,7 @@ export const AuthProvider = ({children}) => {
           },
         });
         setStudentId(res.data?.student_id);
+        packageName = res.data?.package;
         setUserData(res.data);
       }
     } catch (error) {
@@ -84,8 +85,30 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  const fetchPackageData = async () => {
+    const token = await storage.getStringAsync('token');
+    if (token && clientId) {
+      try {
+        const response = await axios.get(`${path}/packages`, {
+          params: {
+            client_id: clientId,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
+        });
+        console.log(response.data);
+        // setChapter(response.data);
+      } catch (error) {
+        console.log('Error fetching package data:', error);
+      }
+    }
+  };
+
   useEffect(() => {
     getDatFunc();
+    // fetchPackageData();
     const intervalId = setInterval(getDatFunc, 3000);
     return () => clearInterval(intervalId);
   }, []);

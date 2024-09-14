@@ -1,0 +1,86 @@
+import React, {useContext} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
+import {
+  DrawerContentScrollView,
+  DrawerItemList,
+} from '@react-navigation/drawer';
+import {ROUTES} from '../Constants/routes';
+import COLOR from '../Constants/color';
+import user from '../Constants/person.jpg';
+import {AppContext} from '../theme/AppContext';
+import storage from '../Constants/storage';
+
+const DrawerContent = props => {
+  const {userData, setIsAuthenticate} = useContext(AppContext);
+
+  const logoutButton = async () => {
+    try {
+      storage.setBoolAsync('isLoggedIn', false);
+      storage.removeItem('token');
+      storage.removeItem('show');
+      storage.removeItem('email');
+      setIsAuthenticate(false);
+      navigation.navigate(ROUTES.LOGIN);
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <DrawerContentScrollView {...props}>
+        <View style={styles.header}>
+          <Image source={user} style={styles.image} />
+          <Text style={styles.username}>
+            {userData?.first_name} {userData?.last_name}
+          </Text>
+        </View>
+        <DrawerItemList {...props} />
+      </DrawerContentScrollView>
+      <TouchableOpacity style={styles.logoutButton} onPress={logoutButton}>
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLOR.white, // Replace with your preferred color
+  },
+  header: {
+    padding: 20,
+    alignItems: 'center',
+    backgroundColor: COLOR.primary,
+  },
+  image: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
+  },
+  username: {
+    fontSize: 18,
+    color: COLOR.black,
+  },
+  logoutButton: {
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: COLOR.gray,
+    alignItems: 'center',
+  },
+  logoutText: {
+    fontSize: 16,
+    color: COLOR.primary,
+  },
+});
+
+export default DrawerContent;

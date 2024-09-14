@@ -10,6 +10,8 @@ import axios from 'axios';
 import {AppContext} from '../../theme/AppContext';
 import storage from '../../Constants/storage';
 import color from '../../Constants/color';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
 
 const {width, height} = Dimensions.get('window');
 
@@ -32,7 +34,8 @@ const Index = ({route}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
 
-  const {path} = useContext(AppContext);
+  const {path, isDark} = useContext(AppContext);
+  const style = isDark ? DarkTheme : LighTheme;
 
   const getFlashcardQuestions = async flash_id => {
     const token = await storage.getStringAsync('token');
@@ -83,7 +86,7 @@ const Index = ({route}) => {
   const {flash_question, flash_answer} = flashcards[currentIndex];
 
   return (
-    <View style={styles.container}>
+    <View style={style.flashCardcontainer}>
       <View style={styles.progressContainer}>
         <Text style={styles.progressText}>
           {currentIndex + 1} / {flashcards.length}
@@ -130,13 +133,6 @@ const Index = ({route}) => {
 export default Index;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF',
-    paddingVertical: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   cardContainer: {
     width: width * 0.9,
     height: height * 0.4,

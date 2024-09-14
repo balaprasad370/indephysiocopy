@@ -1,7 +1,8 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import COLOR from '../Constants/color';
 import color from '../Constants/color';
 import scale from '../utils/utils';
+const {height} = Dimensions.get('window');
 
 const LighTheme = StyleSheet.create({
   dashBoard: {
@@ -503,6 +504,160 @@ const LighTheme = StyleSheet.create({
     backgroundColor: COLOR.white,
     borderTopWidth: 0,
     borderTopColor: 'white',
+  },
+  liveClasscontainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  liveClasscard: {
+    margin: scale(5),
+    width: '99%',
+    borderRadius: scale(15),
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: scale(5),
+    elevation: 3,
+  },
+  liveClasscardTitle: {
+    fontSize: scale(15),
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: color.black,
+  },
+  medium: {
+    textAlign: 'center',
+    marginTop: scale(4),
+    marginBottom: scale(8),
+    fontSize: scale(12),
+    color: color.black,
+  },
+  toggleButton: {
+    paddingVertical: scale(10),
+    paddingHorizontal: scale(20),
+    borderRadius: scale(20),
+    backgroundColor: '#f0f0f0',
+    marginHorizontal: scale(5),
+  },
+  dayButton: {
+    paddingVertical: scale(10),
+    height: scale(40),
+    paddingHorizontal: scale(15),
+    borderRadius: scale(10),
+    backgroundColor: '#f0f0f0',
+    marginHorizontal: scale(5),
+  },
+  toggleText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  activeToggleText: {
+    color: '#000',
+  },
+  dayText: {
+    color: color.black,
+  },
+  regularContainer: {
+    flex: 1,
+    backgroundColor: '#f1f4f8',
+  },
+  detailsContainer: {
+    height: height * scale(0.63),
+    padding: scale(10),
+    backgroundColor: '#FFF',
+    borderTopLeftRadius: scale(18),
+    borderTopRightRadius: scale(18),
+  },
+  selfLearn: {
+    paddingTop: 5,
+    flex: 1,
+    paddingLeft: '3%',
+    paddingRight: '3%',
+  },
+  levelcontainer: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: 'white',
+  },
+  chapterContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+  },
+  quizScreen: {
+    flex: 1,
+    backgroundColor: '#FFF',
+  },
+  faqcontainer: {
+    flex: 1,
+    padding: scale(10),
+    backgroundColor: color.white,
+  },
+  selfcardTitle: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#232425',
+    marginRight: 'auto',
+  },
+  cardDates: {
+    marginTop: 4,
+    fontSize: 16,
+    color: '#595a63',
+  },
+  selfLearnChapter: {
+    backgroundColor: color.white,
+  },
+  cardBox: {
+    width: '100%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#F1f4f8',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  flashCardcontainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reading: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    padding: '3%',
+  },
+  marksContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    paddingHorizontal: 20,
+  },
+  documentContainer: {
+    flex: 1,
+    backgroundColor: '#FFF',
+  },
+  packageContainer: {
+    backgroundColor: '#FFF',
+    padding: 20,
+  },
+  modalQuizText: {
+    fontSize: scale(18),
+    marginLeft: scale(7),
+    color: color.black,
+    fontWeight: 'bold',
+  },
+  upperModal: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: scale(12),
+    backgroundColor: color.white,
   },
 });
 

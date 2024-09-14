@@ -31,11 +31,16 @@ import {AppContext} from '../../theme/AppContext';
 import {useNavigation} from '@react-navigation/native';
 import storage from '../../Constants/storage';
 import VoiceComponent from './VoiceComponent';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
 
 const Index = ({route}) => {
   const {module_id, title} = route.params;
-  const {path, grandScore, setGrandScore, userData} = useContext(AppContext);
+  const {path, grandScore, setGrandScore, userData, student_id, isDark} =
+    useContext(AppContext);
   const navigation = useNavigation();
+
+  const style = isDark ? DarkTheme : LighTheme;
 
   const [questionIndex, setQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -130,7 +135,7 @@ const Index = ({route}) => {
       await axios.post(
         `${path}/student/saveMarks`,
         {
-          student_id: userData?.student_id,
+          student_id: student_id,
           module_id: module_id,
           marks: newScore,
           total: question.length,
@@ -153,9 +158,9 @@ const Index = ({route}) => {
   };
 
   const handlePrev = () => {
+    console.log('first');
     if (questionIndex <= 0) {
-      setSelectedOption(null);
-      setSelectedOptions(null);
+      setSelectedOptions({});
       return;
     }
     if (sound) {
@@ -327,60 +332,6 @@ const Index = ({route}) => {
   };
 
   const [inputValue, setInputValue] = useState('');
-
-  // const renderQuestionWithBlanks = (
-  //   questionText,
-  //   correctAnswerIndex,
-  //   index,
-  //   type,
-  //   audioURL,
-  //   quesIndex,
-  // ) => {
-  //   const parts = questionText.split('_');
-  //   return (
-  //     <>
-  //       <Text>{questionText}</Text>
-  //       <Text style={styled.quiztitle}>
-  //         Q{quesIndex}) {parts[0]}
-  //       </Text>
-  //       {parts.length > 1 && (
-  //         <>
-  //           <TextInput
-  //             style={{
-  //               marginLeft: scale(4),
-  //               marginRight: scale(4),
-  //               borderBottomWidth: scale(1),
-  //               borderBlockColor: color.black,
-  //               paddingLeft: scale(4),
-  //               paddingRight: scale(4),
-  //               fontSize: 14,
-  //               textAlign: 'center',
-  //             }}
-  //             placeholder="type answer"
-  //             onChangeText={text =>
-  //               handleTextInput(text, correctAnswerIndex, index)
-  //             }
-  //             value={inputValue}
-  //           />
-  //           <Text style={[styled.quiztitle, {marginTop: scale(4)}]}>
-  //             {parts[parts.length - 1]}
-  //           </Text>
-  //           {type === 'TextAudio' && (
-  //             <AudioComponent
-  //               isPlaying={isPlaying}
-  //               setIsPlaying={setIsPlaying}
-  //               sound={sound}
-  //               setSound={setSound}
-  //               pauseAudio={pauseAudio}
-  //               audioURL={audioURL}
-  //             />
-  //           )}
-  //         </>
-  //       )}
-  //     </>
-  //   );
-  // };
-
   const renderQuestionWithBlanks = (
     questionText,
     correctAnswerIndex,
@@ -679,12 +630,20 @@ const Index = ({route}) => {
     [isPlaying, setIsPlaying, sound, setSound, pauseAudio, questionIndex],
   );
 
+  const truncateTitle = (title, wordLimit) => {
+    const words = title.split(' ');
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    return title;
+  };
+
   const totalQuestionsCount = getTotalQuestionsCount(question);
   return (
-    <View style={{flex: 1, backgroundColor: '#FFF'}}>
+    <View style={style.quizScreen}>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <View style={styled.upperModal}>
+          <View style={style.upperModal}>
             <View style={styled.upperInside}>
               <TouchableOpacity style={{}} onPress={closeModal}>
                 <Icon
@@ -692,7 +651,7 @@ const Index = ({route}) => {
                   style={{fontSize: 20, color: 'black', fontWeight: 'bold'}}
                 />
               </TouchableOpacity>
-              <Text style={styled.modalQuizText}>{title}</Text>
+              <Text style={style.modalQuizText}>{truncateTitle(title, 3)}</Text>
             </View>
             <View
               style={{
@@ -782,14 +741,6 @@ const Index = ({route}) => {
 export default Index;
 
 const styled = StyleSheet.create({
-  upperModal: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: scale(12),
-  },
-
   upperInside: {
     display: 'flex',
     flexDirection: 'row',
@@ -815,12 +766,7 @@ const styled = StyleSheet.create({
     backgroundColor: color.lowPrimary,
     borderRadius: scale(8),
   },
-  modalQuizText: {
-    fontSize: scale(18),
-    marginLeft: scale(7),
-    color: 'black',
-    fontWeight: 'bold',
-  },
+
   quizContent: {
     height: '92%',
     padding: scale(11),

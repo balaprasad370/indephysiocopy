@@ -50,6 +50,10 @@ const StackNavigation = () => {
         options={{
           headerTitle: 'Level',
           headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Level}
       />
@@ -58,6 +62,10 @@ const StackNavigation = () => {
         options={{
           headerTitle: 'Regular Pathway',
           headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Regular}
       />
@@ -66,6 +74,10 @@ const StackNavigation = () => {
         options={{
           headerTitle: 'Our Package',
           headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Pricing}
       />
@@ -75,6 +87,10 @@ const StackNavigation = () => {
           headerTitle: 'Quiz',
           headerLeftLabelVisible: false,
           headerShown: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Quiz}
       />
@@ -83,6 +99,10 @@ const StackNavigation = () => {
         options={{
           headerTitle: 'Instalment Plans',
           headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Installment}
       />
@@ -91,6 +111,10 @@ const StackNavigation = () => {
         options={{
           headerTitle: 'Referral Portal',
           headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Portal}
       />
@@ -102,7 +126,14 @@ const StackNavigation = () => {
       />
       <Stack.Screen
         name={ROUTES.PACKAGE}
-        options={{headerTitle: 'Packages', headerLeftLabelVisible: false}}
+        options={{
+          headerTitle: 'Packages',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
         component={Package}
       />
       <Stack.Screen
@@ -110,6 +141,10 @@ const StackNavigation = () => {
         options={{
           headerTitle: 'Chapters',
           headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Chapters}
       />
@@ -118,6 +153,10 @@ const StackNavigation = () => {
         options={{
           headerTitle: 'Leader Board',
           headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Leaderboard}
       />
@@ -126,23 +165,47 @@ const StackNavigation = () => {
         options={{
           headerTitle: 'Marks',
           headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={MarksImage}
       />
 
       <Stack.Screen
         name={ROUTES.SELF_LEARN_SCREEN}
-        options={{headerLeftLabelVisible: false, title: 'Chapter 1'}}
+        options={{
+          headerLeftLabelVisible: false,
+          title: 'Chapter 1',
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
         component={SelfLearnScreen}
       />
       <Stack.Screen
         name={ROUTES.READING}
+        options={{
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
         // options={{headerLeftLabelVisible: false, title: ''}}
         component={ReadingMaterial}
       />
       <Stack.Screen
         name={ROUTES.FLASH}
-        options={{headerTitle: 'Flash Cards', headerLeftLabelVisible: false}}
+        options={{
+          headerTitle: 'Flash Cards',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
         // options={{headerLeftLabelVisible: false, title: ''}}
         component={Flash}
       />
@@ -152,6 +215,10 @@ const StackNavigation = () => {
         options={{
           headerTitle: 'FAQs MedUniverse ',
           headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={FAQ}
       />

@@ -1,10 +1,10 @@
 import {StyleSheet, Text, Platform, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
 import {Image} from 'react-native';
-// import { Platform } from 'react-native';
+import color from '../../Constants/color';
 const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
   const navigation = useNavigation();
 
@@ -15,7 +15,9 @@ const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
     } else if (option === 'Self learn') {
       navigation.navigate(ROUTES.SELF_LEARN);
     } else if (option === 'Live') {
-      navigation.navigate('Meeting', {room: 'status'});
+      navigation.navigate(ROUTES.LIVE_CLASS);
+    } else if (option === 'Documents') {
+      navigation.navigate(ROUTES.DOCUMENTS);
     }
   };
 
@@ -39,11 +41,15 @@ const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
           backgroundColor: isLocked ? '#8A8A8A' : '#E4F2FC',
           position: 'relative',
         }}>
-        <Image source={iconImage} style={{width: 45, height: 40}} />
-        {/* <Icon
-          name={iconName}
-          style={{fontSize: 34, color: isLocked ? '#3898ff' : '#FFF'}}
-        /> */}
+        {ROUTE !== 'Documents' && (
+          <Image source={iconImage} style={{width: 45, height: 40}} />
+        )}
+        {ROUTE === 'Documents' && (
+          <Icon
+            name="folderopen"
+            style={{fontSize: 37, color: isLocked ? 'rgba(0,0,0,0.3)' : '#FFF'}}
+          />
+        )}
         {isLocked ? (
           <View style={{position: 'absolute', bottom: 6}}>
             <Image source={lock} style={{width: 20, height: 20}} />

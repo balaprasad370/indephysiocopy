@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   Text,
@@ -15,8 +15,15 @@ import TableComponent from './TableComponent';
 import PlansComponents from './PlansComponent';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
+import {AppContext} from '../../theme/AppContext';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
+import LinearGradient from 'react-native-linear-gradient';
 const FAQ = () => {
   const [expandedIndex, setExpandedIndex] = useState(null);
+
+  const {isDark} = useContext(AppContext);
+  const style = isDark ? DarkTheme : LighTheme;
 
   const toggleExpand = index => {
     setExpandedIndex(expandedIndex === index ? null : index);
@@ -118,16 +125,22 @@ const FAQ = () => {
 
     return (
       <View style={styles.itemContainer}>
-        <TouchableOpacity
-          onPress={() => toggleExpand(index)}
-          style={styles.questionContainer}>
-          <Text style={styles.questionText}>{item.question}</Text>
-          <AntDesign
-            name={expandedIndex === index ? 'minus' : 'plus'}
-            size={20}
-            color="#000"
-          />
-        </TouchableOpacity>
+        <LinearGradient
+          colors={['#2A89C6', '#3397CB', '#0C5CB4']}
+          start={{x: 0, y: 0}} // Start from the left
+          end={{x: 1, y: 0}}
+          style={{borderRadius: scale(15)}}>
+          <TouchableOpacity
+            onPress={() => toggleExpand(index)}
+            style={styles.questionContainer}>
+            <Text style={styles.questionText}>{item.question}</Text>
+            <AntDesign
+              name={expandedIndex === index ? 'minus' : 'plus'}
+              size={20}
+              color="#000"
+            />
+          </TouchableOpacity>
+        </LinearGradient>
         {expandedIndex === index && (
           <View style={styles.answerContainer}>
             {paragraphs.map((paragraph, idx) => (
@@ -153,8 +166,6 @@ const FAQ = () => {
                 </Text>
               </TouchableOpacity>
             )}
-            {/* Installement */}
-            {/* {item.plans && <PlansComponents />} */}
           </View>
         )}
       </View>
@@ -162,7 +173,7 @@ const FAQ = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={style.faqcontainer}>
       <FlatList
         data={faqData}
         renderItem={renderItem}
@@ -174,11 +185,6 @@ const FAQ = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: scale(10),
-    backgroundColor: color.white,
-  },
   itemContainer: {
     backgroundColor: '#FFFFFF',
     borderRadius: scale(15),
@@ -193,11 +199,11 @@ const styles = StyleSheet.create({
   },
   questionContainer: {
     flexDirection: 'row',
-    backgroundColor: color.lightPrimary,
+    borderRadius: scale(15),
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     padding: scale(15),
-    borderRadius: scale(15),
+
     borderColor: color.lightPrimary,
     borderWidth: 1,
   },

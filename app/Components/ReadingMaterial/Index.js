@@ -4,11 +4,14 @@ import WebView from 'react-native-webview';
 import axios from 'axios';
 import {AppContext} from '../../theme/AppContext';
 import storage from '../../Constants/storage';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
 
 const Index = ({route}) => {
   const [htmlData, setHtmlData] = useState('');
 
-  const {path} = useContext(AppContext);
+  const {path, isDark} = useContext(AppContext);
+  const style = isDark ? DarkTheme : LighTheme;
 
   const {read_id} = route.params;
   const readingMaterial = async read_id => {
@@ -26,54 +29,125 @@ const Index = ({route}) => {
         );
 
         let readingText = response.data[0]?.reading_text;
-        const customCss = `
-          <style>
-            p{
-              font-size:38px;
-              font-family: "Poppins", sans-serif;
-            }
-            span{
-              font-size:40px;
-              font-family: "Poppins", sans-serif;
-            }
-            
-            em{
-              font-size:38px;
-              font-family: "Poppins", sans-serif;
-            }
-            img{
-              width:100%;
-              margin-bottom:10px;
-              margin-top:10px;
-            }
-            ul{
-              font-size:38px;
-              font-family: "Poppins", sans-serif;
-            }
-            li{
-              font-size:38px;
-              font-family: "Poppins", sans-serif;
-            }
-            strong{
-              font-size:38px;
-              font-family: "Poppins", sans-serif;
-            }
-            blockquote{
-              font-size:38px; 
-              font-family: "Poppins", sans-serif;
-            }
-            iframe {
-              width: 100%;
-              height: auto;
-              max-width: 100%;
-              aspect-ratio: 16/9;
-            }
-            h2{
-              font-size:46px;
-              font-family: "Poppins", sans-serif;
-            }
-          </style>
-        `;
+        const customCss = isDark
+          ? `
+        <style>
+          body {
+            background-color: black; 
+          }
+          p{
+            font-size:38px;
+            font-family: "Poppins", sans-serif;
+            color:white;
+          }
+          span{
+            font-size:40px;
+            font-family: "Poppins", sans-serif;
+            color:white;
+          }
+          
+          em{
+            font-size:38px;
+            font-family: "Poppins", sans-serif;
+            color:white;
+          }
+          img{
+            width:100%;
+            margin-bottom:10px;
+            margin-top:10px;
+          }
+          ul{
+            font-size:38px;
+            font-family: "Poppins", sans-serif;
+            color:white;
+          }
+          li{
+            font-size:38px;
+            font-family: "Poppins", sans-serif;
+            color:white;
+          }
+          strong{
+            font-size:38px;
+            font-family: "Poppins", sans-serif;
+            color:white;
+          }
+          blockquote{
+            font-size:38px; 
+            font-family: "Poppins", sans-serif;
+            color:white;
+          }
+          iframe {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            aspect-ratio: 16/9;
+          }
+          h2{
+            font-size:46px;
+            font-family: "Poppins", sans-serif;
+            color:white;
+          }
+        </style>
+      `
+          : `
+      <style>
+        body {
+          background-color: white; 
+        }
+        p{
+          font-size:38px;
+          font-family: "Poppins", sans-serif;
+          color:black;
+        }
+        span{
+          font-size:40px;
+          font-family: "Poppins", sans-serif;
+          color:black;
+        }
+        
+        em{
+          font-size:38px;
+          font-family: "Poppins", sans-serif;
+          color:black;
+        }
+        img{
+          width:100%;
+          margin-bottom:10px;
+          margin-top:10px;
+        }
+        ul{
+          font-size:38px;
+          font-family: "Poppins", sans-serif;
+          color:black;
+        }
+        li{
+          font-size:38px;
+          font-family: "Poppins", sans-serif;
+          color:black;
+        }
+        strong{
+          font-size:38px;
+          font-family: "Poppins", sans-serif;
+          color:black;
+        }
+        blockquote{
+          font-size:38px; 
+          font-family: "Poppins", sans-serif;
+          color:black;
+        }
+        iframe {
+          width: 100%;
+          height: auto;
+          max-width: 100%;
+          aspect-ratio: 16/9;
+        }
+        h2{
+          font-size:46px;
+          font-family: "Poppins", sans-serif;
+          color:black;
+        }
+      </style>
+    `;
 
         // Prepend the CSS to the readingText
         readingText = customCss + readingText;
@@ -90,7 +164,7 @@ const Index = ({route}) => {
   }, []);
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFF', padding: '3%'}}>
+    <View style={style.reading}>
       <WebView
         originWhitelist={['*']}
         source={{html: htmlData}}

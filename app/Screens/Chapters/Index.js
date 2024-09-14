@@ -15,13 +15,19 @@ import {ROUTES} from '../../Constants/routes';
 import {AppContext} from '../../theme/AppContext';
 import color from '../../Constants/color';
 import storage from '../../Constants/storage';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Index = ({navigation}) => {
   const route = useRoute();
   const {level_id} = route.params;
-  const {path, clientId, packageId, packageName} = useContext(AppContext);
+  const {path, clientId, packageId, packageName, isDark} =
+    useContext(AppContext);
   const [chapter, setChapter] = useState([]);
   let newPackageId = packageId;
+
+  const style = isDark ? DarkTheme : LighTheme;
 
   const packageData = [
     {
@@ -225,92 +231,45 @@ const Index = ({navigation}) => {
     chapterData();
   }, []);
 
-  const fetchPackageData = async () => {
-    const token = await storage.getStringAsync('token');
-    if (token) {
-      try {
-        const response = await axios.get(`${path}/packages`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-        });
-        // console.log(response.data);
-        // setChapter(response.data);
-      } catch (error) {
-        console.log('Error fetching package data:', error);
-      }
-    }
-  };
-
-  // useEffect(() => {
-  //   fetchPackageData();
-  // }, []);
-
-  // const renderItem = ({item}) => (
-  //   <TouchableOpacity
-  //     style={styles.chapterBox}
-  //     onPress={() =>
-  //       navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
-  //         parent_module_id: item.id,
-  //       })
-  //     }>
-  //     <View style={styles.chapterCard}>
-  //       {/* Icon */}
-  //       <View style={styles.iconContainer}>
-  //         <Icon name="book" style={styles.chapterIcon} />
-  //       </View>
-  //       {/* Text */}
-  //       <View style={styles.chapterMiddle}>
-  //         <Text style={styles.chapterName}>{item.name}</Text>
-  //         <Text style={styles.title}>{item.description}</Text>
-  //       </View>
-  //     </View>
-  //   </TouchableOpacity>
-  // );
-
-  // return (
-  // <SafeAreaView style={styles.container}>
-  //   <FlatList
-  //     data={chapter}
-  //     renderItem={renderItem}
-  //     keyExtractor={item => item.id.toString()}
-  //     showsHorizontalScrollIndicator={false}
-  //     showsVerticalScrollIndicator={false}
-  //   />
-  // </SafeAreaView>
-  // );
   const renderItem = ({item}) => (
     <TouchableOpacity
-      style={styles.chapterBox}
       onPress={() =>
         navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
           parent_module_id: item.id,
         })
       }>
-      <View style={styles.chapterCard}>
-        {/* Left Side: Chapter Image */}
-        {item.image && (
-          <Image
-            source={{
-              uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.image}`,
-            }}
-            style={styles.chapterImage}
-            resizeMode="cover"
-          />
-        )}
+      <LinearGradient
+        style={styles.chapterBox}
+        colors={
+          isDark
+            ? ['#2A89C6', '#3397CB', '#0C5CB4']
+            : [color.lightPrimary, color.lightPrimary, color.lightPrimary]
+        }
+        start={{x: 0, y: 0}} // Start from the left
+        end={{x: 1, y: 0}}>
+        <View style={styles.chapterCard}>
+          {item.image && (
+            <Image
+              source={{
+                uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.image}`,
+              }}
+              style={styles.chapterImage}
+              resizeMode="cover"
+            />
+          )}
 
-        {/* Right Side: Chapter Info */}
-        <View style={styles.chapterInfo}>
-          <Text style={styles.chapterName}>{item.name}</Text>
-          <Text style={styles.chapterDescription}>{item.description}</Text>
+          {/* Right Side: Chapter Info */}
+          <View style={styles.chapterInfo}>
+            <Text style={styles.chapterName}>{item.name}</Text>
+            <Text style={styles.chapterDescription}>{item.description}</Text>
+          </View>
         </View>
-      </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={style.chapterContainer}>
       <FlatList
         data={chapter}
         renderItem={renderItem}
@@ -324,69 +283,7 @@ const Index = ({navigation}) => {
 
 export default Index;
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: 'white',
-//     paddingHorizontal: 16,
-//   },
-//   chapterBox: {
-//     width: '100%',
-//     backgroundColor: color.lowPrimary,
-//     borderRadius: 15,
-//     marginVertical: 8,
-//     padding: 15,
-//     shadowColor: '#000',
-//     shadowOffset: {width: 0, height: 4},
-
-//     transform: [{scale: 1}],
-//     transition: 'transform 0.2s',
-//   },
-//   chapterBoxActive: {
-//     transform: [{scale: 1.05}],
-//   },
-//   chapterCard: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//   },
-//   iconContainer: {
-//     padding: 10,
-//     borderRadius: 30,
-//     backgroundColor: '#FFF',
-//     marginRight: 15,
-//     shadowColor: '#000',
-//     shadowOffset: {width: 0, height: 2},
-//     shadowOpacity: 0.2,
-//     shadowRadius: 4,
-//     elevation: 4,
-//   },
-//   chapterIcon: {
-//     fontSize: 28,
-//     color: color.black,
-//     fontWeight: 'bold',
-//   },
-//   chapterMiddle: {
-//     flex: 1,
-//     justifyContent: 'center',
-//   },
-//   chapterName: {
-//     fontSize: 18,
-//     color: color.black,
-//     fontWeight: 'bold',
-//     marginBottom: 4,
-//   },
-//   title: {
-//     fontSize: 14,
-//     color: color.black,
-//   },
-// });
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-  },
   chapterBox: {
     width: '100%',
     backgroundColor: color.lowPrimary,
@@ -422,13 +319,13 @@ const styles = StyleSheet.create({
   },
   chapterName: {
     fontSize: 18,
-    color: '#333', // Darker text color for emphasis
+    color: '#333',
     fontWeight: 'bold',
     marginBottom: 6,
   },
   chapterDescription: {
     fontSize: 14,
-    color: '#666', // Lighter text for description
+    color: '#666',
     lineHeight: 20,
   },
 });

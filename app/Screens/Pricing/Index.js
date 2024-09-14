@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,6 +9,9 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import color from '../../Constants/color';
+import {AppContext} from '../../theme/AppContext';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
 
 const PricingCard = ({item}) => {
   const handlePress = () => {
@@ -19,9 +22,9 @@ const PricingCard = ({item}) => {
   return (
     <TouchableOpacity style={styles.card}>
       <LinearGradient
-        colors={[color.darkPrimary, '#764ba2']} // Example gradient colors
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        colors={['#2A89C6', '#3397CB', '#0C5CB4']}
+        start={{x: 0, y: 0}} // Start from the left
+        end={{x: 1, y: 0}}
         style={styles.gradientBackground}>
         <Text style={styles.packageName}>{item.packageName}</Text>
         <Text style={styles.oneTimePrice}>Duration: {item.duration}</Text>
@@ -92,12 +95,16 @@ const Index = () => {
       placement: '€599 after 1st month Salary',
     },
   ];
+
+  const {isDark} = useContext(AppContext);
+
+  const style = isDark ? DarkTheme : LighTheme;
   return (
     <FlatList
       data={packages}
       renderItem={({item}) => <PricingCard item={item} />}
       keyExtractor={item => item.packageName}
-      contentContainerStyle={styles.container}
+      contentContainerStyle={style.packageContainer}
       showsVerticalScrollIndicator={false}
     />
   );
@@ -106,8 +113,8 @@ const Index = () => {
 export default Index;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFF',
+  packageContainer: {
+    backgroundColor: '#000',
     padding: 20,
   },
   card: {

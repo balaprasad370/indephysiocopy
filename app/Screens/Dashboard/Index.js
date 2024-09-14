@@ -173,13 +173,14 @@ const Index = ({navigation}) => {
             iconImage={liveclass}
             lock={lockImage}
             isLocked={true}
-            // ROUTE="Live"
+            ROUTE="Live"
           />
           <Menu
             name="Docs"
             iconImage={docs}
             lock={lockImage}
-            isLocked={false}
+            isLocked={true}
+            ROUTE="Documents"
           />
           <Menu
             name="Scorecard"

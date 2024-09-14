@@ -17,7 +17,6 @@ const Index = () => {
       </View>
       <View style={styles.inputField}>
         <OTPInput />
-        {/* <AuthInput placeholder="*********" /> */}
       </View>
       <View style={styles.OTPBottom}>
         <LineAfterBtn

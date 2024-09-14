@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
 
 const AuthNavigator = () => (
   <Stack.Navigator>
-    {/* <Stack.Navigator screenOptions={{headerShown: false}}> */}
     <Stack.Screen name={ROUTES.WELCOME} options={{headerShown: false}}>
       {props => (
         <ScreenWrapper>

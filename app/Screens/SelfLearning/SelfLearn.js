@@ -5,12 +5,17 @@ import LanguageComponent from '../../Components/LanguageComponent/LanguageCompon
 import {ROUTES} from '../../Constants/routes';
 import Example from './LanguageCard';
 import {AppContext} from '../../theme/AppContext';
+import LighTheme from '../../theme/LighTheme';
+import DarkTheme from '../../theme/Darktheme';
+import LinearGradient from 'react-native-linear-gradient';
 
 const SelfLearn = () => {
-  const {langCode} = useContext(AppContext);
+  const {langCode, isDark} = useContext(AppContext);
+
+  const style = isDark ? DarkTheme : LighTheme;
 
   return (
-    <View style={styles.selfLearn}>
+    <View style={style.selfLearn}>
       <Example
         route={ROUTES.LEVEL}
         langCode={langCode}
@@ -25,12 +30,4 @@ const SelfLearn = () => {
 
 export default SelfLearn;
 
-const styles = StyleSheet.create({
-  selfLearn: {
-    paddingTop: 5,
-    backgroundColor: 'white',
-    flex: 1,
-    paddingLeft: '3%',
-    paddingRight: '3%',
-  },
-});
+const styles = StyleSheet.create({});

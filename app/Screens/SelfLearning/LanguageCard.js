@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -11,44 +11,58 @@ import {
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
+import {AppContext} from '../../theme/AppContext';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
+import color from '../../Constants/color';
 
 export default function Example({id, img, name, description, route}) {
   const navigation = useNavigation();
 
+  const {isDark} = useContext(AppContext);
+  const style = isDark ? DarkTheme : LighTheme;
+
   return (
-    <TouchableOpacity key={id} onPress={() => navigation.navigate(route)}>
-      <View style={styles.card}>
-        <View style={styles.cardLikeWrapper}>
-          <TouchableOpacity onPress={() => handleSave(id)}></TouchableOpacity>
-        </View>
+    <LinearGradient
+      colors={[color.first, color.second, color.third]} // Gradient colors
+      start={{x: 0, y: 0}} // Start from the left
+      end={{x: 1, y: 0}} // End at the right
+      style={{borderRadius: 10}}>
+      <TouchableOpacity key={id} onPress={() => navigation.navigate(route)}>
+        <View style={styles.card}>
+          <View style={styles.cardLikeWrapper}>
+            <TouchableOpacity onPress={() => handleSave(id)}></TouchableOpacity>
+          </View>
 
-        <View style={styles.cardTop}>
-          <Image
-            alt=""
-            resizeMode="cover"
-            style={styles.cardImg}
-            source={{uri: img}}
-          />
-        </View>
-
-        <View style={styles.cardBody}>
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>{name}</Text>
-
-            <FontAwesome
-              color="#ea266d"
-              name="star"
-              solid={true}
-              size={12}
-              style={{marginBottom: 2}}
+          <View style={styles.cardTop}>
+            <Image
+              alt=""
+              resizeMode="cover"
+              style={styles.cardImg}
+              source={{uri: img}}
             />
           </View>
 
-          <Text style={styles.cardDates}>{description}</Text>
-          <Text style={styles.cardPrice}></Text>
+          <View style={styles.cardBody}>
+            <View style={styles.cardHeader}>
+              <Text style={style.selfcardTitle}>{name}</Text>
+
+              <FontAwesome
+                color="#ea266d"
+                name="star"
+                solid={true}
+                size={12}
+                style={{marginBottom: 2}}
+              />
+            </View>
+
+            <Text style={style.cardDates}>{description}</Text>
+            <Text style={styles.cardPrice}></Text>
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </LinearGradient>
   );
 }
 
@@ -83,7 +97,7 @@ const styles = StyleSheet.create({
   card: {
     position: 'relative',
     borderRadius: 8,
-    backgroundColor: '#f1f1f8',
+    // backgroundColor: '#f1f1f8',
     marginBottom: 16,
     shadowColor: 'rgba(0, 0, 0, 0.5)',
     shadowOffset: {
@@ -123,23 +137,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#232425',
-    marginRight: 'auto',
-  },
+
   cardStars: {
     marginLeft: 2,
     marginRight: 4,
     fontSize: 15,
     fontWeight: '500',
     color: '#232425',
-  },
-  cardDates: {
-    marginTop: 4,
-    fontSize: 16,
-    color: '#595a63',
   },
   cardPrice: {
     marginTop: 6,

@@ -9,10 +9,13 @@ import {Image} from 'react-native';
 import leaderboard from '../../assets/leaderboards.png';
 import storage from '../../Constants/storage';
 import axios from 'axios';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Index = ({Title, secondOption, optionClick, unique_id}) => {
   const navigation = useNavigation();
-  const {userData, path} = useContext(AppContext);
+  const {userData, path, student_id, isDark} = useContext(AppContext);
 
   const toggleModal = option => {
     if (option === 'Quiz') {
@@ -35,7 +38,7 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
         try {
           const response = await axios.get(`${path}/student/allscore`, {
             params: {
-              student_id: userData?.student_id,
+              student_id: student_id,
             },
             headers: {
               'Content-Type': 'application/json',
@@ -56,10 +59,12 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
   // Check if there is a mark with matching module_id
   const isResultsAvailable = marks.some(mark => mark.module_id === unique_id);
 
+  const style = isDark ? DarkTheme : LighTheme;
+
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity
-        style={styles.cardBox}
+        style={style.cardBox}
         onPress={() => toggleModal(optionClick)}>
         <View style={styles.statusContainer}>
           <Text style={styles.statusText}>{optionClick}</Text>
@@ -70,7 +75,7 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
               onPress={() =>
                 navigation.navigate(ROUTES.MARKS, {
                   module_id: unique_id,
-                  student_id: userData?.student_id,
+                  student_id: student_id,
                 })
               }>
               <Text
@@ -92,8 +97,16 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
             </TouchableOpacity>
           ) : null}
         </View>
-
-        <View style={styles.textContainer}>
+        <LinearGradient
+          style={styles.textContainer}
+          colors={
+            isDark
+              ? ['#2A89C6', '#3397CB', '#0C5CB4']
+              : ['#f4f5f8', '#f4f5f8', '#f4f5f8']
+          }
+          start={{x: 0, y: 0}} // Start from the left
+          end={{x: 1, y: 0}}>
+          {/* <View> */}
           {optionClick === 'Quiz' ? (
             <View
               style={{
@@ -101,8 +114,8 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
-              <View>
-                <Text style={styles.cardTitle}>{Title}</Text>
+              <View style={{width: '80%'}}>
+                <Text style={[styles.cardTitle]}>{Title}</Text>
                 <Text style={styles.cardSubtitle}>{secondOption}</Text>
               </View>
               <TouchableOpacity
@@ -128,7 +141,8 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
               <Text style={styles.cardSubtitle}>{secondOption}</Text>
             </>
           )}
-        </View>
+          {/* </View> */}
+        </LinearGradient>
       </TouchableOpacity>
     </View>
   );
@@ -142,16 +156,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     paddingHorizontal: 16,
   },
-  cardBox: {
-    width: '100%',
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#F1f4f8',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-  },
+
   statusContainer: {
     display: 'flex',
     flexDirection: 'row',

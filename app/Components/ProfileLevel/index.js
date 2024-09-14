@@ -23,7 +23,7 @@ import planeImage from '../../assets/plane.png';
 import planeImage2 from '../../assets/planewhite.png';
 
 const Index = () => {
-  const {path, isDark, userData, profileStatus, setProfileStatus} =
+  const {path, isDark, userData, profileStatus, setProfileStatus, student_id} =
     useContext(AppContext);
 
   const navigation = useNavigation();
@@ -57,7 +57,6 @@ const Index = () => {
     if (statusA === 1) return -1;
     if (statusB === 1) return 1;
 
-    // Both are incomplete, maintain order
     return 0;
   });
 
@@ -82,7 +81,7 @@ const Index = () => {
           const response = await axios.post(
             `${path}/profile/status`,
             {
-              student_id: userData?.student_id,
+              student_id: student_id,
             },
             {
               headers: {
@@ -216,7 +215,7 @@ const Index = () => {
       </>
     );
   };
-  // Looks good, try adding colours to the location icons and for each name like A1 German level etc
+
   return (
     <FlatList
       data={[{key: 'renderItem'}]}

@@ -20,7 +20,7 @@ import Calender from '../../Components/Calender/Index';
 import axios from 'axios';
 
 const Index = () => {
-  const {isDark, setIsDark, documents} = useContext(AppContext);
+  const {isDark, path, setIsDark, documents} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
   const [events, setEvents] = useState([]);
@@ -81,10 +81,8 @@ const Index = () => {
     setModalVisible(true);
   };
 
-  const {path} = useContext(AppContext);
-
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={style.documentContainer}>
       <FlatList
         data={documents}
         ListHeaderComponent={
@@ -157,10 +155,6 @@ const Index = () => {
 export default Index;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF',
-  },
   documentItem: {
     backgroundColor: '#FFF',
     padding: 10,

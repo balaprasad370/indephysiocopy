@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: color.inputColor,
   },
   authInputAlert: {
-    flex: 1, // Let the input take full available width
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderColor: color.danger,

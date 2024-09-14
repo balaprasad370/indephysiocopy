@@ -1,7 +1,6 @@
 export default COLORS = {
   white: '#FFF',
   black: '#000',
-  // darkPrimary: '#6FA7DB',
   darkPrimary: '#3898FF',
   lightPrimary: '#9AC9FF',
   lightSecondary: '#e4f2fc',
@@ -16,5 +15,7 @@ export default COLORS = {
   inputColor: '#EFF1F5',
   danger: 'red',
   safe: 'green',
-  // inputColor: '#FDFDFE',
+  first: '#2A89C6',
+  second: '#3397CB',
+  third: '#0C5CB4',
 };

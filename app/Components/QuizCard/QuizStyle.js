@@ -45,19 +45,8 @@ export const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
     shadowRadius: 3.84,
-
-    // Elevation for Android
     elevation: 5,
   },
-  // quizBox: {
-  //   display: 'flex',
-  //   flexDirection: 'column',
-  //   justifyContent: 'flex-start',
-  //   margin: 7,
-  //   backgroundColor: '#F6F5F2',
-
-  //   borderRadius: 12,
-  // },
   middleBox: {
     margin: 10,
   },

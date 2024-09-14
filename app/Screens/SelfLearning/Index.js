@@ -21,7 +21,8 @@ import storage from '../../Constants/storage';
 
 const Index = ({route}) => {
   const {parent_module_id} = route.params;
-  const {isDark, setIsDark, path, clientId, userData} = useContext(AppContext);
+  const {isDark, setIsDark, path, clientId, userData, student_id} =
+    useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
@@ -129,8 +130,6 @@ const Index = ({route}) => {
     }
   };
 
-  const student_id = userData?.student_id;
-
   useEffect(() => {
     getModules();
     readingMaterial();
@@ -167,7 +166,7 @@ const Index = ({route}) => {
       data={combinedData}
       renderItem={renderItem}
       keyExtractor={item => item.unique_id}
-      style={style.selfLearn}
+      style={style.selfLearnChapter}
       showsVerticalScrollIndicator={false}
     />
   );
