@@ -177,7 +177,7 @@ const StackNavigation = () => {
         name={ROUTES.SELF_LEARN_SCREEN}
         options={{
           headerLeftLabelVisible: false,
-          title: 'Chapter 1',
+          title: ' ',
           headerStyle: {
             backgroundColor: isDark ? '#000' : '#fff',
           },

@@ -602,7 +602,7 @@ const LighTheme = StyleSheet.create({
     marginRight: 'auto',
   },
   cardDates: {
-    marginTop: 4,
+    marginTop: 2,
     fontSize: 16,
     color: '#595a63',
   },

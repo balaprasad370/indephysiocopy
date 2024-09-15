@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import axios from 'axios';
 import {AppContext} from '../../theme/AppContext';
@@ -36,6 +37,7 @@ const Index = ({route}) => {
   const [flashcards, setFlashcards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [completed, setCompleted] = useState(0);
 
   const {path, isDark} = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
@@ -58,6 +60,54 @@ const Index = ({route}) => {
         console.error('Error fetching flashcard questions:', err);
       }
     }
+  };
+
+  const submitFlashcardCompletion = async () => {
+    const token = await storage.getStringAsync('token'); // Assuming token is stored
+
+    setCompleted(!completed);
+
+    Alert.alert(
+      'Submit Completion',
+      'Are you sure you want to submit your flashcard completion?',
+      [
+        {
+          text: 'No',
+          onPress: () => console.log('Submission cancelled'),
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            try {
+              const response = await axios.post(
+                `${path}/student/flashcardresults`,
+                {
+                  flash_id,
+                  completed: completed,
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Attach token
+                  },
+                },
+              );
+
+              console.log('Response:', response.data.msg);
+              Alert.alert('Success', response.data.msg); // Show success alert
+            } catch (error) {
+              console.error('Error submitting flashcard:', error);
+              Alert.alert(
+                'Error',
+                'There was a problem submitting the flashcard.',
+              );
+            }
+          },
+        },
+      ],
+      {cancelable: false}, // Prevent dismissing by clicking outside
+    );
   };
 
   useEffect(() => {
@@ -90,45 +140,64 @@ const Index = ({route}) => {
 
   return (
     <View style={style.flashCardcontainer}>
-      <View style={styles.progressContainer}>
-        <Text style={styles.progressText}>
-          {currentIndex + 1} / {flashcards.length}
-        </Text>
-        <View style={styles.progressBar}>
-          <View
+      <View style={style.flashCardcontainer}>
+        <View style={styles.progressContainer}>
+          <Text style={styles.progressText}>
+            {currentIndex + 1} / {flashcards.length}
+          </Text>
+          <View style={styles.progressBar}>
+            <View
+              style={[
+                styles.progress,
+                {width: `${((currentIndex + 1) / flashcards.length) * 100}%`},
+              ]}
+            />
+          </View>
+        </View>
+
+        <Flashcard
+          question={flash_question}
+          answer={flash_answer}
+          showAnswer={showAnswer}
+          onCardPress={swipeCard}
+        />
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            hitSlop={{x: 25, y: 15}}
+            onPress={goToPreviousCard}
+            style={[styles.button, currentIndex === 0 && styles.disabledButton]}
+            disabled={currentIndex === 0}>
+            <Text style={styles.buttonText}>Previous</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            hitSlop={{x: 25, y: 15}}
+            onPress={goToNextCard}
             style={[
-              styles.progress,
-              {width: `${((currentIndex + 1) / flashcards.length) * 100}%`},
+              styles.button,
+              currentIndex === flashcards.length - 1 && styles.disabledButton,
             ]}
-          />
+            disabled={currentIndex === flashcards.length - 1}>
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
         </View>
       </View>
-
-      <Flashcard
-        question={flash_question}
-        answer={flash_answer}
-        showAnswer={showAnswer}
-        onCardPress={swipeCard}
-      />
-
-      <View style={styles.buttonContainer}>
+      <View
+        style={{
+          backgroundColor: color.lightPrimary,
+          paddingVertical: 8,
+          borderRadius: 9,
+          width: '95%',
+        }}>
         <TouchableOpacity
-          hitSlop={{x: 25, y: 15}}
-          onPress={goToPreviousCard}
-          style={[styles.button, currentIndex === 0 && styles.disabledButton]}
-          disabled={currentIndex === 0}>
-          <Text style={styles.buttonText}>Previous</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          hitSlop={{x: 25, y: 15}}
-          onPress={goToNextCard}
-          style={[
-            styles.button,
-            currentIndex === flashcards.length - 1 && styles.disabledButton,
-          ]}
-          disabled={currentIndex === flashcards.length - 1}>
-          <Text style={styles.buttonText}>Next</Text>
+          onPress={() => submitFlashcardCompletion()}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignSelf: 'center',
+          }}>
+          <Text style={{fontSize: 18, color: 'black'}}>Marks as read</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -1,12 +1,14 @@
-import React, {useCallback, useRef, useEffect} from 'react';
+import React, {useCallback, useRef, useEffect, useContext} from 'react';
 import {BackHandler, Alert} from 'react-native';
 import {JitsiMeeting} from '@jitsi/react-native-sdk';
 import {useNavigation} from '@react-navigation/native';
+import {AppContext} from '../../theme/AppContext';
 
 const Meeting = ({route}) => {
   const jitsiMeeting = useRef(null);
   const navigation = useNavigation();
   const {room} = route.params;
+  const {userData} = useContext(AppContext);
 
   // Logic to handle when the meeting is ready to close
   const onReadyToClose = useCallback(() => {
@@ -51,26 +53,21 @@ const Meeting = ({route}) => {
     <JitsiMeeting
       config={{
         hideConferenceTimer: true,
-        customToolbarButtons: [
-          {
-            icon: 'https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png',
-            id: 'btn1',
-            text: 'Button one',
-          },
-          {
-            icon: 'https://w7.pngwing.com/pngs/987/537/png-transparent-download-downloading-save-basic-user-interface-icon-thumbnail.png',
-            id: 'btn2',
-            text: 'Button two',
-          },
-        ],
       }}
       eventListeners={eventListeners}
       flags={{
-        'call-integration.enabled': true,
-        'fullscreen.enabled': false,
-        'invite.enabled': true,
+        'call-integration.enabled': false,
+        'fullscreen.enabled': true,
         'pip.enabled': true,
         'pip-while-screen-sharing.enabled': true,
+        'security-options.enabled': false,
+        'invite.enabled': false,
+        'prejoinpage.enabled': false,
+        'breakout-rooms.enabled': false,
+      }}
+      userInfo={{
+        displayName: `${userData?.first_name} ${userData?.last_name}`,
+        email: `${userData?.username}`,
       }}
       ref={jitsiMeeting}
       style={{flex: 1}}

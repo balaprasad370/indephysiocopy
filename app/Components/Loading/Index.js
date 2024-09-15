@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import color from '../../Constants/color';
-import LoaderKit from 'react-native-loader-kit';
+// import LoaderKit from 'react-native-loader-kit';
 
 const Index = () => {
   return (
@@ -17,14 +17,14 @@ const Index = () => {
         alignItems: 'center',
         zIndex: 9999,
       }}>
-      <LoaderKit
+      {/* <LoaderKit
         style={{
           width: 50,
           height: 50,
         }}
         name={'LineScalePulseOutRapid'}
         color={color.lowPrimary}
-      />
+      /> */}
     </View>
   );
 };

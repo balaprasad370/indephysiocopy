@@ -42,7 +42,7 @@ const LeaderboardScreen = ({route}) => {
   ];
 
   const renderStudent = ({item, index}) => (
-    <View style={styles.studentRow}>
+    <View style={styles.studentRow} key={index}>
       <Text style={styles.rank}>{index + 1}</Text>
       <Text style={styles.studentName}>{item.name}</Text>
       <Text style={styles.marks}>{item.marks} Marks</Text>
@@ -105,7 +105,7 @@ const LeaderboardScreen = ({route}) => {
       <FlatList
         data={mockData.slice(3)} // Skip top 3
         renderItem={renderStudent}
-        keyExtractor={item => item.id}
+        // keyExtractor={item => item.id}
         contentContainerStyle={styles.flatListContent}
       />
     </View>

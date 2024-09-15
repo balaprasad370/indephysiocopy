@@ -114,19 +114,19 @@ const Index = ({navigation}) => {
             onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
             style={{
               paddingRight: '3%',
-              width: 55,
-              height: 55,
+              // width: 55,
+              // height: 55,
             }}>
-            <Image
+            {/* <Image
               source={require('../../Constants/person.jpg')}
               style={{
                 width: 55,
                 height: 55,
                 borderRadius: 50,
               }}
-            />
-            {/* <UserIcon
-              name="user"
+            /> */}
+            <UserIcon
+              name="user-circle"
               style={{
                 color: 'black',
                 paddingLeft: 15,
@@ -137,7 +137,7 @@ const Index = ({navigation}) => {
                 fontSize: 30,
                 backgroundColor: 'white',
               }}
-            /> */}
+            />
           </TouchableOpacity>
         </View>
         <FlatList
@@ -233,8 +233,19 @@ const Index = ({navigation}) => {
             </View>
           </ScrollView>
         </Modal>
-        <View style={{marginBottom: '20%'}}>
-          <View style={{display: 'flex', alignItems: 'flex-end'}}>
+        <View>
+          <View
+            style={{
+              marginBottom: '20%',
+              display: 'flex',
+              flexDirection: 'row',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text style={{fontSize: 18, color: 'black', fontWeight: 'bold'}}>
+              Pathway: {userData?.package}
+            </Text>
             <TouchableOpacity
               hitSlop={{x: 25, y: 15}}
               onPress={() => navigation.navigate(ROUTES.REGULAR)}

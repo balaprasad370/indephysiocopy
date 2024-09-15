@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import WebView from 'react-native-webview';
 import axios from 'axios';
@@ -6,6 +6,7 @@ import {AppContext} from '../../theme/AppContext';
 import storage from '../../Constants/storage';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
+import color from '../../Constants/color';
 
 const Index = ({route}) => {
   const [htmlData, setHtmlData] = useState('');
@@ -159,6 +160,56 @@ const Index = ({route}) => {
     }
   };
 
+  const [completed, setCompleted] = useState(0);
+
+  const submitReadStatus = async () => {
+    const token = await storage.getStringAsync('token'); // Assuming token is stored
+
+    setCompleted(!completed);
+
+    Alert.alert(
+      'Submit Completion',
+      'Are you sure you want to submit your flashcard completion?',
+      [
+        {
+          text: 'No',
+          onPress: () => console.log('Submission cancelled'),
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            try {
+              const response = await axios.post(
+                `${path}/student/readingresult`,
+                {
+                  read_id,
+                  completed: completed,
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Attach token
+                  },
+                },
+              );
+
+              console.log('Response:', response.data.msg);
+              Alert.alert('Success', response.data.msg); // Show success alert
+            } catch (error) {
+              console.error('Error submitting flashcard:', error);
+              Alert.alert(
+                'Error',
+                'There was a problem submitting the flashcard.',
+              );
+            }
+          },
+        },
+      ],
+      {cancelable: false}, // Prevent dismissing by clicking outside
+    );
+  };
+
   useEffect(() => {
     readingMaterial(read_id);
   }, []);
@@ -170,6 +221,22 @@ const Index = ({route}) => {
         source={{html: htmlData}}
         showsVerticalScrollIndicator={false}
       />
+      <View
+        style={{
+          backgroundColor: color.lightPrimary,
+          paddingVertical: 8,
+          borderRadius: 9,
+        }}>
+        <TouchableOpacity
+          onPress={submitReadStatus}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignSelf: 'center',
+          }}>
+          <Text style={{fontSize: 18, color: 'black'}}>Marks as read</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

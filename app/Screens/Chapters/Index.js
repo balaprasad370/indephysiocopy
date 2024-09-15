@@ -18,12 +18,11 @@ import storage from '../../Constants/storage';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import LinearGradient from 'react-native-linear-gradient';
-import LoadingArea from '../../Components/Loading/Index';
 
 const Index = ({navigation}) => {
   const route = useRoute();
   const {level_id} = route.params;
-  const {path, clientId, packageId, loader, setLoader, packageName, isDark} =
+  const {path, clientId, packageId, packageName, isDark} =
     useContext(AppContext);
   const [chapter, setChapter] = useState([]);
   let newPackageId = packageId;
@@ -207,13 +206,12 @@ const Index = ({navigation}) => {
   }, [level_id, packageName]);
 
   const chapterData = async () => {
-    setLoader(true);
     const token = await storage.getStringAsync('token');
     if (token) {
+      console.log(level_id, newPackageId, clientId);
       try {
         const response = await axios.get(`${path}/chapters`, {
           params: {
-            package_id: newPackageId,
             level_id: level_id,
             client_id: clientId,
           },
@@ -223,7 +221,6 @@ const Index = ({navigation}) => {
           },
         });
         setChapter(response.data);
-        setLoader(false);
       } catch (error) {
         console.log('error', error);
       }
@@ -240,6 +237,7 @@ const Index = ({navigation}) => {
       onPress={() =>
         navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
           parent_module_id: item.id,
+          title: item.name,
         })
       }>
       <LinearGradient
@@ -252,7 +250,7 @@ const Index = ({navigation}) => {
         start={{x: 0, y: 0}} // Start from the left
         end={{x: 1, y: 0}}>
         <View style={styles.chapterCard}>
-          {item.image && (
+          {item.image ? (
             <Image
               source={{
                 uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.image}`,
@@ -260,6 +258,15 @@ const Index = ({navigation}) => {
               style={styles.chapterImage}
               resizeMode="cover"
             />
+          ) : (
+            <View
+              style={{
+                backgroundColor: 'white',
+                width: 70,
+                height: 70,
+                borderRadius: 10,
+                marginRight: 15,
+              }}></View>
           )}
 
           {/* Right Side: Chapter Info */}
@@ -272,23 +279,28 @@ const Index = ({navigation}) => {
     </TouchableOpacity>
   );
 
-  if (loader) {
-    return (
-      <>
-        <LoadingArea />
-      </>
-    );
-  }
-
   return (
     <SafeAreaView style={style.chapterContainer}>
-      <FlatList
-        data={chapter}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-      />
+      {chapter.length > 0 ? (
+        <FlatList
+          data={chapter}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style={{fontSize: 18, fontWeight: '900'}}>
+            There is no content
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -300,8 +312,8 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: color.lowPrimary,
     borderRadius: 15,
-    marginVertical: 10,
-    padding: 15,
+    marginVertical: 7,
+    padding: 5,
     shadowColor: color.lowPrimary,
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,

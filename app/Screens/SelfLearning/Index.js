@@ -18,20 +18,11 @@ import ReadingMaterial from '../../Components/ReadingMaterial/Index';
 import {ROUTES} from '../../Constants/routes';
 import axios from 'axios';
 import storage from '../../Constants/storage';
-import LoadingArea from '../../Components/Loading/Index';
 
-const Index = ({route}) => {
+const Index = ({route, navigation}) => {
   const {parent_module_id} = route.params;
-  const {
-    isDark,
-    setIsDark,
-    path,
-    clientId,
-    userData,
-    student_id,
-    loader,
-    setLoader,
-  } = useContext(AppContext);
+  const {isDark, setIsDark, path, clientId, userData, student_id} =
+    useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
@@ -40,8 +31,13 @@ const Index = ({route}) => {
   const [flashCard, setFlashCard] = useState();
   const [modules, setModules] = useState();
 
+  const {title} = route.params;
+
+  useEffect(() => {
+    navigation.setOptions({title});
+  }, [title]);
+
   const getAssessments = async () => {
-    setLoader(true);
     try {
       const token = await storage.getStringAsync('token');
       if (token) {
@@ -52,7 +48,6 @@ const Index = ({route}) => {
           },
         });
         setAssessments(response.data[0]);
-        setLoader(false);
       } else {
         console.error('No token found');
       }
@@ -62,7 +57,6 @@ const Index = ({route}) => {
   };
 
   const getFlashCard = async () => {
-    setLoader(true);
     try {
       const token = await storage.getStringAsync('token');
       if (token) {
@@ -82,7 +76,6 @@ const Index = ({route}) => {
           description: item.flashcard_description,
         }));
         setFlashCard(materials);
-        setLoader(false);
       } else {
         console.error('No token found');
       }
@@ -92,7 +85,6 @@ const Index = ({route}) => {
   };
 
   const getModules = async () => {
-    setLoader(true);
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
@@ -112,7 +104,6 @@ const Index = ({route}) => {
           description: item.description,
         }));
         setModules(materials);
-        setLoader(false);
       } catch (error) {
         console.log('Error fetching data from modules', error.message);
       }
@@ -120,7 +111,6 @@ const Index = ({route}) => {
   };
 
   const readingMaterial = async () => {
-    setLoader(true);
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
@@ -140,7 +130,6 @@ const Index = ({route}) => {
           description: item.description,
         }));
         setReadingMaterials(materials);
-        setLoader(false);
       } catch (error) {
         console.log('Error from reading material:', error);
       }
@@ -157,8 +146,9 @@ const Index = ({route}) => {
     getAssessments();
   }, []);
 
-  const renderItem = ({item}) => (
+  const renderItem = ({item, index}) => (
     <QuizCard
+      key={index}
       Title={item.title}
       secondOption={item.description || 'Articles'}
       parent_module_id={parent_module_id}
@@ -178,22 +168,29 @@ const Index = ({route}) => {
     ...(modules ?? []), // Provide an empty array if undefined
   ];
 
-  if (loader) {
-    return (
-      <>
-        <LoadingArea />
-      </>
-    );
-  }
-
   return (
-    <FlatList
-      data={combinedData}
-      renderItem={renderItem}
-      keyExtractor={item => item.unique_id}
-      style={style.selfLearnChapter}
-      showsVerticalScrollIndicator={false}
-    />
+    <>
+      {combinedData.length > 0 ? (
+        <FlatList
+          data={combinedData}
+          renderItem={renderItem}
+          keyExtractor={item => item.unique_id}
+          style={style.selfLearnChapter}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style={{fontSize: 18, fontWeight: '900'}}>
+            There is no content
+          </Text>
+        </View>
+      )}
+    </>
   );
 };
 

@@ -1,14 +1,24 @@
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import StackNavigation from './StackNavigation';
 import AuthNavigator from './AuthNavigator';
 import {NavigationContainer} from '@react-navigation/native';
 import {AppContext} from '../theme/AppContext';
 import Toast from '../Components/Toast/Index';
+import storage from '../Constants/storage';
+import axios from 'axios';
 
 const AppNavigator = () => {
-  const {isAuthenticate, setIsAuthenticate, isDark, show} =
-    useContext(AppContext);
+  const {
+    isAuthenticate,
+    setIsAuthenticate,
+    isDark,
+    show,
+    packageName,
+    setPackageId,
+    packageId,
+    path,
+  } = useContext(AppContext);
 
   return (
     <NavigationContainer>

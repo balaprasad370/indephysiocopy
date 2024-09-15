@@ -62,7 +62,7 @@ const Index = () => {
           userType: 'student',
         },
       );
-
+      setLoadTime(false);
       if (response.status === 200) {
         await storage.setStringAsync('token', response.data.token);
         await storage.setBoolAsync('isLoggedIn', true);
@@ -75,6 +75,7 @@ const Index = () => {
         Alert.alert('Error', 'Unexpected response status', [{text: 'OK'}]);
       }
     } catch (error) {
+      setLoadTime(false);
       if (error.response) {
         console.log(error.response);
         const {status, data} = error.response;

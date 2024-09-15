@@ -16,7 +16,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import LoadingArea from '../../Components/Loading/Index';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -36,16 +35,8 @@ import LighTheme from '../../theme/LighTheme';
 
 const Index = ({route}) => {
   const {module_id, title} = route.params;
-  const {
-    path,
-    grandScore,
-    setGrandScore,
-    userData,
-    student_id,
-    isDark,
-    loader,
-    setLoader,
-  } = useContext(AppContext);
+  const {path, grandScore, setGrandScore, userData, student_id, isDark} =
+    useContext(AppContext);
   const navigation = useNavigation();
 
   const style = isDark ? DarkTheme : LighTheme;
@@ -88,7 +79,6 @@ const Index = ({route}) => {
   const [correctAnswers, setCorrectAnswers] = useState({});
 
   const getDetails = async () => {
-    setLoader(true);
     await axios
       .post(`${path}/questions/details`, {
         module_id: module_id, //279
@@ -108,7 +98,6 @@ const Index = ({route}) => {
         console.log('Correct Answer Indices:', correctAnswerIndices);
         setCorrectAnswers(correctAnswerIndices);
         setQuestion(res.data);
-        setLoader(false);
       })
       .catch(error => console.log('error', error));
   };
@@ -132,39 +121,96 @@ const Index = ({route}) => {
     setIsAttempted(false);
     setQuestionIndex(prevIndex => prevIndex + 1);
   };
-  const submitNow = async () => {
-    const token = await storage.getStringAsync('token');
-    setSelectedOption(null);
-    setQuestionIndex(0);
+  // const submitNow = async () => {
+  //   const token = await storage.getStringAsync('token');
+  //   setSelectedOption(null);
+  //   setQuestionIndex(0);
 
-    if (sound) {
-      sound.pause();
-    }
-    const newScore = score == 0 ? 0 : score;
-    try {
-      await axios.post(
-        `${path}/student/saveMarks`,
+  //   if (sound) {
+  //     sound.pause();
+  //   }
+  //   const newScore = score == 0 ? 0 : score;
+  //   try {
+  //     await axios.post(
+  //       `${path}/student/saveMarks`,
+  //       {
+  //         student_id: student_id,
+  //         module_id: module_id,
+  //         marks: newScore,
+  //         total: question.length,
+  //       },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     );
+  //     setScore(0);
+  //     setIsPlaying(false);
+  //     setIsAttempted(false);
+  //     navigation.goBack();
+  //     console.log('Marks saved successfully');
+  //   } catch (error) {
+  //     console.log('Error saving marks:', error.message);
+  //   }
+  // };
+
+  const submitNow = async () => {
+    // Show confirmation alert before proceeding
+    Alert.alert(
+      'Confirm Submission',
+      'Are you sure you want to submit your marks?',
+      [
         {
-          student_id: student_id,
-          module_id: module_id,
-          marks: newScore,
-          total: question.length,
+          text: 'No', // If "No" is pressed, do nothing
+          onPress: () => console.log('Submission cancelled'),
+          style: 'cancel',
         },
         {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+          text: 'Yes', // If "Yes" is pressed, proceed with submitNow logic
+          onPress: async () => {
+            const token = await storage.getStringAsync('token');
+            setSelectedOption(null);
+            setQuestionIndex(0);
+
+            if (sound) {
+              sound.pause();
+            }
+
+            const newScore = score === 0 ? 0 : score; // Fixed == to ===
+            try {
+              // Save the marks using POST request
+              await axios.post(
+                `${path}/student/saveMarks`,
+                {
+                  student_id: student_id,
+                  module_id: module_id,
+                  marks: newScore,
+                  total: question.length,
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
+                },
+              );
+
+              // Reset states and navigate back
+              setScore(0);
+              setIsPlaying(false);
+              setIsAttempted(false);
+              navigation.goBack();
+              console.log('Marks saved successfully');
+            } catch (error) {
+              console.log('Error saving marks:', error.message);
+            }
           },
         },
-      );
-      setScore(0);
-      setIsPlaying(false);
-      setIsAttempted(false);
-      navigation.goBack();
-      console.log('Marks saved successfully');
-    } catch (error) {
-      console.log('Error saving marks:', error.message);
-    }
+      ],
+      {cancelable: false}, // Prevent dismissing the alert by tapping outside
+    );
   };
 
   const handlePrev = () => {
@@ -482,7 +528,7 @@ const Index = ({route}) => {
           height: 9,
           borderRadius: 8,
           backgroundColor: attemptedQuestions.includes(index)
-            ? 'grey'
+            ? 'green'
             : 'white',
           borderColor: 'black',
           borderWidth: 1,
@@ -649,14 +695,6 @@ const Index = ({route}) => {
     }
     return title;
   };
-
-  if (loader) {
-    return (
-      <>
-        <LoadingArea />
-      </>
-    );
-  }
 
   const totalQuestionsCount = getTotalQuestionsCount(question);
   return (
