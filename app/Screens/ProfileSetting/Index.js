@@ -112,7 +112,7 @@ const Index = () => {
         </View>
 
         {/* Accessibility and Media Section  */}
-        <Text style={style.upperText}>Accessibility and Media</Text>
+        {/* <Text style={style.upperText}>Accessibility and Media</Text> */}
         {/* <View style={style.commonBackground}>
           <TouchableOpacity style={style.commonTouch}>
             <View style={style.settingLeft}>

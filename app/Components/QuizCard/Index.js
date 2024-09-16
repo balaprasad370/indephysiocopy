@@ -129,12 +129,14 @@ const Index = ({Title, secondOption, optionClick, unique_id}) => {
           isResultsAvailable ? (
             <TouchableOpacity
               hitSlop={{x: 25, y: 15}}
-              onPress={() =>
-                navigation.navigate(ROUTES.MARKS, {
-                  module_id: unique_id,
-                  student_id: student_id,
-                })
-              }>
+              onPress={() => {
+                optionClick === 'Quiz'
+                  ? navigation.navigate(ROUTES.MARKS, {
+                      module_id: unique_id,
+                      student_id: student_id,
+                    })
+                  : null;
+              }}>
               <Text
                 style={{
                   backgroundColor:

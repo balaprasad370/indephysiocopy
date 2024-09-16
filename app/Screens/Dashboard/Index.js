@@ -90,8 +90,16 @@ const Index = ({navigation}) => {
           <View style={styles.textstyle}>
             <Text style={style.textWel}>Welcome back</Text>
             <Text style={style.candName}>
-              {userData
+              {/* {userData
                 ? `${userData?.first_name} ${userData?.last_name} `
+                : null} */}
+              {userData
+                ? `${userData.first_name} ${userData.last_name}`.length > 20
+                  ? `${userData.first_name} ${userData.last_name}`.slice(
+                      0,
+                      20,
+                    ) + '...'
+                  : `${userData.first_name} ${userData.last_name}`
                 : null}
             </Text>
             <View
@@ -128,14 +136,14 @@ const Index = ({navigation}) => {
             <UserIcon
               name="user-circle"
               style={{
-                color: 'black',
-                paddingLeft: 15,
-                paddingRight: 15,
-                paddingTop: 12,
-                paddingBottom: 12,
+                color: isDark ? 'black' : 'white',
+                paddingLeft: 8,
+                paddingRight: 8,
+                paddingTop: 8,
+                paddingBottom: 8,
                 borderRadius: 100,
-                fontSize: 30,
-                backgroundColor: 'white',
+                fontSize: 32,
+                backgroundColor: isDark ? 'white' : 'black',
               }}
             />
           </TouchableOpacity>
@@ -181,7 +189,7 @@ const Index = ({navigation}) => {
             name="Live class"
             iconImage={liveclass}
             lock={lockImage}
-            isLocked={true}
+            isLocked={false}
             ROUTE="Live"
           />
           <Menu
@@ -236,15 +244,15 @@ const Index = ({navigation}) => {
         <View>
           <View
             style={{
-              marginBottom: '20%',
               display: 'flex',
               flexDirection: 'row',
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: 18, color: 'black', fontWeight: 'bold'}}>
+            <Text style={{fontSize: 17, color: 'black', fontWeight: 'bold'}}>
               Pathway: {userData?.package}
+              {/* Pathway: Professionals */}
             </Text>
             <TouchableOpacity
               hitSlop={{x: 25, y: 15}}

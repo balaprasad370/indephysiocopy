@@ -54,6 +54,27 @@ const Index = () => {
     return new Date(now.setHours(23, 59, 59, 999));
   };
 
+  // const getEventSchedule = async () => {
+  //   const token = await storage.getStringAsync('token');
+  //   try {
+  //     const res = await axios({
+  //       method: 'post',
+  //       url: path + '/admin/schedule/arrange',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: 'Bearer ' + token,
+  //       },
+  //     });
+  //     //  seteventsSchedule(res.data);
+  //     console.log(res.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getEventSchedule();
+  // }, []);
+
   const fetchSchedule = async () => {
     const token = await storage.getStringAsync('token');
     if (token) {
@@ -149,7 +170,54 @@ const Index = () => {
 
                 currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
               }
-            } else if (item.schdeule_recur_type === 'weekly') {
+            }
+            // else if (item.schdeule_recur_type === 'weekly') {
+            //   let weekdays = item.schedule_recur_week_index
+            //     .split(',')
+            //     .map(Number);
+            //   let excludeDates = item.schedule_recur_exclude_dates
+            //     ? item.schedule_recur_exclude_dates
+            //         .split(',')
+            //         .map(date => new Date(date.trim()))
+            //     : [];
+            //   let currentDate = new Date(recurringStartDate);
+
+            //   while (currentDate <= recurringEndDate) {
+            //     let dayOfWeek = currentDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
+            //     if (weekdays.includes(dayOfWeek)) {
+            //       let eventStartDate = new Date(currentDate);
+            //       let eventEndDate = new Date(currentDate);
+
+            //       eventStartDate.setHours(startHours, startMinutes);
+            //       eventEndDate.setHours(endHours, endMinutes);
+
+            //       // Check if the currentDate is not in the excluded dates
+            //       let isExcluded = excludeDates.some(
+            //         excludeDate =>
+            //           excludeDate.getFullYear() === currentDate.getFullYear() &&
+            //           excludeDate.getMonth() === currentDate.getMonth() &&
+            //           excludeDate.getDate() === currentDate.getDate(),
+            //       );
+
+            //       if (!isExcluded) {
+            //         fetchedEvents.push({
+            //           title: item.title,
+            //           description: item.description,
+            //           start: eventStartDate,
+            //           end: eventEndDate,
+            //           day: eventStartDate.toLocaleDateString('en-US', {
+            //             weekday: 'long',
+            //           }),
+            //           room_name: item.room_name,
+            //         });
+            //       }
+            //     }
+
+            //     currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+            //   }
+            // }
+            else if (item.schdeule_recur_type === 'weekly') {
               let weekdays = item.schedule_recur_week_index
                 .split(',')
                 .map(Number);
@@ -433,8 +501,8 @@ const Index = () => {
                 style={styles.joinButton}
                 onPress={() => {
                   navigation.navigate('Meeting', {
-                    // room: selectedEvent.room_name,
-                    room: 'ic2wYAPi7sqlUZKi',
+                    room: selectedEvent.room_name,
+                    // room: 'ic2wYAPi7sqlUZKi',
                   });
                   setModalVisible(false);
                 }}>
@@ -595,86 +663,3 @@ const styles = StyleSheet.create({
 });
 
 export default Index;
-
-const data = [
-  {
-    client_id: 7,
-    created_date: '2024-09-12T14:43:23.000Z',
-    description: 'repeating class',
-    modified_date: '2024-09-12T14:43:23.000Z',
-    package_id: 1,
-    room_name: '8EXcEMu8kKPJCGW4',
-    schdeule_recur_type: 'weekly',
-    schedule_end_date: '2024-09-02T00:00:00.000Z',
-    schedule_end_time: '07:30:00',
-    schedule_id: 94,
-    schedule_is_recurring: 1,
-    schedule_recur_exclude_dates: ',2024-09-10,2024-09-09',
-    schedule_recur_week_index: '1',
-    schedule_recurring_date_end: '0000-00-00',
-    schedule_recurring_date_start: '0000-00-00',
-    schedule_start_date: '2024-09-02T00:00:00.000Z',
-    schedule_start_time: '07:00:00',
-    title: 'superfast - class1',
-  },
-  {
-    client_id: 7,
-    created_date: '2024-09-12T14:55:59.000Z',
-    description: '',
-    modified_date: '2024-09-12T14:55:59.000Z',
-    package_id: 1,
-    room_name: 'XU9LtyDFFPcHVMvj',
-    schdeule_recur_type: 'weekly',
-    schedule_end_date: '2024-09-04T00:00:00.000Z',
-    schedule_end_time: '07:30:00',
-    schedule_id: 96,
-    schedule_is_recurring: 1,
-    schedule_recur_exclude_dates: '',
-    schedule_recur_week_index: '3',
-    schedule_recurring_date_end: '0000-00-00',
-    schedule_recurring_date_start: '0000-00-00',
-    schedule_start_date: '2024-09-04T00:00:00.000Z',
-    schedule_start_time: '07:00:00',
-    title: 'superfast - class 2',
-  },
-  {
-    client_id: 7,
-    created_date: '2024-09-12T14:56:28.000Z',
-    description: '',
-    modified_date: '2024-09-12T14:56:28.000Z',
-    package_id: 1,
-    room_name: 'ic2wYAPi7sqlUZKi',
-    schdeule_recur_type: 'weekly',
-    schedule_end_date: '2024-09-06T00:00:00.000Z',
-    schedule_end_time: '07:30:00',
-    schedule_id: 97,
-    schedule_is_recurring: 1,
-    schedule_recur_exclude_dates: '',
-    schedule_recur_week_index: '5',
-    schedule_recurring_date_end: '0000-00-00',
-    schedule_recurring_date_start: '0000-00-00',
-    schedule_start_date: '2024-09-06T00:00:00.000Z',
-    schedule_start_time: '07:00:00',
-    title: 'superfast -class -3',
-  },
-  {
-    client_id: 7,
-    created_date: '2024-09-12T14:59:56.000Z',
-    description: '',
-    modified_date: '2024-09-12T14:59:56.000Z',
-    package_id: 1,
-    room_name: 'VWiKyA5C4pX8ZHUz',
-    schdeule_recur_type: '',
-    schedule_end_date: '2024-09-15T00:00:00.000Z',
-    schedule_end_time: '07:30:00',
-    schedule_id: 98,
-    schedule_is_recurring: 0,
-    schedule_recur_exclude_dates: '',
-    schedule_recur_week_index: '',
-    schedule_recurring_date_end: '0000-00-00',
-    schedule_recurring_date_start: '0000-00-00',
-    schedule_start_date: '2024-09-15T00:00:00.000Z',
-    schedule_start_time: '07:00:00',
-    title: 'superfast extra class',
-  },
-];

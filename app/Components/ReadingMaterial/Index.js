@@ -169,7 +169,7 @@ const Index = ({route}) => {
 
     Alert.alert(
       'Submit Completion',
-      'Are you sure you want to submit your flashcard completion?',
+      'Are you sure you want to submit your Reading material completion?',
       [
         {
           text: 'No',

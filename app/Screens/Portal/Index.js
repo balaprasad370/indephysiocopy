@@ -15,25 +15,13 @@ import Share from 'react-native-share';
 import {AppContext} from '../../theme/AppContext';
 
 const ReferralScreen = () => {
-  const {userData, student_id} = useContext(AppContext);
-  const [referralCode, setReferralCode] = useState('');
-
-  useEffect(() => {
-    // Generate referral code based on the user's name and student ID
-    const generateReferralCode = () => {
-      return `${userData?.first_name?.toUpperCase().slice(0, 3)}${student_id}`;
-    };
-
-    if (userData) {
-      setReferralCode(generateReferralCode());
-    }
-  }, [userData]);
+  const {userData, student_id, referralcode} = useContext(AppContext);
 
   const handleShare = async () => {
     const shareOptions = {
       title: 'Join Indephysio and Earn Rewards!',
-      message: `Use my referral code ${referralCode} to sign up and start earning rewards today!`,
-      url: 'https://portal.indephysio.com/app',
+      message: `Use my referral code ${referralcode} to sign up and start earning rewards today!`,
+      url: 'https://portal.indephysio.com',
     };
 
     try {
@@ -44,11 +32,11 @@ const ReferralScreen = () => {
   };
 
   const handleVisitWebsite = () => {
-    Linking.openURL('https://portal.indephysio.com/app');
+    Linking.openURL('https://portal.indephysio.com');
   };
 
   const handleCopyCode = () => {
-    Clipboard.setString(referralCode);
+    Clipboard.setString(referralcode);
     Alert.alert('Copied!', 'Referral code copied to clipboard.');
   };
 
@@ -101,7 +89,7 @@ const ReferralScreen = () => {
             <View style={styles.cardContainer}>
               <View style={styles.scratchCard}>
                 <Text style={styles.referralCodeTitle}>Your Referral Code</Text>
-                <Text style={styles.referralCode}>{referralCode}</Text>
+                <Text style={styles.referralCode}>{referralcode}</Text>
               </View>
               <TouchableOpacity
                 hitSlop={{x: 25, y: 15}}

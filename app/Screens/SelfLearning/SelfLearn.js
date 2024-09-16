@@ -36,17 +36,9 @@ const SelfLearn = () => {
 
   return (
     <View style={style.selfLearn}>
-      <View
-        style={{
-          width: '100%',
-          elevation: 1,
-          paddingVertical: 6,
-          backgroundColor: 'white',
-        }}>
+      <View style={style.example}>
         <View style={{width: '90%', alignSelf: 'center'}}>
-          <Text style={{fontSize: 22, color: color.black, fontWeight: 'bold'}}>
-            Subjects
-          </Text>
+          <Text style={style.exampleScreen}>Subjects</Text>
         </View>
       </View>
 

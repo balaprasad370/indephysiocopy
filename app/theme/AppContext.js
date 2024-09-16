@@ -37,6 +37,7 @@ export const AuthProvider = ({children}) => {
   const [loadTime, setLoadTime] = useState(false);
   const [error, setError] = useState(false);
   const [documents, setDocuments] = useState([]);
+  const [referralcode, setReferralCode] = useState();
 
   const getDatFunc = async () => {
     try {
@@ -52,6 +53,7 @@ export const AuthProvider = ({children}) => {
         });
         setStudentId(res.data?.student_id);
         setPackageName(res.data?.package);
+        setReferralCode(res.data?.referral_student_id);
         setUserData(res.data);
       }
     } catch (error) {
@@ -210,6 +212,7 @@ export const AuthProvider = ({children}) => {
     setLevelId,
     packageName,
     student_id,
+    referralcode,
   };
 
   const style = isDark ? DarkTheme : LighTheme;

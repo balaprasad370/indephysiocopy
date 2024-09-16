@@ -34,7 +34,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen
         name={ROUTES.LIVE_CLASS}
         component={LiveClasses}
-        options={{headerShown: false}}
+        options={{headerShown: true}}
       />
       {/* <Drawer.Screen
         name={ROUTES.DOCUMENTS}
@@ -44,12 +44,12 @@ const DrawerNavigator = () => {
       <Drawer.Screen
         name={ROUTES.SELF_LEARN}
         component={SelfLearn}
-        options={{headerShown: false}}
+        options={{headerShown: true}}
       />
       <Drawer.Screen
         name=" "
         component={BottomNavigator}
-        options={{headerShown: false}}
+        options={{headerShown: true}}
       />
     </Drawer.Navigator>
   );

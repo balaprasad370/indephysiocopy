@@ -660,6 +660,17 @@ const LighTheme = StyleSheet.create({
     padding: scale(12),
     backgroundColor: color.white,
   },
+  exampleScreen: {
+    fontSize: 22,
+    color: color.black,
+    fontWeight: 'bold',
+  },
+  example: {
+    width: '100%',
+    elevation: 1,
+    paddingVertical: 6,
+    backgroundColor: color.white,
+  },
 });
 
 export default LighTheme;

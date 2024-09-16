@@ -674,5 +674,16 @@ const DarkTheme = StyleSheet.create({
     padding: scale(12),
     backgroundColor: color.black,
   },
+  exampleScreen: {
+    fontSize: 22,
+    color: color.white,
+    fontWeight: 'bold',
+  },
+  example: {
+    width: '100%',
+    elevation: 1,
+    paddingVertical: 6,
+    backgroundColor: color.black,
+  },
 });
 export default DarkTheme;
