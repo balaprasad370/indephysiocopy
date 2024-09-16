@@ -1,5 +1,6 @@
 import {
   FlatList,
+  Image,
   StyleSheet,
   Switch,
   Text,
@@ -21,6 +22,7 @@ import LighTheme from '../../theme/LighTheme';
 import storage from '../../Constants/storage';
 import {ROUTES} from '../../Constants/routes';
 import {useNavigation} from '@react-navigation/native';
+import UserIcon from 'react-native-vector-icons/FontAwesome';
 
 const Index = () => {
   const navigation = useNavigation();
@@ -61,6 +63,66 @@ const Index = () => {
   const RenderItem = () => {
     return (
       <View style={{}}>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+          }}>
+          <View
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 20,
+            }}>
+            <TouchableOpacity>
+              <Image
+                src={'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
+                style={{width: 90, height: 90}}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: color.lightPrimary,
+                padding: 8,
+                borderRadius: 10,
+                width: '45%',
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 16,
+                  color: isDark ? color.white : color.black,
+                }}>
+                Take a photo
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: color.lightPrimary,
+                padding: 8,
+                borderRadius: 10,
+                width: '45%',
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 16,
+                  color: isDark ? color.white : color.black,
+                }}>
+                Choose from gallery
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         <View style={style.commonBackground}>
           {/* <View style={style.commonTouchInput}>
             <Icon name="search1" style={style.settingIcon} />

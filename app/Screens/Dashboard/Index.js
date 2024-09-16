@@ -133,7 +133,7 @@ const Index = ({navigation}) => {
                 borderRadius: 50,
               }}
             /> */}
-            <UserIcon
+            {/* <UserIcon
               name="user-circle"
               style={{
                 color: isDark ? 'black' : 'white',
@@ -145,6 +145,10 @@ const Index = ({navigation}) => {
                 fontSize: 32,
                 backgroundColor: isDark ? 'white' : 'black',
               }}
+            /> */}
+            <Image
+              src={'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
+              style={{width: 55, height: 55}}
             />
           </TouchableOpacity>
         </View>

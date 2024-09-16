@@ -48,18 +48,9 @@ const DrawerContent = props => {
             style={{
               paddingRight: '3%',
             }}>
-            <UserIcon
-              name="user-circle"
-              style={{
-                color: 'black',
-                paddingLeft: 15,
-                paddingRight: 15,
-                paddingTop: 12,
-                paddingBottom: 12,
-                borderRadius: 100,
-                fontSize: 50,
-                backgroundColor: 'white',
-              }}
+            <Image
+              src={'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
+              style={{width: 55, height: 55}}
             />
           </TouchableOpacity>
           <Text style={styles.username}>

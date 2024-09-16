@@ -37,7 +37,8 @@ const Index = () => {
   const [isNextWeek, setIsNextWeek] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const {isDark, path, packageId, clientId} = useContext(AppContext);
+  const {isDark, path, packageId, clientId, packageName} =
+    useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
 
   const getStartOfWeek = () => {
@@ -83,7 +84,6 @@ const Index = () => {
           params: {
             package_id: packageId,
             client_id: clientId,
-            // client_id: clientId,
           },
           headers: {
             'Content-Type': 'application/json',
@@ -221,30 +221,81 @@ const Index = () => {
               let weekdays = item.schedule_recur_week_index
                 .split(',')
                 .map(Number);
-              let currentDate = new Date(recurringStartDate);
-              while (currentDate <= recurringEndDate) {
-                let dayOfWeek = currentDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-                if (weekdays.includes(dayOfWeek)) {
-                  let eventStartDate = new Date(currentDate);
-                  let eventEndDate = new Date(currentDate);
+              // Check if the start and end dates are invalid
+              const invalidDate = '0000-00-00';
+              const isInvalidDate =
+                item.schedule_recurring_date_start === invalidDate ||
+                item.schedule_recurring_date_end === invalidDate;
 
-                  eventStartDate.setHours(startHours, startMinutes);
-                  eventEndDate.setHours(endHours, endMinutes);
+              // If the start and end dates are invalid, just loop through the current week
+              if (isInvalidDate) {
+                // Get the current date
+                let currentDate = new Date();
+                // Get the start of the current week (Monday)
+                let startOfWeek = new Date(
+                  currentDate.setDate(
+                    currentDate.getDate() - currentDate.getDay() + 1,
+                  ),
+                );
 
-                  fetchedEvents.push({
-                    title: item.title,
-                    description: item.description,
-                    start: eventStartDate,
-                    end: eventEndDate,
-                    day: eventStartDate.toLocaleDateString('en-US', {
-                      weekday: 'long',
-                    }),
-                    room_name: item.room_name,
-                  });
+                // Loop through the days of the week (Monday to Sunday)
+                for (let i = 0; i < 7; i++) {
+                  let dayOfWeek = startOfWeek.getDay() % 7; // Get the day of the week (0 = Sunday, 1 = Monday, etc.)
+
+                  console.log(startOfWeek.getDay() % 7);
+                  if (weekdays.includes(dayOfWeek)) {
+                    let eventStartDate = new Date(startOfWeek);
+                    let eventEndDate = new Date(startOfWeek);
+
+                    eventStartDate.setHours(startHours, startMinutes);
+                    eventEndDate.setHours(endHours, endMinutes);
+
+                    fetchedEvents.push({
+                      title: item.title,
+                      description: item.description,
+                      start: eventStartDate,
+                      end: eventEndDate,
+                      day: eventStartDate.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                      }),
+                      room_name: item.room_name,
+                    });
+                  }
+
+                  startOfWeek.setDate(startOfWeek.getDate() + 1); // Move to the next day
                 }
+              } else {
+                // Fallback to original logic if start and end dates are valid
+                let weekdays = item.schedule_recur_week_index
+                  .split(',')
+                  .map(Number);
+                let currentDate = new Date(recurringStartDate);
 
-                currentDate.setDate(currentDate.getDate() + 1);
+                while (currentDate <= recurringEndDate) {
+                  let dayOfWeek = currentDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
+                  if (weekdays.includes(dayOfWeek)) {
+                    let eventStartDate = new Date(currentDate);
+                    let eventEndDate = new Date(currentDate);
+
+                    eventStartDate.setHours(startHours, startMinutes);
+                    eventEndDate.setHours(endHours, endMinutes);
+
+                    fetchedEvents.push({
+                      title: item.title,
+                      description: item.description,
+                      start: eventStartDate,
+                      end: eventEndDate,
+                      day: eventStartDate.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                      }),
+                      room_name: item.room_name,
+                    });
+                  }
+
+                  currentDate.setDate(currentDate.getDate() + 1);
+                }
               }
             }
           }
@@ -315,7 +366,7 @@ const Index = () => {
                 item.start.getHours() >= 12 ? 'PM' : 'AM'
               }`}
             </Text>
-            <Text style={styles.pathway}>Superfast Pathway</Text>
+            <Text style={styles.pathway}>{packageName} Pathway</Text>
           </View>
         </View>
       </LinearGradient>
@@ -323,7 +374,7 @@ const Index = () => {
         <Text style={style.liveClasscardTitle}>{item.title}</Text>
 
         <View style={{marginTop: scale(5)}}>
-          <Text style={style.medium}>GERMAN - English Medium</Text>
+          <Text style={style.medium}>GERMAN - {item.description}</Text>
         </View>
         <View style={styles.cardTimeDiv}>
           <Text style={style.medium}>Dependent Task : Quiz 14</Text>

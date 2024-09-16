@@ -23,7 +23,7 @@ export const AuthProvider = ({children}) => {
   const [isDark, setIsDark] = useState(storage.getBool('theme'));
   const [langId, setLangId] = useState(1); // 0 // 1
   const [levelId, setLevelId] = useState(6); //6  // 7
-  const [packageId, setPackageId] = useState(3); // 3 // 1
+  const [packageId, setPackageId] = useState(0); // 3 // 1
   const [clientId, setClientId] = useState(8); // 8 // 7
   const [student_id, setStudentId] = useState(null);
   const [grandScore, setGrandScore] = useState(0);
@@ -100,7 +100,7 @@ export const AuthProvider = ({children}) => {
             Authorization: 'Bearer ' + token,
           },
         });
-        console.log(response.data);
+        console.log('helo package data', response.data);
         // setChapter(response.data);
       } catch (error) {
         console.log('Error fetching package data:', error);
@@ -139,12 +139,13 @@ export const AuthProvider = ({children}) => {
   const getPackageId = async () => {
     try {
       const token = await storage.getStringAsync('token');
-      const isLoggedIn = await storage.getBoolAsync('isLoggedIn');
-      console.log(userData?.package);
-      if (token && isLoggedIn) {
+
+      if (token && student_id) {
         const response = await axios.get(`${path}/package/alias`, {
           params: {
             package_name: userData?.package, // Using the correct property here
+            client_id: clientId,
+            // lang_id:langId, for future purpose
           },
           headers: {
             'Content-Type': 'application/json',
@@ -169,6 +170,8 @@ export const AuthProvider = ({children}) => {
   // }, []);
 
   useEffect(() => {
+    // fetchPackageData();
+    getPackageId();
     fetchDocumentStatus();
   }, [userData]);
 
