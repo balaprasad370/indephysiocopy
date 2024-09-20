@@ -12,7 +12,7 @@ import {ROUTES} from '../../Constants/routes';
 import {AppContext} from '../../theme/AppContext';
 import {useNavigation} from '@react-navigation/native';
 import storage from '../../Constants/storage';
-import LoadComponent from '../../Components/Loading/Index';
+import LoadComponent from '../../Components/Loading/Loading';
 import Logo from '../../assets/logo.png';
 import scale from '../../utils/utils';
 

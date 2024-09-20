@@ -17,16 +17,20 @@ import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import LinearGradient from 'react-native-linear-gradient';
 import logo from '../../assets/logo.png';
+import color from '../../Constants/color';
 
 const Certificate = ({route}) => {
   const viewShotRef = useRef();
   const {module_id} = route.params;
-  const {path, student_id, isDark} = useContext(AppContext);
+
+  console.log(module_id);
+  const {path, isDark, userData} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
   const [marks, setMarks] = useState(null);
   const [total, setTotal] = useState(0);
+  const [date, setDate] = useState();
 
   useEffect(() => {
     const fetchMarks = async () => {
@@ -34,7 +38,6 @@ const Certificate = ({route}) => {
       try {
         const response = await axios.get(`${path}/student/score`, {
           params: {
-            student_id,
             module_id,
           },
           headers: {
@@ -43,6 +46,7 @@ const Certificate = ({route}) => {
           },
         });
         setMarks(response.data?.result?.marks);
+        setDate(response.data?.result?.modified_date);
         setTotal(response.data?.result?.total);
       } catch (error) {
         console.error('Error fetching marks:', error);
@@ -50,7 +54,7 @@ const Certificate = ({route}) => {
     };
 
     fetchMarks();
-  }, [student_id, module_id]);
+  }, [module_id]);
 
   const captureAndShareScreenshot = () => {
     Alert.alert('');
@@ -58,7 +62,7 @@ const Certificate = ({route}) => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={{flex: 1}}>
       <View style={style.marksContainer}>
         <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.9}}>
           {/* <View style={styles.certificateCard}> */}
@@ -81,7 +85,9 @@ const Certificate = ({route}) => {
               <View style={styles.decorativeLine} />
 
               {/* Student Name */}
-              <Text style={styles.studentName}>John Doe</Text>
+              <Text style={styles.studentName}>
+                {userData?.first_name} {userData?.last_name}
+              </Text>
               <Text style={styles.descriptionText}>
                 has successfully completed
               </Text>
@@ -98,7 +104,10 @@ const Certificate = ({route}) => {
               </View>
 
               {/* Date and Issuer */}
-              <Text style={styles.date}>Date: September 8, 2024</Text>
+              <Text style={styles.date}>
+                Date: {new Date(date).toLocaleDateString()}
+              </Text>
+
               <Text style={styles.issuer}>
                 Issued by: ABC Certification Board
               </Text>
@@ -218,7 +227,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 16,
-    color: '#777',
+    color: '#000',
     marginBottom: 5,
     textAlign: 'center',
     fontFamily: 'sans-serif',

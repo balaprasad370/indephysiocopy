@@ -74,13 +74,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.indephysio"
+    namespace "com.inde.physio"
     defaultConfig {
-        applicationId "com.indephysio"
+        applicationId "com.inde.physio"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "3.0"
+        versionCode 2
+        versionName "2.0"
     }
     signingConfigs {
         debug {

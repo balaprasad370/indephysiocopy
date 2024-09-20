@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.indephysio",
+  "applicationId": "com.inde.physio",
   "variantName": "release",
   "elements": [
     {

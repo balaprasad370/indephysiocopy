@@ -1,5 +1,6 @@
 import {
   Image,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -26,9 +27,10 @@ const Index = () => {
   const style = isDark ? DarkTheme : LighTheme;
 
   return (
-    <View style={{flex: 1, backgroundColor: color.white}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: isDark ? color.black : color.white}}>
       <CalendarComponent />
-    </View>
+    </SafeAreaView>
   );
 };
 

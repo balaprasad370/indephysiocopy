@@ -4,7 +4,6 @@ import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import LighTheme from './LighTheme';
 import {DarkTheme} from '@react-navigation/native';
-import {StatusBar} from 'react-native';
 
 // Create the context
 export const AppContext = createContext();
@@ -30,7 +29,7 @@ export const AuthProvider = ({children}) => {
   const [profileStatus, setProfileStatus] = useState([]);
   const [isAuthenticate, setIsAuthenticate] = useState(false);
   const [subscribe, setSubscribe] = useState(0);
-  // const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [show, setShow] = useState(storage.getBool('show'));
   const [documentStatus, setDocumentStatus] = useState('Not initialize');
   const [userData, setUserData] = useState(null);
@@ -129,6 +128,7 @@ export const AuthProvider = ({children}) => {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(response.data);
         setDocumentStatus(response.data.status);
       } catch (error) {
         console.error('Error fetching document status:', error);
@@ -138,6 +138,7 @@ export const AuthProvider = ({children}) => {
 
   const getPackageId = async () => {
     try {
+      let level = '';
       const token = await storage.getStringAsync('token');
 
       if (token && student_id) {
@@ -145,11 +146,12 @@ export const AuthProvider = ({children}) => {
           params: {
             package_name: userData?.package, // Using the correct property here
             client_id: clientId,
+            level: level,
             // lang_id:langId, for future purpose
           },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // Set token in headers
+            Authorization: `Bearer ${token}`,
           },
         });
         if (response.status === 200) {
@@ -161,6 +163,46 @@ export const AuthProvider = ({children}) => {
       console.error('Error:', error);
     }
   };
+
+  // app.get('/package/alias', async (req, res) => {
+  //   const {package_name, level, lang_id} = req.query;
+
+  //   if (lang_id !== 1344) {
+  //     if (level === 'A1') {
+  //       const sql =
+  //         'SELECT * FROM package_alias WHERE package_name = ? AND level = ? ';
+  //       connection.query(sql, [package_name, level], (err, results) => {
+  //         if (err) {
+  //           console.error(err);
+  //           res.status(500).send(err);
+  //         } else {
+  //           res.status(200).json(results);
+  //         }
+  //       });
+  //     } else {
+  //       const sql = 'SELECT * FROM package_alias WHERE package_name = ? AND lang_id = ?';
+  //     connection.query(sql, [package_name, lang_id], (err, results) => {
+  //       if (err) {
+  //         console.error(err);
+  //         res.status(500).send(err);
+  //       } else {
+  //         res.status(200).json(results);
+  //       }
+  //     });
+  //     }
+
+  //   } else {
+  //     const sql = 'SELECT * FROM package_alias WHERE package_name = ? ';
+  //     connection.query(sql, [package_name], (err, results) => {
+  //       if (err) {
+  //         console.error(err);
+  //         res.status(500).send(err);
+  //       } else {
+  //         res.status(200).json(results);
+  //       }
+  //     });
+  //   }
+  // });
 
   // useEffect(() => {
   //   getPackageId();
@@ -216,6 +258,8 @@ export const AuthProvider = ({children}) => {
     packageName,
     student_id,
     referralcode,
+    loader,
+    setLoader,
   };
 
   const style = isDark ? DarkTheme : LighTheme;

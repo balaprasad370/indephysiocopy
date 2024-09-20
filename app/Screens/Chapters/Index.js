@@ -18,197 +18,22 @@ import storage from '../../Constants/storage';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import LinearGradient from 'react-native-linear-gradient';
+import Loading from '../../Components/Loading/Loading';
 
 const Index = ({navigation}) => {
   const route = useRoute();
   const {level_id} = route.params;
-  const {path, clientId, packageId, packageName, isDark} =
+  const {path, clientId, packageId, packageName, isDark, loader, setLoader} =
     useContext(AppContext);
   const [chapter, setChapter] = useState([]);
   let newPackageId = packageId;
 
   const style = isDark ? DarkTheme : LighTheme;
 
-  const packageData = [
-    {
-      client_id: 7,
-      lang_id: 1,
-      level_id: 6,
-      package_color: '#44834b',
-      package_created_date: '2024-08-05T13:36:09.000Z',
-      package_description: 'Description about the data hj',
-      package_id: 1,
-      package_img: 'uploads/17247025791724586619referral.webp',
-      package_modified_date: '2024-08-26T15:21:35.000Z',
-      package_name: 'Superfast',
-    },
-    {
-      client_id: 8,
-      lang_id: 1,
-      level_id: 6,
-      package_color: '#a23939',
-      package_created_date: '2024-08-06T03:26:28.000Z',
-      package_description: 'Super Fast',
-      package_id: 3,
-      package_img: 'uploads/1723907085appicon.png',
-      package_modified_date: '2024-08-26T10:05:38.000Z',
-      package_name: 'Superfast',
-    },
-    {
-      client_id: 7,
-      lang_id: 1,
-      level_id: 6,
-      package_color: '#ed73d2',
-      package_created_date: '2024-08-10T06:12:43.000Z',
-      package_description: 'Nomejdn',
-      package_id: 6,
-      package_img: 'uploads/1725382249de.jpg',
-      package_modified_date: '2024-09-03T17:02:26.000Z',
-      package_name: 'deluxe package',
-    },
-    {
-      client_id: 10,
-      lang_id: 1,
-      level_id: 6,
-      package_color: '#e65a37',
-      package_created_date: '2024-08-15T10:34:51.000Z',
-      package_description: 'Premium package',
-      package_id: 7,
-      package_img: 'uploads/1723731120ICON TRY 2.png',
-      package_modified_date: '2024-08-15T10:35:13.000Z',
-      package_name: 'Superfast',
-    },
-    {
-      client_id: 10,
-      lang_id: 1,
-      level_id: 6,
-      package_color: '#6e97d8',
-      package_created_date: '2024-08-15T10:35:47.000Z',
-      package_description: 'Regular package',
-      package_id: 8,
-      package_img: 'uploads/1723731120indephysio App Icon draft 2.png',
-      package_modified_date: '2024-08-15T10:36:00.000Z',
-      package_name: 'Express',
-    },
-    {
-      client_id: 8,
-      lang_id: 1,
-      level_id: 6,
-      package_color: '#cf72c3',
-      package_created_date: '2024-08-23T04:06:21.000Z',
-      package_description: 'Express',
-      package_id: 10,
-      package_img: '',
-      package_modified_date: '2024-08-26T10:20:08.000Z',
-      package_name: 'Express',
-    },
-    {
-      client_id: 8,
-      lang_id: 1,
-      level_id: 7,
-      package_color: '#ae6f6f',
-      package_created_date: '2024-08-26T03:11:34.000Z',
-      package_description: 'Super Fast',
-      package_id: 11,
-      package_img: '',
-      package_modified_date: '2024-08-26T03:12:41.000Z',
-      package_name: 'Superfast',
-    },
-    {
-      client_id: 8,
-      lang_id: 1,
-      level_id: 7,
-      package_color: '#c37999',
-      package_created_date: '2024-08-26T03:13:00.000Z',
-      package_description: 'Express',
-      package_id: 12,
-      package_img: '',
-      package_modified_date: '2024-08-26T03:13:30.000Z',
-      package_name: 'Express',
-    },
-    {
-      client_id: 8,
-      lang_id: 1,
-      level_id: 12,
-      package_color: '#5e87d9',
-      package_created_date: '2024-08-30T05:46:54.000Z',
-      package_description: 'Super Fast',
-      package_id: 13,
-      package_img: '',
-      package_modified_date: '2024-08-30T05:47:28.000Z',
-      package_name: 'Superfast',
-    },
-    {
-      client_id: 8,
-      lang_id: 1,
-      level_id: 13,
-      package_color: '#0f3331',
-      package_created_date: '2024-08-31T07:53:21.000Z',
-      package_description: 'A2',
-      package_id: 14,
-      package_img: 'uploads/1725074415plat1.jpg',
-      package_modified_date: '2024-08-31T08:43:46.000Z',
-      package_name: 'Superfast',
-    },
-    {
-      client_id: 8,
-      lang_id: 1,
-      level_id: 13,
-      package_color: '#5d1445',
-      package_created_date: '2024-08-31T07:55:24.000Z',
-      package_description: 'B1',
-      package_id: 15,
-      package_img: 'uploads/1725074415emb1.jpg',
-      package_modified_date: '2024-08-31T07:56:30.000Z',
-      package_name: 'Superfast',
-    },
-    {
-      client_id: 8,
-      lang_id: 1,
-      level_id: 14,
-      package_color: '#ea99d1',
-      package_created_date: '2024-09-01T01:56:49.000Z',
-      package_description: 'Super Fast',
-      package_id: 16,
-      package_img: '',
-      package_modified_date: '2024-09-01T01:56:58.000Z',
-      package_name: 'Superfast',
-    },
-    {
-      client_id: 8,
-      lang_id: 1,
-      level_id: 15,
-      package_color: '',
-      package_created_date: '2024-09-02T02:58:10.000Z',
-      package_description: '',
-      package_id: 17,
-      package_img: '',
-      package_modified_date: '2024-09-02T02:58:10.000Z',
-      package_name: 'Ram',
-    },
-  ];
-
-  useEffect(() => {
-    if (packageName === 'Superfast' || packageName === 'Express') {
-      const matchingPackage = packageData.find(
-        pkg =>
-          pkg.level_id === level_id &&
-          pkg.package_name === packageName &&
-          pkg.client_id === clientId,
-      );
-
-      if (matchingPackage) {
-        newPackageId = matchingPackage.package_id;
-      } else {
-        newPackageId = 0;
-      }
-    }
-  }, [level_id, packageName]);
-
   const chapterData = async () => {
     const token = await storage.getStringAsync('token');
     if (token) {
-      console.log(level_id, newPackageId, clientId);
+      setLoader(true);
       try {
         const response = await axios.get(`${path}/chapters`, {
           params: {
@@ -223,6 +48,8 @@ const Index = ({navigation}) => {
         setChapter(response.data);
       } catch (error) {
         console.log('error', error);
+      } finally {
+        setLoader(false);
       }
     }
   };
@@ -230,6 +57,10 @@ const Index = ({navigation}) => {
   useEffect(() => {
     chapterData();
   }, []);
+
+  if (loader) {
+    return <Loading />;
+  }
 
   const renderItem = ({item}) => (
     <TouchableOpacity
@@ -239,7 +70,8 @@ const Index = ({navigation}) => {
           parent_module_id: item.id,
           title: item.name,
         })
-      }>
+      }
+      style={{marginVertical: 6}}>
       <LinearGradient
         style={styles.chapterBox}
         colors={
@@ -247,7 +79,7 @@ const Index = ({navigation}) => {
             ? ['#2A89C6', '#3397CB', '#0C5CB4']
             : [color.lightPrimary, color.lightPrimary, color.lightPrimary]
         }
-        start={{x: 0, y: 0}} // Start from the left
+        start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}>
         <View style={styles.chapterCard}>
           {item.image ? (
@@ -312,14 +144,13 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: color.lowPrimary,
     borderRadius: 15,
-    marginVertical: 7,
     padding: 5,
     shadowColor: color.lowPrimary,
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
-    flexDirection: 'row', // Horizontal layout
+    flexDirection: 'row',
   },
   chapterCard: {
     flexDirection: 'row',

@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Modal,
   Button,
-  StatusBar,
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -54,28 +53,6 @@ const Index = () => {
     now.setDate(now.getDate() + 6);
     return new Date(now.setHours(23, 59, 59, 999));
   };
-
-  // const getEventSchedule = async () => {
-  //   const token = await storage.getStringAsync('token');
-  //   try {
-  //     const res = await axios({
-  //       method: 'post',
-  //       url: path + '/admin/schedule/arrange',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: 'Bearer ' + token,
-  //       },
-  //     });
-  //     //  seteventsSchedule(res.data);
-  //     console.log(res.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   getEventSchedule();
-  // }, []);
-
   const fetchSchedule = async () => {
     const token = await storage.getStringAsync('token');
     if (token) {
@@ -83,7 +60,7 @@ const Index = () => {
         const response = await axios.get(`${path}/app/schedule`, {
           params: {
             package_id: packageId,
-            client_id: clientId,
+            // client_id: clientId,
           },
           headers: {
             'Content-Type': 'application/json',
@@ -221,7 +198,6 @@ const Index = () => {
               let weekdays = item.schedule_recur_week_index
                 .split(',')
                 .map(Number);
-
               // Check if the start and end dates are invalid
               const invalidDate = '0000-00-00';
               const isInvalidDate =
@@ -229,6 +205,7 @@ const Index = () => {
                 item.schedule_recurring_date_end === invalidDate;
 
               // If the start and end dates are invalid, just loop through the current week
+
               if (isInvalidDate) {
                 // Get the current date
                 let currentDate = new Date();
@@ -242,12 +219,9 @@ const Index = () => {
                 // Loop through the days of the week (Monday to Sunday)
                 for (let i = 0; i < 7; i++) {
                   let dayOfWeek = startOfWeek.getDay() % 7; // Get the day of the week (0 = Sunday, 1 = Monday, etc.)
-
-                  console.log(startOfWeek.getDay() % 7);
                   if (weekdays.includes(dayOfWeek)) {
                     let eventStartDate = new Date(startOfWeek);
                     let eventEndDate = new Date(startOfWeek);
-
                     eventStartDate.setHours(startHours, startMinutes);
                     eventEndDate.setHours(endHours, endMinutes);
 
@@ -274,7 +248,6 @@ const Index = () => {
 
                 while (currentDate <= recurringEndDate) {
                   let dayOfWeek = currentDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-
                   if (weekdays.includes(dayOfWeek)) {
                     let eventStartDate = new Date(currentDate);
                     let eventEndDate = new Date(currentDate);
@@ -353,9 +326,10 @@ const Index = () => {
         end={{x: 1, y: 0}}
         style={styles.cardHeader}>
         <View>
-          <Text style={styles.mainHeaderLevel}>A2 German</Text>
+          <Text style={styles.cardTime}>{item.title}</Text>
+          {/* <Text style={styles.mainHeaderLevel}>A1 German</Text> */}
           <View style={styles.cardTimeDiv}>
-            <Text style={styles.cardTime}>
+            {/* <Text style={styles.cardTime}>
               {`${item.start.getHours()}:${item.start
                 .getMinutes()
                 .toString()
@@ -365,205 +339,215 @@ const Index = () => {
                 .padStart(2, '0')} ${
                 item.start.getHours() >= 12 ? 'PM' : 'AM'
               }`}
-            </Text>
-            <Text style={styles.pathway}>{packageName} Pathway</Text>
+            </Text> */}
+            {/* <Text style={styles.pathway}>{packageName} Pathway</Text> */}
           </View>
         </View>
       </LinearGradient>
       <View style={styles.cardContent}>
-        <Text style={style.liveClasscardTitle}>{item.title}</Text>
-
+        {/* <Text style={style.liveClass
+          cardTitle}>{item.title}</Text> */}
         <View style={{marginTop: scale(5)}}>
-          <Text style={style.medium}>GERMAN - {item.description}</Text>
+          <Text style={{marginVertical: 7}}>GERMAN - {item.description}</Text>
         </View>
-        <View style={styles.cardTimeDiv}>
+        <Text style={styles.cardTime}>
+          {`${item.start.getHours()}:${item.start
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')} - ${item.end.getHours()}:${item.end
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')} ${item.start.getHours() >= 12 ? 'PM' : 'AM'}`}
+        </Text>
+
+        {/* <View style={styles.cardTimeDiv}>
           <Text style={style.medium}>Dependent Task : Quiz 14</Text>
           <Text style={style.medium}>Teach Name : Swathi</Text>
-        </View>
+        </View> */}
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <View style={style.liveClasscontainer}>
-      <View style={{height: '18%'}}>
-        <View style={styles.toggleContainer}>
-          <LinearGradient
-            colors={
-              !isNextWeek
-                ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
-                : isDark
-                ? ['#3B3B3B', '#3B3B3B']
-                : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
-            }
-            start={{x: 0, y: 0}} // Start from the left
-            end={{x: 1, y: 0}} // End at the right
-            style={[
-              style.toggleButton,
-              !isNextWeek && styles.activeToggleButton,
-            ]}>
-            <TouchableOpacity
-              // style={[
-              //   style.toggleButton,
-              //   !isNextWeek && styles.activeToggleButton,
-              // ]}
-              hitSlop={{x: 25, y: 15}}
-              onPress={() => {
-                setIsNextWeek(false);
-                fetchSchedule();
-              }}>
-              <Text
-                style={[
-                  style.toggleText,
-                  !isNextWeek && style.activeToggleText,
-                ]}>
-                This Week
-              </Text>
-            </TouchableOpacity>
-          </LinearGradient>
-          <LinearGradient
-            colors={
-              isNextWeek
-                ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
-                : isDark
-                ? ['#3B3B3B', '#3B3B3B']
-                : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
-            }
-            start={{x: 0, y: 0}} // Start from the left
-            end={{x: 1, y: 0}} // End at the right
-            style={[
-              style.toggleButton,
-              !isNextWeek && styles.activeToggleButton,
-            ]}>
-            <TouchableOpacity
-              // style={[
-              //   style.toggleButton,
-              //   isNextWeek && styles.activeToggleButton,
-              // ]}
-              hitSlop={{x: 25, y: 15}}
-              onPress={() => {
-                setIsNextWeek(true);
-                fetchSchedule();
-              }}>
-              <Text style={style.toggleText}>Next Week</Text>
-            </TouchableOpacity>
-          </LinearGradient>
-        </View>
-
-        <FlatList
-          horizontal
-          data={daysOfWeek}
-          renderItem={({item: day}) => (
+    <>
+      <View style={style.liveClasscontainer}>
+        <View style={{height: '18%'}}>
+          <View style={styles.toggleContainer}>
             <LinearGradient
               colors={
-                selectedDay === day
+                !isNextWeek
                   ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
                   : isDark
                   ? ['#3B3B3B', '#3B3B3B']
                   : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
               }
-              style={[
-                style.dayButton,
-                selectedDay === day && styles.selectedDayButton,
-              ]}
               start={{x: 0, y: 0}} // Start from the left
-              end={{x: 1, y: 0}}>
+              end={{x: 1, y: 0}} // End at the right
+              style={[
+                style.toggleButton,
+                !isNextWeek && styles.activeToggleButton,
+              ]}>
               <TouchableOpacity
+                // style={[
+                //   style.toggleButton,
+                //   !isNextWeek && styles.activeToggleButton,
+                // ]}
                 hitSlop={{x: 25, y: 15}}
-                key={day}
-                onPress={() => setSelectedDay(day)}>
+                onPress={() => {
+                  setIsNextWeek(false);
+                  fetchSchedule();
+                }}>
                 <Text
                   style={[
-                    style.dayText,
-                    selectedDay === day && styles.selectedDayText,
+                    style.toggleText,
+                    !isNextWeek && style.activeToggleText,
                   ]}>
-                  {day}
+                  This Week
                 </Text>
               </TouchableOpacity>
             </LinearGradient>
-          )}
-          keyExtractor={day => day}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.daySelector}
-        />
-      </View>
-
-      <View style={{height: '83%'}}>
-        {filteredEvents.length === 0 ? (
-          <View style={styles.noEventsContainer}>
-            <Text style={styles.noEventsText}>No classes on {selectedDay}</Text>
+            <LinearGradient
+              colors={
+                isNextWeek
+                  ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
+                  : isDark
+                  ? ['#3B3B3B', '#3B3B3B']
+                  : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
+              }
+              start={{x: 0, y: 0}} // Start from the left
+              end={{x: 1, y: 0}} // End at the right
+              style={[
+                style.toggleButton,
+                !isNextWeek && styles.activeToggleButton,
+              ]}>
+              <TouchableOpacity
+                // style={[
+                //   style.toggleButton,
+                //   isNextWeek && styles.activeToggleButton,
+                // ]}
+                hitSlop={{x: 25, y: 15}}
+                onPress={() => {
+                  setIsNextWeek(true);
+                  fetchSchedule();
+                }}>
+                <Text style={style.toggleText}>Next Week</Text>
+              </TouchableOpacity>
+            </LinearGradient>
           </View>
-        ) : (
+
           <FlatList
-            data={filteredEvents}
-            renderItem={renderEventCard}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={styles.eventList}
+            horizontal
+            data={daysOfWeek}
+            renderItem={({item: day}) => (
+              <LinearGradient
+                colors={
+                  selectedDay === day
+                    ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
+                    : isDark
+                    ? ['#3B3B3B', '#3B3B3B']
+                    : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
+                }
+                style={[
+                  style.dayButton,
+                  selectedDay === day && styles.selectedDayButton,
+                ]}
+                start={{x: 0, y: 0}} // Start from the left
+                end={{x: 1, y: 0}}>
+                <TouchableOpacity
+                  hitSlop={{x: 25, y: 15}}
+                  key={day}
+                  onPress={() => setSelectedDay(day)}>
+                  <Text
+                    style={[
+                      style.dayText,
+                      selectedDay === day && styles.selectedDayText,
+                    ]}>
+                    {day}
+                  </Text>
+                </TouchableOpacity>
+              </LinearGradient>
+            )}
+            keyExtractor={day => day}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.daySelector}
           />
+        </View>
+
+        <View style={{height: '83%'}}>
+          {filteredEvents.length === 0 ? (
+            <View style={styles.noEventsContainer}>
+              <Text style={styles.noEventsText}>
+                No classes on {selectedDay}
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              data={filteredEvents}
+              renderItem={renderEventCard}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={(item, index) => index.toString()}
+              contentContainerStyle={styles.eventList}
+            />
+          )}
+        </View>
+
+        {selectedEvent && (
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                {/* Close Button */}
+                <TouchableOpacity
+                  hitSlop={{x: 25, y: 15}}
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}>
+                  <Icon name="times" size={18} color={color.darkGrey} />
+                </TouchableOpacity>
+
+                {/* Time at the Top */}
+                <Text style={styles.modalTime}>
+                  {`${selectedEvent.start.getHours()}:${selectedEvent.start
+                    .getMinutes()
+                    .toString()
+                    .padStart(
+                      2,
+                      '0',
+                    )} - ${selectedEvent.end.getHours()}:${selectedEvent.end
+                    .getMinutes()
+                    .toString()
+                    .padStart(2, '0')} ${
+                    selectedEvent.start.getHours() >= 12 ? 'PM' : 'AM'
+                  }`}
+                </Text>
+
+                {/* Title and Description */}
+                <Text style={styles.modalTitle}>{selectedEvent.title}</Text>
+                <Text style={styles.modalDescription}>
+                  {selectedEvent.description}
+                </Text>
+
+                {/* Join Class Button */}
+                <TouchableOpacity
+                  hitSlop={{x: 25, y: 15}}
+                  style={styles.joinButton}
+                  onPress={() => {
+                    navigation.navigate('Meeting', {
+                      room: selectedEvent.room_name,
+                      // room: 'ic2wYAPi7sqlUZKi',
+                    });
+                    setModalVisible(false);
+                  }}>
+                  <Text style={styles.joinButtonText}>Join Class</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         )}
       </View>
-
-      {selectedEvent && (
-        <Modal
-          visible={modalVisible}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setModalVisible(false)}>
-          <View style={styles.modalContainer}>
-            <StatusBar
-              barStyle={isDark ? 'light-content' : 'dark-content'}
-              backgroundColor="rgba(0, 0, 0, 0.5)"
-            />
-            <View style={styles.modalContent}>
-              {/* Close Button */}
-              <TouchableOpacity
-                hitSlop={{x: 25, y: 15}}
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}>
-                <Icon name="times" size={18} color={color.darkGrey} />
-              </TouchableOpacity>
-
-              {/* Time at the Top */}
-              <Text style={styles.modalTime}>
-                {`${selectedEvent.start.getHours()}:${selectedEvent.start
-                  .getMinutes()
-                  .toString()
-                  .padStart(
-                    2,
-                    '0',
-                  )} - ${selectedEvent.end.getHours()}:${selectedEvent.end
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, '0')} ${
-                  selectedEvent.start.getHours() >= 12 ? 'PM' : 'AM'
-                }`}
-              </Text>
-
-              {/* Title and Description */}
-              <Text style={styles.modalTitle}>{selectedEvent.title}</Text>
-              <Text style={styles.modalDescription}>
-                {selectedEvent.description}
-              </Text>
-
-              {/* Join Class Button */}
-              <TouchableOpacity
-                hitSlop={{x: 25, y: 15}}
-                style={styles.joinButton}
-                onPress={() => {
-                  navigation.navigate('Meeting', {
-                    room: selectedEvent.room_name,
-                    // room: 'ic2wYAPi7sqlUZKi',
-                  });
-                  setModalVisible(false);
-                }}>
-                <Text style={styles.joinButtonText}>Join Class</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      )}
-    </View>
+    </>
   );
 };
 

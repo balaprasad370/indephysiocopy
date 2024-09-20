@@ -1,4 +1,4 @@
-package com.indephysio
+package com.inde.physio
 
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule

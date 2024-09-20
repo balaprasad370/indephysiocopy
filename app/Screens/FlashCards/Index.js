@@ -13,6 +13,7 @@ import storage from '../../Constants/storage';
 import color from '../../Constants/color';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
+import {useNavigation} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 
@@ -42,6 +43,8 @@ const Index = ({route}) => {
   const {path, isDark} = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
 
+  const navigation = useNavigation();
+
   const getFlashcardQuestions = async flash_id => {
     const token = await storage.getStringAsync('token');
     if (token) {
@@ -65,7 +68,7 @@ const Index = ({route}) => {
   const submitFlashcardCompletion = async () => {
     const token = await storage.getStringAsync('token'); // Assuming token is stored
 
-    setCompleted(!completed);
+    // setCompleted(1);
 
     Alert.alert(
       'Submit Completion',
@@ -84,7 +87,7 @@ const Index = ({route}) => {
                 `${path}/student/flashcardresults`,
                 {
                   flash_id,
-                  completed: completed,
+                  completed: 1,
                 },
                 {
                   headers: {
@@ -95,7 +98,8 @@ const Index = ({route}) => {
               );
 
               console.log('Response:', response.data.msg);
-              Alert.alert('Success', response.data.msg); // Show success alert
+              navigation.goBack();
+              // Alert.alert('Success', response.data.msg); // Show success alert
             } catch (error) {
               console.error('Error submitting flashcard:', error);
               Alert.alert(

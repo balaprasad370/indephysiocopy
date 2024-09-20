@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import color from '../../Constants/color';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -23,6 +23,9 @@ import storage from '../../Constants/storage';
 import {ROUTES} from '../../Constants/routes';
 import {useNavigation} from '@react-navigation/native';
 import UserIcon from 'react-native-vector-icons/FontAwesome';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import ImageResizer from 'react-native-image-resizer';
+import axios from 'axios';
 
 const Index = () => {
   const navigation = useNavigation();
@@ -41,7 +44,7 @@ const Index = () => {
       setIsAuthenticate(false);
       navigation.navigate(ROUTES.LOGIN);
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.log('Error during logout:', error);
     }
   };
 
@@ -57,6 +60,96 @@ const Index = () => {
       setIsDark(newTheme === true);
     } catch (error) {
       console.log('Error changing theme:', error);
+    }
+  };
+
+  // Image upload content
+  const [image, setImage] = useState(null); // Store the image in a hook
+
+  // Function to handle camera image capture
+  const takePhoto = async () => {
+    const result = await launchCamera({
+      mediaType: 'photo',
+      quality: 1, // Capture the highest quality photo
+      saveToPhotos: true,
+    });
+
+    if (result.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (result.errorCode) {
+      console.log('Error: ', result.errorMessage);
+      Alert.alert('Error', result.errorMessage);
+    } else if (result.assets) {
+      // Compress the image after capture
+      compressImage(result.assets[0].uri);
+    }
+  };
+
+  // Function to handle image selection from gallery
+  const chooseFromGallery = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 1, // Choose the highest quality image
+    });
+
+    if (result.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (result.errorCode) {
+      console.log('Error: ', result.errorMessage);
+      Alert.alert('Error', result.errorMessage);
+    } else if (result.assets) {
+      // Compress the image after selection
+      compressImage(result.assets[0].uri);
+    }
+  };
+
+  // Function to compress the image before storing it
+  const compressImage = async uri => {
+    try {
+      const resizedImage = await ImageResizer.createResizedImage(
+        uri,
+        800, // Resize to width 800px
+        800, // Resize to height 800px
+        'JPEG',
+        80, // 80% quality
+      );
+      setImage(resizedImage.uri); // Store the compressed image URI in state
+      console.log('Image compressed and set:', resizedImage.uri);
+    } catch (error) {
+      console.log('Error resizing image:', error);
+      Alert.alert('Error', 'Failed to compress image');
+    }
+  };
+
+  const uploadFileToServer = async fileUri => {
+    const token = await storage.getStringAsync('token');
+
+    const fileName = fileUri.split('/').pop();
+    const payload = {
+      file: {
+        uri: fileUri,
+        name: fileName,
+        type: 'image/jpeg',
+      },
+    };
+
+    try {
+      const response = await axios.post(
+        'https://server.indephysio.com/upload/image',
+        fileName,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      console.log(response.data.filepath);
+      // return response.data.filepath;
+    } catch (error) {
+      console.log('Error uploading file:', error.response);
+      // throw error;
     }
   };
 
@@ -77,8 +170,14 @@ const Index = () => {
             }}>
             <TouchableOpacity>
               <Image
-                src={'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
-                style={{width: 90, height: 90}}
+                source={
+                  image
+                    ? {uri: image}
+                    : {
+                        uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                      }
+                }
+                style={{width: 90, height: 90, borderRadius: 45}}
               />
             </TouchableOpacity>
           </View>
@@ -90,8 +189,9 @@ const Index = () => {
               justifyContent: 'space-between',
             }}>
             <TouchableOpacity
+              onPress={takePhoto}
               style={{
-                backgroundColor: color.lightPrimary,
+                backgroundColor: color.white,
                 padding: 8,
                 borderRadius: 10,
                 width: '45%',
@@ -100,14 +200,15 @@ const Index = () => {
                 style={{
                   textAlign: 'center',
                   fontSize: 16,
-                  color: isDark ? color.white : color.black,
+                  color: isDark ? color.black : color.black,
                 }}>
                 Take a photo
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={chooseFromGallery}
               style={{
-                backgroundColor: color.lightPrimary,
+                backgroundColor: color.white,
                 padding: 8,
                 borderRadius: 10,
                 width: '45%',
@@ -116,23 +217,35 @@ const Index = () => {
                 style={{
                   textAlign: 'center',
                   fontSize: 16,
-                  color: isDark ? color.white : color.black,
+                  color: isDark ? color.black : color.black,
                 }}>
                 Choose from gallery
               </Text>
             </TouchableOpacity>
           </View>
+          {image && (
+            <TouchableOpacity
+              onPress={() => uploadFileToServer(image)} // Choose an image from gallery
+              style={{
+                backgroundColor: color.darkPrimary,
+                padding: 8,
+                borderRadius: 10,
+                alignSelf: 'center',
+                width: '45%',
+                marginTop: 20,
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 16,
+                  color: isDark ? color.white : color.black,
+                }}>
+                Upload
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
-        <View style={style.commonBackground}>
-          {/* <View style={style.commonTouchInput}>
-            <Icon name="search1" style={style.settingIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search"
-              placeholderTextColor={isDark ? color.white : color.black}
-            />
-          </View> */}
-        </View>
+        <View style={style.commonBackground}></View>
         <Text style={style.upperText}>Account</Text>
         <View style={style.commonBackground}>
           <TouchableOpacity hitSlop={{x: 25, y: 15}} style={style.commonTouch}>

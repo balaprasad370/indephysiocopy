@@ -36,6 +36,7 @@ import axios from 'axios';
 import iconImage from '../../assets/scorecard.png';
 import lockImage from '../../assets/lock.png';
 import liveclass from '../../assets/live.png';
+
 import mock from '../../assets/mock.png';
 import docs from '../../assets/doc.png';
 import book from '../../assets/book.png';

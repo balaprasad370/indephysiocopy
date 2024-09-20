@@ -24,7 +24,7 @@ const AppNavigator = () => {
     <NavigationContainer>
       <StatusBar
         barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={isDark ? '#000000' : '#FFFFFF'}
+        backgroundColor={isDark ? '#000' : '#FFF'}
       />
       <Toast visible={show} onClose={() => setShow(false)} />
       {isAuthenticate ? <StackNavigation /> : <AuthNavigator />}

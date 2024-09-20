@@ -7,6 +7,7 @@ import storage from '../../Constants/storage';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import color from '../../Constants/color';
+import {useNavigation} from '@react-navigation/native';
 
 const Index = ({route}) => {
   const [htmlData, setHtmlData] = useState('');
@@ -161,11 +162,12 @@ const Index = ({route}) => {
   };
 
   const [completed, setCompleted] = useState(0);
+  const navigation = useNavigation();
 
   const submitReadStatus = async () => {
     const token = await storage.getStringAsync('token'); // Assuming token is stored
 
-    setCompleted(!completed);
+    // setCompleted(!completed);
 
     Alert.alert(
       'Submit Completion',
@@ -184,7 +186,7 @@ const Index = ({route}) => {
                 `${path}/student/readingresult`,
                 {
                   read_id,
-                  completed: completed,
+                  completed: 1,
                 },
                 {
                   headers: {
@@ -195,7 +197,8 @@ const Index = ({route}) => {
               );
 
               console.log('Response:', response.data.msg);
-              Alert.alert('Success', response.data.msg); // Show success alert
+              navigation.goBack();
+              // Alert.alert('Success', response.data.msg); // Show success alert
             } catch (error) {
               console.error('Error submitting flashcard:', error);
               Alert.alert(

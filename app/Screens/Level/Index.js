@@ -19,9 +19,12 @@ import storage from '../../Constants/storage';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import LinearGradient from 'react-native-linear-gradient';
+import Loading from '../../Components/Loading/Loading';
+import IconTimer from 'react-native-vector-icons/Ionicons';
 
 const Index = ({route}) => {
-  const {path, langId, clientId, isDark} = useContext(AppContext);
+  const {path, langId, clientId, isDark, loader, setLoader} =
+    useContext(AppContext);
 
   const {lang_id} = route.params;
   const [levels, setLevels] = useState([]);
@@ -32,8 +35,10 @@ const Index = ({route}) => {
   useEffect(() => {
     const fetchLevels = async () => {
       try {
+        setLoader(true);
         const token = await storage.getStringAsync('token');
         console.log('my', lang_id);
+
         if (token) {
           const response = await axios.get(`${path}/levels/${lang_id}`, {
             headers: {
@@ -53,11 +58,14 @@ const Index = ({route}) => {
         }
       } catch (error) {
         console.log('Error fetching levels: ', error.response);
+      } finally {
+        setLoader(false);
       }
     };
 
     fetchLevels();
-  }, []);
+  }, [lang_id, path]); // Add dependencies if necessary
+
   const progressArray = [true, true, false, false, false];
   const completedCount = progressArray.filter(Boolean).length;
   const total = progressArray.length;
@@ -88,14 +96,26 @@ const Index = ({route}) => {
           />
 
           {/* Right Side: Level Info */}
-          <View style={styles.levelInfo}>
+          <View style={[styles.levelInfo]}>
+            {/* <View
+              style={{
+                position: 'absolute',
+                left: '40%',
+                zIndex: 9999,
+              }}>
+              <IconTimer
+                name="lock-closed-sharp"
+                style={{fontSize: 26}}
+                color="black"
+              />
+            </View> */}
             <Text style={styles.levelText}>{item.level_name}</Text>
             <Text style={styles.levelDescription}>
               {item.level_description}
             </Text>
 
             {/* Dynamic Level Progress */}
-            <View style={styles.progressWrapper}>
+            {/* <View style={styles.progressWrapper}>
               <Text style={styles.progressText}>{progressPercentage}%</Text>
               {progressArray.map((num, index) => (
                 <React.Fragment key={index}>
@@ -118,12 +138,16 @@ const Index = ({route}) => {
               <Text style={{marginLeft: 5, fontSize: 12, color: color.black}}>
                 100%
               </Text>
-            </View>
+            </View> */}
           </View>
         </View>
       </LinearGradient>
     </TouchableOpacity>
   );
+
+  if (loader) {
+    return <Loading />;
+  }
 
   return (
     <SafeAreaView style={style.levelcontainer}>
@@ -156,8 +180,10 @@ const styles = StyleSheet.create({
   level: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    // marginBottom: 20,
     padding: 5,
+    marginHorizontal: 5,
+    marginVertical: 8,
     // height: 120,
     // backgroundColor: color.lowPrimary,
     borderRadius: 10,
@@ -182,6 +208,7 @@ const styles = StyleSheet.create({
   levelInfo: {
     flex: 1,
     justifyContent: 'center',
+    position: 'relative',
   },
   levelText: {
     fontSize: 18,

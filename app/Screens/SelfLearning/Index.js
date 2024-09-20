@@ -21,8 +21,7 @@ import storage from '../../Constants/storage';
 
 const Index = ({route, navigation}) => {
   const {parent_module_id} = route.params;
-  const {isDark, setIsDark, path, clientId, userData, student_id} =
-    useContext(AppContext);
+  const {isDark, setIsDark, path, clientId, userData} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
@@ -31,150 +30,68 @@ const Index = ({route, navigation}) => {
   const [flashCard, setFlashCard] = useState();
   const [modules, setModules] = useState();
 
+  const [content, setContent] = useState([]);
+
   const {title} = route.params;
 
   useEffect(() => {
     navigation.setOptions({title});
   }, [title]);
 
-  const getAssessments = async () => {
-    try {
-      const token = await storage.getStringAsync('token');
-      if (token) {
-        const response = await axios.get(`${path}/assessments/0`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setAssessments(response.data[0]);
-      } else {
-        console.error('No token found');
-      }
-    } catch (err) {
-      console.error('Error fetching assessments:', err);
-    }
-  };
-
-  const getFlashCard = async () => {
-    try {
-      const token = await storage.getStringAsync('token');
-      if (token) {
-        const response = await axios.get(
-          `${path}/flashcard/${parent_module_id}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        console.log(response.data);
-        const materials = response.data.map(item => ({
-          flash_id: item.flash_id,
-          title: item.flashcard_name,
-          description: item.flashcard_description,
-        }));
-        setFlashCard(materials);
-      } else {
-        console.error('No token found');
-      }
-    } catch (err) {
-      console.error('Error fetching flashcard:', err);
-    }
-  };
-
-  const getModules = async () => {
+  const getAllChapterContent = async () => {
     const token = await storage.getStringAsync('token');
-    if (token) {
-      try {
-        const response = await axios.get(`${path}/modules`, {
-          params: {
-            client_id: clientId,
-            module_id: parent_module_id,
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const materials = response.data.data.map(item => ({
-          module_id: item.id,
-          title: item.name,
-          description: item.description,
-        }));
-        setModules(materials);
-      } catch (error) {
-        console.log('Error fetching data from modules', error.message);
-      }
-    }
-  };
-
-  const readingMaterial = async () => {
-    const token = await storage.getStringAsync('token');
-    if (token) {
-      try {
-        const response = await axios.get(
-          `${path}/reading/${parent_module_id}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + token,
-            },
-          },
-        );
-
-        const materials = response.data.map(item => ({
-          read_id: item.read_id,
-          title: item.title,
-          description: item.description,
-        }));
-        setReadingMaterials(materials);
-      } catch (error) {
-        console.log('Error from reading material:', error);
-      }
+    try {
+      const res = await axios({
+        method: 'get',
+        url: path + '/chapter/v1/admin/' + parent_module_id,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+      });
+      setContent(res.data);
+    } catch (error) {
+      console.log('error', error.response);
     }
   };
 
   useEffect(() => {
-    getModules();
-    readingMaterial();
-  }, []);
-
-  useEffect(() => {
-    getFlashCard();
-    getAssessments();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getAllChapterContent();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const renderItem = ({item, index}) => (
     <QuizCard
-      key={index}
-      Title={item.title}
-      secondOption={item.description || 'Articles'}
+      key={item.order_id}
+      Title={item.flashcard_name || item.title || item.name || item.title_live}
+      secondOption={
+        item.flashcard_description || item.description || item.description_live
+      }
       parent_module_id={parent_module_id}
       optionClick={
         item.read_id
           ? 'Reading Material'
           : item.flash_id
           ? 'Flash Card'
+          : item.schedule_live_class_id
+          ? 'Live class'
           : 'Quiz'
       }
-      unique_id={item.read_id || item.flash_id || item.module_id}
+      unique_id={item.read_id || item.flash_id || item.id}
+      status={item.status}
+      room_name={item.room_name}
     />
   );
-  const combinedData = [
-    ...(readingMaterials ?? []), // Provide an empty array if undefined
-    ...(flashCard ?? []), // Provide an empty array if undefined
-    ...(modules ?? []), // Provide an empty array if undefined
-  ];
 
   return (
     <>
-      {combinedData.length > 0 ? (
+      {content.length > 0 ? (
         <FlatList
-          data={combinedData}
+          data={content}
           renderItem={renderItem}
-          keyExtractor={item => item.unique_id}
+          keyExtractor={item => item.order_id}
           style={style.selfLearnChapter}
           showsVerticalScrollIndicator={false}
         />

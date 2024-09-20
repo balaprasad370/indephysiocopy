@@ -1,4 +1,4 @@
-package com.indephysio
+package com.inde.physio
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -1,4 +1,4 @@
-package com.indephysio
+package com.inde.physio
 
 import android.os.Build
 import android.os.Bundle

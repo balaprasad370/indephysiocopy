@@ -346,41 +346,41 @@ const Index = ({route}) => {
     );
   };
 
-  const [countdown, setCountdown] = useState(200);
-  const endTimeRef = useRef(null);
-  const animationFrameRef = useRef(null);
+  // const [countdown, setCountdown] = useState(200);
+  // const endTimeRef = useRef(null);
+  // const animationFrameRef = useRef(null);
 
-  const updateCountdown = useCallback(() => {
-    if (!endTimeRef.current) return;
+  // const updateCountdown = useCallback(() => {
+  //   if (!endTimeRef.current) return;
 
-    const currentTime = Date.now();
-    const remainingTime = Math.max(
-      0,
-      Math.floor((endTimeRef.current - currentTime) / 1000),
-    );
+  //   const currentTime = Date.now();
+  //   const remainingTime = Math.max(
+  //     0,
+  //     Math.floor((endTimeRef.current - currentTime) / 1000),
+  //   );
 
-    setCountdown(remainingTime);
+  //   setCountdown(remainingTime);
 
-    if (remainingTime === 0) {
-      cancelAnimationFrame(animationFrameRef.current);
-      setSelectedOption(null);
-      setQuestionIndex(0);
-    } else {
-      animationFrameRef.current = requestAnimationFrame(updateCountdown);
-    }
-  }, [setSelectedOption, setQuestionIndex]);
+  //   if (remainingTime === 0) {
+  //     cancelAnimationFrame(animationFrameRef.current);
+  //     setSelectedOption(null);
+  //     setQuestionIndex(0);
+  //   } else {
+  //     animationFrameRef.current = requestAnimationFrame(updateCountdown);
+  //   }
+  // }, [setSelectedOption, setQuestionIndex]);
 
-  const startCountdown = () => {
-    endTimeRef.current = Date.now() + 200 * 1000;
-    animationFrameRef.current = requestAnimationFrame(updateCountdown);
-  };
+  // const startCountdown = () => {
+  //   endTimeRef.current = Date.now() + 200 * 1000;
+  //   animationFrameRef.current = requestAnimationFrame(updateCountdown);
+  // };
 
-  if (!endTimeRef.current) {
-    startCountdown();
-  }
+  // if (!endTimeRef.current) {
+  //   startCountdown();
+  // }
 
-  const minutes = Math.floor(countdown / 60);
-  const seconds = countdown % 60;
+  // const minutes = Math.floor(countdown / 60);
+  // const seconds = countdown % 60;
 
   const [inputWidth, setInputWidth] = useState(50);
 
@@ -714,7 +714,7 @@ const Index = ({route}) => {
               </TouchableOpacity>
               <Text style={style.modalQuizText}>{truncateTitle(title, 3)}</Text>
             </View>
-            <View
+            {/* <View
               style={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -732,7 +732,7 @@ const Index = ({route}) => {
               <Text style={styled.leftQuestion}>
                 {minutes} min {seconds < 10 ? `0${seconds}` : seconds} sec
               </Text>
-            </View>
+            </View> */}
           </View>
           <LinearGradient
             colors={[color.black, color.black, color.lowPrimary]}

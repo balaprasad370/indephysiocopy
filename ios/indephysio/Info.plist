@@ -22,26 +22,23 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-    <key>NSCameraUsageDescription</key> 
-	<string>We need access to your camera for video conferencing</string> 
-	<key>NSMicrophoneUsageDescription</key> 
-	<string>We need access to your microphone for audio conferencing</string>
-	<key>RTCScreenSharingExtension</key> 
-	<string>your.broadcast.extension.bundle.identifier</string> 
-	<key>UIBackgroundModes</key> 
-	<array> 
-    	<string>voip</string> 
-	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera for video conferencing</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to your microphone for audio conferencing</string>
+	<key>RTCScreenSharingExtension</key>
+	<string>your.broadcast.extension.bundle.identifier</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -64,8 +61,10 @@
 		<string>Zocial.ttf</string>
 		<string>Fontisto.ttf</string>
 	</array>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>voip</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

@@ -5,6 +5,8 @@ import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
 import {Image} from 'react-native';
 import color from '../../Constants/color';
+import liveclassTrue from '../../assets/colorlive.png';
+import darkDoc from '../../assets/darkdoc.png';
 const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
   const navigation = useNavigation();
 
@@ -42,14 +44,22 @@ const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
           backgroundColor: isLocked ? '#8A8A8A' : '#E4F2FC',
           position: 'relative',
         }}>
-        {ROUTE !== 'Documents' && (
+        {ROUTE !== 'Documents' && ROUTE !== 'Live' && (
+          <>
+            <Image source={iconImage} style={{width: 45, height: 40}} />
+          </>
+        )}
+        {ROUTE === 'Live' && !isLocked && (
+          <Image source={liveclassTrue} style={{width: 45, height: 40}} />
+        )}
+        {ROUTE === 'Live' && isLocked && (
           <Image source={iconImage} style={{width: 45, height: 40}} />
         )}
-        {ROUTE === 'Documents' && (
-          <Icon
-            name="folderopen"
-            style={{fontSize: 37, color: isLocked ? 'rgba(0,0,0,0.3)' : '#FFF'}}
-          />
+        {ROUTE == 'Documents' && !isLocked && (
+          <Image source={iconImage} style={{width: 45, height: 40}} />
+        )}
+        {ROUTE === 'Documents' && isLocked && (
+          <Image source={darkDoc} style={{width: 45, height: 40}} />
         )}
         {isLocked ? (
           <View style={{position: 'absolute', bottom: 6}}>

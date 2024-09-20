@@ -1,5 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import SearchComponent from '../../Components/SearchComponent/Index';
 import LanguageComponent from '../../Components/LanguageComponent/LanguageComponent';
 import {ROUTES} from '../../Constants/routes';
@@ -10,9 +18,10 @@ import DarkTheme from '../../theme/Darktheme';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import color from '../../Constants/color';
+import Loading from '../../Components/Loading/Loading';
 
 const SelfLearn = () => {
-  const {langCode, isDark} = useContext(AppContext);
+  const {langCode, isDark, loader, setLoader} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
@@ -20,22 +29,27 @@ const SelfLearn = () => {
 
   const getLanguages = async () => {
     try {
+      setLoader(true);
       const response = await axios.get(
         'https://server.indephysio.com/languages',
       );
-      console.log(response.data);
       setLanguages(response.data);
     } catch (error) {
       console.log('Langg', error);
+    } finally {
+      setLoader(false);
     }
   };
 
   useEffect(() => {
     getLanguages();
   }, []);
+  if (loader) {
+    return <Loading />;
+  }
 
   return (
-    <View style={style.selfLearn}>
+    <SafeAreaView style={style.selfLearn}>
       <View style={style.example}>
         <View style={{width: '90%', alignSelf: 'center'}}>
           <Text style={style.exampleScreen}>Subjects</Text>
@@ -74,7 +88,7 @@ const SelfLearn = () => {
           </Text>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
