@@ -29,6 +29,7 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {AppContext} from '../theme/AppContext';
 import DarkTheme from '../theme/Darktheme';
 import LighTheme from '../theme/LighTheme';
+import Recording from '../Screens/Recording/Index';
 import VoiceComponent from '../Screens/Quiz/VoiceComponent';
 
 const Stack = createStackNavigator();
@@ -56,6 +57,18 @@ const StackNavigation = () => {
           headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Level}
+      />
+      <Stack.Screen
+        name={ROUTES.RECORDING}
+        options={{
+          headerTitle: 'Recording',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
+        component={Recording}
       />
       <Stack.Screen
         name={ROUTES.REGULAR}

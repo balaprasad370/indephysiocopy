@@ -128,7 +128,6 @@ export const AuthProvider = ({children}) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data);
         setDocumentStatus(response.data.status);
       } catch (error) {
         console.error('Error fetching document status:', error);

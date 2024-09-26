@@ -49,6 +49,7 @@ const Index = ({route, navigation}) => {
           Authorization: 'Bearer ' + token,
         },
       });
+
       setContent(res.data);
     } catch (error) {
       console.log('error', error.response);
@@ -64,7 +65,6 @@ const Index = ({route, navigation}) => {
 
   const renderItem = ({item, index}) => (
     <QuizCard
-      key={item.order_id}
       Title={item.flashcard_name || item.title || item.name || item.title_live}
       secondOption={
         item.flashcard_description || item.description || item.description_live
@@ -91,7 +91,7 @@ const Index = ({route, navigation}) => {
         <FlatList
           data={content}
           renderItem={renderItem}
-          keyExtractor={item => item.order_id}
+          keyExtractor={item => item.id}
           style={style.selfLearnChapter}
           showsVerticalScrollIndicator={false}
         />

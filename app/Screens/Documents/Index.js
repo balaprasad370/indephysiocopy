@@ -3,6 +3,7 @@ import {
   FlatList,
   Modal,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -18,6 +19,9 @@ import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import Calender from '../../Components/Calender/Index';
 import axios from 'axios';
+import DocumentCard from '../../Components/DocumentCard/Index';
+import Tasks from '../../Components/Tasks/Index';
+import {ImageBackground} from 'react-native';
 
 const Index = () => {
   const {isDark, path, setIsDark, documents} = useContext(AppContext);
@@ -83,75 +87,57 @@ const Index = () => {
 
   return (
     <SafeAreaView style={style.documentContainer}>
-      <FlatList
-        data={documents}
-        ListHeaderComponent={
-          <View>
-            <View
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View style={{marginBottom: 8}}>
-                <Text style={style.documentText}>Document Name</Text>
-                <Text style={style.documentStatus}>Status: Attested</Text>
+      <View style={styles.container}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={[{key: 'documents'}]}
+          style={{padding: 20}}
+          renderItem={() => (
+            <View>
+              <View>
+                <Text style={style.buttonTab}>Documentation</Text>
+                <Text style={style.modalStatus}>Status: Not started</Text>
               </View>
-              <View style={style.documentPage}></View>
-            </View>
-            <View
-              style={{
-                display: 'flex',
-                marginTop: 10,
-
-                marginBottom: 20,
-              }}>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: 10,
-                  marginLeft: 10,
-                  marginRight: 10,
-                }}>
-                <TouchableOpacity
-                  hitSlop={{x: 25, y: 15}}
-                  style={styles.uploadButton}>
-                  <View style={styles.uploadIconContainer}>
-                    <Upload
-                      name="arrowup"
-                      style={{fontSize: 20, color: 'black'}}
-                    />
-                  </View>
-                  <Text style={styles.uploadText}>Upload</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  hitSlop={{x: 25, y: 15}}
-                  style={styles.orderTransactionButton}>
-                  <Icon
-                    name="wifi-tethering-error-rounded"
-                    style={{fontSize: 27, marginRight: 10, color: 'white'}}
+              <ScrollView
+                showsHorizontalScrollIndicator={false}
+                style={{marginTop: 30, marginBottom: 10}}
+                horizontal={true}>
+                {[
+                  {id: 1, title: 'Indephysio documents', content: 'Tasks'},
+                  {
+                    id: 2,
+                    title: 'Document 2',
+                    content: 'Content for Document 2',
+                  },
+                  {
+                    id: 3,
+                    title: 'Document 3',
+                    content: 'Content for Document 3',
+                  },
+                ].map((doc, index) => (
+                  <DocumentCard
+                    key={doc.id}
+                    isDone={index === 0}
+                    title={doc.title}
+                    onPress={() => setSelectedDocument(doc)}
                   />
-                  <Text style={styles.orderTransactionText}>
-                    Order transaction
-                  </Text>
-                </TouchableOpacity>
+                ))}
+                {/* <DocumentCard isDone={true} />
+                <DocumentCard isDone={true} />
+                <DocumentCard /> */}
+              </ScrollView>
+
+              <View style={{marginTop: 30}}>
+                <Tasks name="Payments and Dues" />
+                <Tasks name="Agreements" />
+                <Tasks name="Request for Attestation" />
+                <Tasks name="Software and App terms and agreement" />
               </View>
             </View>
-            <Text style={styles.sortText}>Sort by</Text>
-          </View>
-        }
-        renderItem={({item}) => (
-          <View style={styles.documentItem}>
-            <Text>Document Name: {item.document_name}</Text>
-            <Text>Status: {item.status}</Text>
-            {/* Display other document details as needed */}
-          </View>
-        )}
-        ListEmptyComponent={<Text>No documents found.</Text>}
-        showsVerticalScrollIndicator={false}
-      />
+          )}
+          keyExtractor={item => item.key}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -161,7 +147,7 @@ export default Index;
 const styles = StyleSheet.create({
   documentItem: {
     backgroundColor: '#FFF',
-    padding: 10,
+    // padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#FFF',
   },
@@ -212,5 +198,48 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 18,
     color: '#979797',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  status: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  documentRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  documentBox: {
+    width: '30%',
+    backgroundColor: '#f0f4ff',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  image: {
+    width: 60,
+    height: 60,
+    marginBottom: 10,
+  },
+  documentTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });

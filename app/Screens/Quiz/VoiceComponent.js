@@ -76,8 +76,8 @@ export default function TextToSpeech({item}) {
     setEnd('');
 
     try {
-      //  await Voice.start('en-US');
-      await Voice.start('de-DE'); // Changed to German language
+      await Voice.start('en-US');
+      // await Voice.start('de-DE'); // Changed to German language
     } catch (e) {
       console.error(e);
     }

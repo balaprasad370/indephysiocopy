@@ -15,7 +15,7 @@ import LighTheme from '../../theme/LighTheme';
 import DarkTheme from '../../theme/Darktheme';
 import {styles} from './DocumentCard';
 
-const Index = ({isDone}) => {
+const Index = ({isDone, title}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -30,9 +30,9 @@ const Index = ({isDone}) => {
     <View>
       <TouchableOpacity
         hitSlop={{x: 25, y: 15}}
-        onPress={toggleModal}
+        // onPress={toggleModal}
         style={isDone ? style.documentCard : style.documentLockCard}>
-        <Text style={style.documentCardText}>Indephysio documents</Text>
+        <Text style={style.documentCardText}>{title}</Text>
         <View style={style.documentImage}></View>
       </TouchableOpacity>
       <Modal

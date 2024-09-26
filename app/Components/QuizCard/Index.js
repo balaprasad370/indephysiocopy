@@ -51,85 +51,77 @@ const Index = ({
         onPress={() => toggleModal(optionClick)}>
         <View style={styles.statusContainer}>
           <Text style={styles.statusText}>{optionClick}</Text>
-          {/* Conditionally render the Results button */}
-          <TouchableOpacity
-            hitSlop={{x: 25, y: 15}}
-            onPress={() => {
-              optionClick === 'Quiz'
-                ? navigation.navigate(ROUTES.MARKS, {
-                    module_id: unique_id,
-                  })
-                : null;
-            }}></TouchableOpacity>
-          {(optionClick === 'Quiz' || optionClick === 'Live class') && (
+          {optionClick === 'Live class' && (
             <TouchableOpacity
               hitSlop={{x: 25, y: 15}}
               onPress={() => {
-                optionClick === 'Quiz'
-                  ? navigation.navigate(ROUTES.MARKS, {
-                      module_id: unique_id,
-                    })
-                  : optionClick === 'Live class'
-                  ? navigation.navigate('Meeting', {
-                      room: room_name,
-                    })
-                  : null;
+                // Navigate based on the status
+                if (status === 1) {
+                  navigation.navigate(ROUTES.RECORDING);
+                } else {
+                  navigation.navigate('Meeting', {
+                    room: room_name,
+                  });
+                }
               }}>
-              {optionClick === 'Live class' && (
-                <Text
-                  style={{
-                    backgroundColor: color.darkPrimary,
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    paddingTop: 5,
-                    paddingBottom: 5,
-                    borderRadius: 20,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: color.white,
-                  }}>
-                  Join now
-                </Text>
-              )}
-              {status ? (
-                <Text
-                  style={{
-                    backgroundColor: '#ED1C25',
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    paddingTop: 5,
-                    paddingBottom: 5,
-                    borderRadius: 20,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: color.white,
-                  }}>
-                  {optionClick === 'Quiz' ? 'Result' : 'Completed'}
-                </Text>
-              ) : null}
+              <Text
+                style={{
+                  backgroundColor: color.darkPrimary,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  paddingTop: 5,
+                  paddingBottom: 5,
+                  borderRadius: 20,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: color.white,
+                }}>
+                {status === 1 ? 'Recording' : 'Join now'}
+              </Text>
             </TouchableOpacity>
           )}
-          {optionClick === 'Flash Card' ||
-            (optionClick === 'Reading Material' && (
-              <>
-                {status ? (
-                  <Text
-                    style={{
-                      backgroundColor: '#7ED957',
-                      paddingLeft: 10,
-                      paddingRight: 10,
-                      paddingTop: 5,
-                      paddingBottom: 5,
-                      borderRadius: 20,
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: color.black,
-                    }}>
-                    Completed
-                  </Text>
-                ) : null}
-              </>
-            ))}
+          {optionClick === 'Quiz' && status && (
+            <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
+              onPress={() =>
+                navigation.navigate(ROUTES.MARKS, {
+                  module_id: unique_id,
+                })
+              }>
+              <Text
+                style={{
+                  backgroundColor: '#ED1C25',
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  paddingTop: 5,
+                  paddingBottom: 5,
+                  borderRadius: 20,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: color.white,
+                }}>
+                Result
+              </Text>
+            </TouchableOpacity>
+          )}
+          {status &&
+          (optionClick === 'Flash Card' ||
+            optionClick === 'Reading Material') ? (
+            <Text
+              style={{
+                backgroundColor: '#7ED957',
+                paddingLeft: 10,
+                paddingRight: 10,
+                paddingTop: 5,
+                paddingBottom: 5,
+                borderRadius: 20,
+                fontSize: 13,
+                fontWeight: 600,
+                color: color.black,
+              }}>
+              Completed
+            </Text>
+          ) : null}
         </View>
         <LinearGradient
           style={styles.textContainer}
@@ -140,7 +132,6 @@ const Index = ({
           }
           start={{x: 0, y: 0}} // Start from the left
           end={{x: 1, y: 0}}>
-          {/* <View> */}
           {optionClick === 'Quiz' ? (
             <View
               style={{

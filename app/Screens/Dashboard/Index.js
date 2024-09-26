@@ -148,8 +148,16 @@ const Index = ({navigation}) => {
               }}
             /> */}
             <Image
-              src={'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
-              style={{width: 55, height: 55}}
+              source={
+                userData && userData.address
+                  ? {
+                      uri: `https://d2c9u2e33z36pz.cloudfront.net/${userData?.address}`,
+                    }
+                  : {
+                      uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                    }
+              }
+              style={{width: 55, height: 55, borderRadius: 27}}
             />
           </TouchableOpacity>
         </View>

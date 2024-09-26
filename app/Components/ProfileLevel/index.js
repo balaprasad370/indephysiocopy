@@ -90,7 +90,7 @@ const Index = () => {
               },
             },
           );
-          console.log(response.data);
+          // console.log(response.data);
           setProfileStatus(response.data);
         } catch (error) {
           console.log(error?.response?.status);

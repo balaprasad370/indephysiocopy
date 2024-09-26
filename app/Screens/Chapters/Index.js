@@ -26,6 +26,7 @@ const Index = ({navigation}) => {
   const {path, clientId, packageId, packageName, isDark, loader, setLoader} =
     useContext(AppContext);
   const [chapter, setChapter] = useState([]);
+  const [progressData, setProgressData] = useState({});
   let newPackageId = packageId;
 
   const style = isDark ? DarkTheme : LighTheme;
@@ -46,10 +47,38 @@ const Index = ({navigation}) => {
           },
         });
         setChapter(response.data);
+        // Fetch progress for each chapter and update progressData
+        response.data.forEach(chapter => chapterProgress(chapter.id));
       } catch (error) {
         console.log('error', error);
       } finally {
         setLoader(false);
+      }
+    }
+  };
+
+  const chapterProgress = async chapterId => {
+    const token = await storage.getStringAsync('token');
+    if (token) {
+      try {
+        const response = await axios.get(
+          `${path}/chapter/v1/admin/${chapterId}/progress`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + token,
+            },
+          },
+        );
+        console.log(response.data, 'response');
+
+        // Update the progressData state with the fetched completion_percentage
+        setProgressData(prev => ({
+          ...prev,
+          [chapterId]: response.data.completion_percentage, // Use the correct field from response
+        }));
+      } catch (error) {
+        console.log('Error fetching progress for chapter', chapterId, error);
       }
     }
   };
@@ -62,54 +91,108 @@ const Index = ({navigation}) => {
     return <Loading />;
   }
 
-  const renderItem = ({item}) => (
-    <TouchableOpacity
-      hitSlop={{x: 25, y: 15}}
-      onPress={() =>
-        navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
-          parent_module_id: item.id,
-          title: item.name,
-        })
-      }
-      style={{marginVertical: 6}}>
-      <LinearGradient
-        style={styles.chapterBox}
-        colors={
-          isDark
-            ? ['#2A89C6', '#3397CB', '#0C5CB4']
-            : [color.lightPrimary, color.lightPrimary, color.lightPrimary]
-        }
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}>
-        <View style={styles.chapterCard}>
-          {item.image ? (
-            <Image
-              source={{
-                uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.image}`,
-              }}
-              style={styles.chapterImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <View
-              style={{
-                backgroundColor: 'white',
-                width: 70,
-                height: 70,
-                borderRadius: 10,
-                marginRight: 15,
-              }}></View>
-          )}
+  const renderItem = ({item}) => {
+    const progressPercentage = progressData[item.id] || 0; // Fetch the progress for this chapter
 
-          {/* Right Side: Chapter Info */}
-          <View style={styles.chapterInfo}>
-            <Text style={styles.chapterName}>{item.name}</Text>
-            <Text style={styles.chapterDescription}>{item.description}</Text>
+    // Determine the rounded progress percentage
+    let displayedProgressPercentage;
+    if (progressPercentage >= 95) {
+      displayedProgressPercentage = 100;
+    } else {
+      displayedProgressPercentage = Math.floor(progressPercentage / 10) * 10; // Round down to the nearest ten
+    }
+
+    const progressSteps = 5; // We will use 5 dots to represent progress
+    const progressArray = Array(progressSteps)
+      .fill(false)
+      .map(
+        (_, index) =>
+          index <
+          Math.round((displayedProgressPercentage / 100) * progressSteps),
+      );
+
+    return (
+      <TouchableOpacity
+        hitSlop={{x: 25, y: 15}}
+        onPress={() =>
+          navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
+            parent_module_id: item.id,
+            title: item.name,
+          })
+        }
+        style={{marginVertical: 6}}>
+        <LinearGradient
+          style={styles.chapterBox}
+          colors={
+            isDark
+              ? ['#2A89C6', '#3397CB', '#0C5CB4']
+              : [color.lightPrimary, color.lightPrimary, color.lightPrimary]
+          }
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}>
+          <View style={styles.chapterCard}>
+            {/* Image Section */}
+            {item.image ? (
+              <Image
+                source={{
+                  uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.image}`,
+                }}
+                style={styles.chapterImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <View
+                style={{
+                  backgroundColor: 'white',
+                  width: 70,
+                  height: 70,
+                  borderRadius: 10,
+                  marginRight: 15,
+                }}
+              />
+            )}
+
+            {/* Right Side: Chapter Info */}
+            <View style={styles.chapterInfo}>
+              <Text style={styles.chapterName}>{item.name}</Text>
+              <Text style={styles.chapterDescription}>{item.description}</Text>
+
+              {/* Enhanced Progress Bar */}
+              <View style={styles.progressWrapper}>
+                <Text style={styles.progressText}>
+                  {displayedProgressPercentage}%
+                </Text>
+                <View style={styles.dotsContainer}>
+                  {progressArray.map((filled, index) => (
+                    <React.Fragment key={index}>
+                      <View
+                        style={[
+                          styles.progressDot,
+                          filled && styles.progressDotFilled,
+                        ]}
+                      />
+                      {index < progressArray.length - 1 && (
+                        <View
+                          style={[
+                            styles.progressLine,
+                            filled && styles.progressLineFilled,
+                          ]}
+                        />
+                      )}
+                    </React.Fragment>
+                  ))}
+                  <Text
+                    style={{marginLeft: 5, fontSize: 12, color: color.black}}>
+                    100%
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
-  );
+        </LinearGradient>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView style={style.chapterContainer}>
@@ -182,5 +265,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
+  },
+
+  progressWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  progressText: {
+    fontSize: 12,
+    color: '#333',
+    marginRight: 8,
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  progressDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#ccc',
+    marginHorizontal: 2,
+    transition: 'background-color 0.3s ease',
+  },
+  progressDotFilled: {
+    backgroundColor: '#4CAF50', // Filled color
+  },
+  progressLine: {
+    width: 15,
+    height: 2,
+    backgroundColor: '#ccc',
+  },
+  progressLineFilled: {
+    backgroundColor: '#4CAF50', // Filled color for the connecting line
   },
 });

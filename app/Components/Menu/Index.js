@@ -11,7 +11,6 @@ const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
   const navigation = useNavigation();
 
   const changeRoute = option => {
-    console.log(option);
     if (option === 'Quiz') {
       setModalVisible(!modalVisible);
     } else if (option === 'Self learn') {

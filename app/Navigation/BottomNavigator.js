@@ -76,7 +76,7 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
           {index === 1 && <Text style={styles.tabLabel}>LIVE CLASS</Text>}
         </TouchableOpacity>
 
-        {/* <TouchableOpacity
+        <TouchableOpacity
           style={index === 2 ? styles.activeTabButton : {}}
           onPress={() => handleNavigateScreen(2)}>
           <Ionicons
@@ -86,7 +86,7 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
             color="white"
           />
           {index === 2 && <Text style={styles.tabLabel}>DOCUMENTS</Text>}
-        </TouchableOpacity> */}
+        </TouchableOpacity>
 
         <TouchableOpacity
           hitSlop={{x: 25, y: 15}}
@@ -113,7 +113,7 @@ const BottomNavigator = () => {
       }}>
       <Tab.Screen name={ROUTES.HOME} component={Dashboard} />
       <Tab.Screen name={ROUTES.LIVE_CLASS} component={LiveClasses} />
-      {/* <Tab.Screen name={ROUTES.DOCUMENTS} component={Documents} /> */}
+      <Tab.Screen name={ROUTES.DOCUMENTS} component={Documents} />
       <Tab.Screen name={ROUTES.SELF_LEARN} component={SelfLearn} />
     </Tab.Navigator>
   );

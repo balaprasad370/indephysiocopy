@@ -31,4 +31,5 @@ export const ROUTES = {
   QUIZ: 'Quiz',
   MARKS: 'Marks',
   LEADERBOARD: 'LeaderBoard',
+  RECORDING: 'Recording',
 };
