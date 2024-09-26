@@ -82,6 +82,7 @@ const Index = ({route, navigation}) => {
       unique_id={item.read_id || item.flash_id || item.id}
       status={item.status}
       room_name={item.room_name}
+      video_url={item.live_class_recording_url}
     />
   );
 

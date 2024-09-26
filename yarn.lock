@@ -2554,10 +2554,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/slider@npm:4.4.3":
-  version: 4.4.3
-  resolution: "@react-native-community/slider@npm:4.4.3"
-  checksum: e02416e763a05bee54967aae1e14ff9c7d76395416dc4ff7c0595a71c9866db35ac0bca8305fa1c7feca3568a327d563f6f14e14d342536257e91d3d4b6d5f3e
+"@react-native-community/slider@npm:^4.5.3":
+  version: 4.5.3
+  resolution: "@react-native-community/slider@npm:4.5.3"
+  checksum: 4cd70b0e24fedf6152d5316b73266569ef2af83dabc713ed7c68330b7d9844ace131e32dd90919b6189fc9f041c528bf7b48eb5b6b2b6e36fb474ba861c7a9c3
   languageName: node
   linkType: hard
 
@@ -6664,7 +6664,7 @@ __metadata:
     "@react-native-async-storage/async-storage": 1.19.4
     "@react-native-community/clipboard": 1.5.1
     "@react-native-community/netinfo": 11.1.0
-    "@react-native-community/slider": 4.4.3
+    "@react-native-community/slider": ^4.5.3
     "@react-native-community/voice": ^1.1.9
     "@react-native-google-signin/google-signin": 10.1.0
     "@react-native/babel-preset": 0.74.85

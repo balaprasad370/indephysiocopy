@@ -1,13 +1,22 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import Video from 'react-native-video';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Slider from '@react-native-community/slider';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
+import {AppContext} from '../../theme/AppContext';
 
-const RecordingPlayer = ({videoUrl}) => {
+const RecordingPlayer = ({route}) => {
+  const {isDark} = useContext(AppContext);
   const videoRef = useRef(null);
   const [isPaused, setIsPaused] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+
+  const style = isDark ? DarkTheme : LighTheme;
+
+  const videoUrl = route.params.video_url;
 
   // Function to format time in mm:ss
   const formatTime = time => {
@@ -34,16 +43,9 @@ const RecordingPlayer = ({videoUrl}) => {
     setCurrentTime(data.currentTime);
   };
 
-  const seekForward = () => {
-    const newTime = Math.min(currentTime + 10, duration); // Seek forward 10 seconds
-    videoRef.current.seek(newTime);
-    setCurrentTime(newTime);
-  };
-
-  const seekBackward = () => {
-    const newTime = Math.max(currentTime - 10, 0); // Seek backward 10 seconds
-    videoRef.current.seek(newTime);
-    setCurrentTime(newTime);
+  const handleSliderChange = value => {
+    setCurrentTime(value);
+    videoRef.current.seek(value);
   };
 
   return (
@@ -51,35 +53,44 @@ const RecordingPlayer = ({videoUrl}) => {
       <Video
         ref={videoRef}
         source={{
-          uri: `https://d3kpi6hpyesigd.cloudfront.net/qzxh4gzqelqfcrdk_2024-09-16-01-05-18.mp4`,
+          uri: `https://d3kpi6hpyesigd.cloudfront.net/${videoUrl}`,
         }}
         style={styles.video}
         resizeMode="contain"
         paused={isPaused}
         onLoad={onLoad}
         onProgress={onProgress}
-        onBuffer={this.onBuffer}
-        onError={this.videoError}
+        onBuffer={data => console.log('Buffering...', data)}
+        onError={error => console.error('Video Error:', error)}
+      />
+      <Slider
+        style={styles.slider}
+        minimumValue={0}
+        maximumValue={duration}
+        value={currentTime}
+        onValueChange={handleSliderChange}
+        minimumTrackTintColor="#1fb28a"
+        maximumTrackTintColor="#d3d3d3"
+        thumbTintColor="#1eb900"
       />
       <View style={styles.controls}>
-        <TouchableOpacity style={styles.controlButton} onPress={seekBackward}>
-          <Icon name="replay-10" size={30} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton} onPress={togglePlayback}>
+        <TouchableOpacity
+          style={[styles.controlButton, {backgroundColor: '#FFF'}]}
+          onPress={togglePlayback}>
           <Icon
             name={isPaused ? 'play-arrow' : 'pause'}
             size={30}
-            color="#fff"
+            color={'#111B21'}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton} onPress={seekForward}>
-          <Icon name="forward-10" size={30} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton} onPress={stopPlayback}>
-          <Icon name="stop" size={30} color="#fff" />
+        <TouchableOpacity
+          style={[styles.controlButton, {backgroundColor: '#FFF'}]}
+          onPress={stopPlayback}>
+          <Icon name="stop" size={30} color={'#111B21'} />
         </TouchableOpacity>
       </View>
-      <Text style={styles.timeText}>
+
+      <Text style={[styles.timeText, {color: '#FFF'}]}>
         {formatTime(currentTime)} / {formatTime(duration)}
       </Text>
     </View>
@@ -91,7 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: '#111B21',
   },
   video: {
     width: '100%',
@@ -104,12 +115,15 @@ const styles = StyleSheet.create({
   },
   controlButton: {
     marginHorizontal: 10,
-    backgroundColor: 'rgba(0,0,0,0.7)',
     borderRadius: 50,
     padding: 10,
   },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
   timeText: {
-    color: '#fff',
+    color: '#000',
     marginTop: 5,
   },
 });

@@ -20,6 +20,7 @@ const Index = ({
   unique_id,
   status,
   room_name,
+  video_url,
 }) => {
   const navigation = useNavigation();
   const {userData, path, isDark} = useContext(AppContext);
@@ -57,7 +58,9 @@ const Index = ({
               onPress={() => {
                 // Navigate based on the status
                 if (status === 1) {
-                  navigation.navigate(ROUTES.RECORDING);
+                  navigation.navigate(ROUTES.RECORDING, {
+                    video_url: video_url,
+                  });
                 } else {
                   navigation.navigate('Meeting', {
                     room: room_name,
