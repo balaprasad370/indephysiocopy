@@ -22,6 +22,7 @@ import {
   Quiz,
   MarksImage,
   Leaderboard,
+  FilterRecording,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -31,6 +32,7 @@ import DarkTheme from '../theme/Darktheme';
 import LighTheme from '../theme/LighTheme';
 import Recording from '../Screens/Recording/Index';
 import VoiceComponent from '../Screens/Quiz/VoiceComponent';
+import AppUsageTracker from '../Screens/AppUsage/Index';
 
 const Stack = createStackNavigator();
 
@@ -129,6 +131,7 @@ const StackNavigation = () => {
           },
           headerTintColor: isDark ? '#fff' : '#000',
         }}
+        // component={AppUsageTracker}
         component={Portal}
       />
 
@@ -222,7 +225,18 @@ const StackNavigation = () => {
         // options={{headerLeftLabelVisible: false, title: ''}}
         component={Flash}
       />
-
+      <Stack.Screen
+        name={ROUTES.FILTER_RECORDING}
+        options={{
+          headerTitle: 'Filter Recording',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
+        component={FilterRecording}
+      />
       <Stack.Screen
         name={ROUTES.FAQ}
         options={{

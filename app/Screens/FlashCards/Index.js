@@ -34,7 +34,7 @@ const Flashcard = ({question, answer, showAnswer, onCardPress}) => {
 };
 
 const Index = ({route}) => {
-  const {flash_id} = route.params;
+  const {flash_id, order_id, chapter_id, unique_id} = route.params;
   const [flashcards, setFlashcards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);

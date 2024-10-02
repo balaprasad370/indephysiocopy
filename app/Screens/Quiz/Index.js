@@ -34,7 +34,7 @@ import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 
 const Index = ({route}) => {
-  const {module_id, title} = route.params;
+  const {module_id, title, order_id, chapter_id, unique_id} = route.params;
   const {path, grandScore, setGrandScore, userData, student_id, isDark} =
     useContext(AppContext);
   const navigation = useNavigation();

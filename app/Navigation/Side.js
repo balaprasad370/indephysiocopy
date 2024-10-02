@@ -50,9 +50,9 @@ const DrawerContent = props => {
             }}>
             <Image
               source={
-                userData && userData.address
+                userData && userData.profile_pic
                   ? {
-                      uri: `https://d2c9u2e33z36pz.cloudfront.net/${userData?.address}`,
+                      uri: `https://d2c9u2e33z36pz.cloudfront.net/${userData?.profile_pic}`,
                     }
                   : {
                       uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',

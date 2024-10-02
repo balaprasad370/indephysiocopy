@@ -32,4 +32,5 @@ export const ROUTES = {
   MARKS: 'Marks',
   LEADERBOARD: 'LeaderBoard',
   RECORDING: 'Recording',
+  FILTER_RECORDING: 'Filter Recording',
 };

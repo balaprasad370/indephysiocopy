@@ -46,6 +46,7 @@ const Index = ({route}) => {
               Authorization: `Bearer ${token}`,
             },
           });
+          console.log('response', response.data.data);
 
           if (response.data.status) {
             setLevels(response.data?.data);
@@ -77,6 +78,13 @@ const Index = ({route}) => {
       onPress={
         item.completed
           ? null
+          : (item.status.a1 === 'locked' && item.level_name.includes('A1')) ||
+            (item.status.a2 === 'locked' && item.level_name.includes('A2')) ||
+            (item.status.b1 === 'locked' && item.level_name.includes('B1')) ||
+            (item.status.b2 === 'locked' && item.level_name.includes('B2')) ||
+            (item.status.exam_module === 'locked' &&
+              item.level_name.includes('Exam Module'))
+          ? null // Disable press if the respective level is locked
           : () =>
               navigation.navigate(ROUTES.CHAPTERS, {level_id: item.level_id})
       }>
@@ -85,7 +93,45 @@ const Index = ({route}) => {
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
         style={styles.level}>
-        <View style={styles.levelCard}>
+        <View style={{position: 'absolute', left: '50%', zIndex: 9999}}>
+          <IconTimer
+            name={
+              item.status.a1 === 'locked' && item.level_name.includes('A1')
+                ? 'lock-closed-sharp'
+                : item.status.a2 === 'locked' && item.level_name.includes('A2')
+                ? 'lock-closed-sharp'
+                : item.status.b1 === 'locked' && item.level_name.includes('B1')
+                ? 'lock-closed-sharp'
+                : item.status.exam_module === 'locked' &&
+                  item.level_name.includes('Exam Module')
+                ? 'lock-closed-sharp'
+                : item.status.b2 === 'locked' && item.level_name.includes('B2')
+                ? 'lock-closed-sharp'
+                : null
+            }
+            style={{fontSize: 26}}
+            color="black"
+          />
+        </View>
+        <View
+          style={[
+            styles.levelCard,
+            {
+              opacity:
+                (item.status.a1 === 'locked' &&
+                  item.level_name.includes('A1')) ||
+                (item.status.a2 === 'locked' &&
+                  item.level_name.includes('A2')) ||
+                (item.status.b1 === 'locked' &&
+                  item.level_name.includes('B1')) ||
+                (item.status.b2 === 'locked' &&
+                  item.level_name.includes('B2')) ||
+                (item.status.exam_module === 'locked' &&
+                  item.level_name.includes('Exam Module'))
+                  ? 0.1
+                  : 1,
+            },
+          ]}>
           {/* Left Side: Image */}
           <Image
             source={{
@@ -96,49 +142,11 @@ const Index = ({route}) => {
           />
 
           {/* Right Side: Level Info */}
-          <View style={[styles.levelInfo]}>
-            {/* <View
-              style={{
-                position: 'absolute',
-                left: '40%',
-                zIndex: 9999,
-              }}>
-              <IconTimer
-                name="lock-closed-sharp"
-                style={{fontSize: 26}}
-                color="black"
-              />
-            </View> */}
+          <View style={styles.levelInfo}>
             <Text style={styles.levelText}>{item.level_name}</Text>
             <Text style={styles.levelDescription}>
               {item.level_description}
             </Text>
-
-            {/* Dynamic Level Progress */}
-            {/* <View style={styles.progressWrapper}>
-              <Text style={styles.progressText}>{progressPercentage}%</Text>
-              {progressArray.map((num, index) => (
-                <React.Fragment key={index}>
-                  <View
-                    style={[
-                      styles.progressDot,
-                      num && styles.progressDotFilled,
-                    ]}
-                  />
-                  {index < progressArray.length - 1 && (
-                    <View
-                      style={[
-                        styles.progressLine,
-                        num && styles.progressLineFilled,
-                      ]}
-                    />
-                  )}
-                </React.Fragment>
-              ))}
-              <Text style={{marginLeft: 5, fontSize: 12, color: color.black}}>
-                100%
-              </Text>
-            </View> */}
           </View>
         </View>
       </LinearGradient>

@@ -8,6 +8,7 @@ import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import color from '../../Constants/color';
 import {useNavigation} from '@react-navigation/native';
+import {ROUTES} from '../../Constants/routes';
 
 const Index = ({route}) => {
   const [htmlData, setHtmlData] = useState('');
@@ -15,7 +16,8 @@ const Index = ({route}) => {
   const {path, isDark} = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
 
-  const {read_id} = route.params;
+  const {read_id, order_id, chapter_id, unique_id} = route.params;
+
   const readingMaterial = async read_id => {
     const token = await storage.getStringAsync('token');
     if (token) {
@@ -35,7 +37,7 @@ const Index = ({route}) => {
           ? `
         <style>
           body {
-            background-color: black; 
+            background-color: black;
           }
           p{
             font-size:38px;
@@ -47,7 +49,7 @@ const Index = ({route}) => {
             font-family: "Poppins", sans-serif;
             color:white;
           }
-          
+
           em{
             font-size:38px;
             font-family: "Poppins", sans-serif;
@@ -74,7 +76,7 @@ const Index = ({route}) => {
             color:white;
           }
           blockquote{
-            font-size:38px; 
+            font-size:38px;
             font-family: "Poppins", sans-serif;
             color:white;
           }
@@ -94,7 +96,7 @@ const Index = ({route}) => {
           : `
       <style>
         body {
-          background-color: white; 
+          background-color: white;
         }
         p{
           font-size:38px;
@@ -106,7 +108,7 @@ const Index = ({route}) => {
           font-family: "Poppins", sans-serif;
           color:black;
         }
-        
+
         em{
           font-size:38px;
           font-family: "Poppins", sans-serif;
@@ -133,7 +135,7 @@ const Index = ({route}) => {
           color:black;
         }
         blockquote{
-          font-size:38px; 
+          font-size:38px;
           font-family: "Poppins", sans-serif;
           color:black;
         }
@@ -212,7 +214,6 @@ const Index = ({route}) => {
       {cancelable: false}, // Prevent dismissing by clicking outside
     );
   };
-
   useEffect(() => {
     readingMaterial(read_id);
   }, []);

@@ -90,23 +90,21 @@ const Index = () => {
               },
             },
           );
-          // console.log(response.data);
           setProfileStatus(response.data);
         } catch (error) {
           console.log(error?.response?.status);
         }
       }
     };
-
     // Fetch data initially
     fetchProfileStatus();
 
-    // Set up polling interval
+    // // Set up polling interval
     const intervalId = setInterval(fetchProfileStatus, 5000); // Poll every 5 seconds
 
-    // Clean up interval on component unmount
+    // // Clean up interval on component unmount
     return () => clearInterval(intervalId);
-  }, [userData]); // Re-run if userData changes
+  }, [userData]);
 
   const ProfileComponent = ({item}) => {
     return (

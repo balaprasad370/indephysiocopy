@@ -12,28 +12,67 @@ import axios from 'axios';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import LinearGradient from 'react-native-linear-gradient';
+import IconTimer from 'react-native-vector-icons/Ionicons';
 
 const Index = ({
   Title,
   secondOption,
+  parent_module_id,
   optionClick,
   unique_id,
   status,
   room_name,
   video_url,
+  order_id,
+  time_spent,
+  locked,
 }) => {
   const navigation = useNavigation();
   const {userData, path, isDark} = useContext(AppContext);
 
+  // Function to format time_spent in hours, minutes, and seconds
+  const formatTime = milliseconds => {
+    const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+    const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+
+    const formattedHours = hours < 10 ? `0${hours}` : hours;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  };
+
   const toggleModal = option => {
     if (option === 'Quiz') {
-      navigation.navigate(ROUTES.QUIZ, {module_id: unique_id, title: Title});
+      navigation.navigate(ROUTES.QUIZ, {
+        module_id: unique_id,
+        title: Title,
+        order_id: order_id,
+        chapter_id: parent_module_id,
+        unique_id: unique_id,
+      });
     } else if (option === 'Reading Material') {
-      navigation.navigate(ROUTES.READING, {read_id: unique_id});
+      navigation.navigate(ROUTES.READING, {
+        read_id: unique_id,
+        order_id: order_id,
+        chapter_id: parent_module_id,
+        unique_id: unique_id,
+      });
     } else if (option === 'Live') {
-      navigation.navigate('Meeting', {room: 'checkpaaras'});
+      navigation.navigate('Meeting', {
+        room: 'checkpaaras',
+        order_id: order_id,
+        chapter_id: parent_module_id,
+        unique_id: unique_id,
+      });
     } else if (option === 'Flash Card') {
-      navigation.navigate(ROUTES.FLASH, {flash_id: unique_id});
+      navigation.navigate(ROUTES.FLASH, {
+        flash_id: unique_id,
+        order_id: order_id,
+        chapter_id: parent_module_id,
+        unique_id: unique_id,
+      });
     }
   };
 
@@ -46,11 +85,36 @@ const Index = ({
 
   return (
     <View style={styles.cardContainer}>
+      <View
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          zIndex: 9999,
+        }}>
+        {locked && (
+          <IconTimer
+            name="lock-closed-sharp"
+            size={30}
+            color="#000"
+            style={styles.lockIcon}
+          />
+        )}
+      </View>
       <TouchableOpacity
         hitSlop={{x: 25, y: 15}}
         style={style.cardBox}
-        onPress={() => toggleModal(optionClick)}>
-        <View style={styles.statusContainer}>
+        onPress={locked ? null : () => toggleModal(optionClick)}>
+        <View
+          style={[
+            styles.statusContainer,
+            {
+              opacity: locked ? 0.3 : 1, // Dim when locked
+              filter: locked ? 'blur(2px)' : 'none', // Apply blur when locked
+              transition:
+                'opacity 0.3s ease, background-color 0.3s ease, filter 0.3s ease', // Smooth transition
+            },
+          ]}>
           <Text style={styles.statusText}>{optionClick}</Text>
           {optionClick === 'Live class' && (
             <TouchableOpacity
@@ -87,9 +151,11 @@ const Index = ({
             <TouchableOpacity
               hitSlop={{x: 25, y: 15}}
               onPress={() =>
-                navigation.navigate(ROUTES.MARKS, {
-                  module_id: unique_id,
-                })
+                !locked
+                  ? navigation.navigate(ROUTES.MARKS, {
+                      module_id: unique_id,
+                    })
+                  : null
               }>
               <Text
                 style={{
@@ -143,8 +209,24 @@ const Index = ({
                 justifyContent: 'space-between',
               }}>
               <View style={{width: '80%'}}>
-                <Text style={[styles.cardTitle]}>{Title}</Text>
-                <Text style={styles.cardSubtitle}>{secondOption}</Text>
+                <Text style={[styles.cardTitle, locked && {opacity: 0.5}]}>
+                  {Title}
+                </Text>
+                <Text style={[styles.cardSubtitle, locked && {opacity: 0.5}]}>
+                  {secondOption}
+                </Text>
+                {time_spent !== undefined &&
+                  time_spent !== 0 &&
+                  time_spent !== null && (
+                    <Text
+                      style={
+                        locked
+                          ? {fontSize: 12, color: color.black, opacity: 0.5}
+                          : {fontSize: 12, color: color.black}
+                      }>
+                      You have spent: {formatTime(time_spent)}
+                    </Text>
+                  )}
               </View>
               <View
                 style={{
@@ -191,11 +273,26 @@ const Index = ({
             </View>
           ) : (
             <>
-              <Text style={styles.cardTitle}>{Title}</Text>
-              <Text style={styles.cardSubtitle}>{secondOption}</Text>
+              <Text style={[styles.cardTitle, locked && {opacity: 0.5}]}>
+                {Title}
+              </Text>
+              <Text style={[styles.cardSubtitle, locked && {opacity: 0.5}]}>
+                {secondOption}
+              </Text>
+              {time_spent !== undefined &&
+                time_spent !== 0 &&
+                time_spent !== null && (
+                  <Text
+                    style={
+                      locked
+                        ? {fontSize: 12, color: color.black, opacity: 0.5}
+                        : {fontSize: 12, color: color.black}
+                    }>
+                    You have spent: {formatTime(time_spent)}
+                  </Text>
+                )}
             </>
           )}
-          {/* </View> */}
         </LinearGradient>
       </TouchableOpacity>
     </View>

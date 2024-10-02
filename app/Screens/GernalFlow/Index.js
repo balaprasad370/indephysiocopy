@@ -120,7 +120,7 @@ const Index = () => {
         <FlatList
           data={packages}
           renderItem={renderPackage}
-          keyExtractor={item => item.name}
+          keyExtractor={item => item.packageName}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.flatListContent}

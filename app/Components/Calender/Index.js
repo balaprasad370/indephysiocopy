@@ -18,6 +18,7 @@ import storage from '../../Constants/storage';
 import LighTheme from '../../theme/LighTheme';
 import DarkTheme from '../../theme/Darktheme';
 import LinearGradient from 'react-native-linear-gradient';
+import {ROUTES} from '../../Constants/routes';
 
 const daysOfWeek = [
   'Monday',

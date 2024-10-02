@@ -163,55 +163,7 @@ export const AuthProvider = ({children}) => {
     }
   };
 
-  // app.get('/package/alias', async (req, res) => {
-  //   const {package_name, level, lang_id} = req.query;
-
-  //   if (lang_id !== 1344) {
-  //     if (level === 'A1') {
-  //       const sql =
-  //         'SELECT * FROM package_alias WHERE package_name = ? AND level = ? ';
-  //       connection.query(sql, [package_name, level], (err, results) => {
-  //         if (err) {
-  //           console.error(err);
-  //           res.status(500).send(err);
-  //         } else {
-  //           res.status(200).json(results);
-  //         }
-  //       });
-  //     } else {
-  //       const sql = 'SELECT * FROM package_alias WHERE package_name = ? AND lang_id = ?';
-  //     connection.query(sql, [package_name, lang_id], (err, results) => {
-  //       if (err) {
-  //         console.error(err);
-  //         res.status(500).send(err);
-  //       } else {
-  //         res.status(200).json(results);
-  //       }
-  //     });
-  //     }
-
-  //   } else {
-  //     const sql = 'SELECT * FROM package_alias WHERE package_name = ? ';
-  //     connection.query(sql, [package_name], (err, results) => {
-  //       if (err) {
-  //         console.error(err);
-  //         res.status(500).send(err);
-  //       } else {
-  //         res.status(200).json(results);
-  //       }
-  //     });
-  //   }
-  // });
-
-  // useEffect(() => {
-  //   getPackageId();
-  //   // fetchPackageData();
-  //   const intervalId = setInterval(getPackageId, 4000);
-  //   return () => clearInterval(intervalId);
-  // }, []);
-
   useEffect(() => {
-    // fetchPackageData();
     getPackageId();
     fetchDocumentStatus();
   }, [userData]);

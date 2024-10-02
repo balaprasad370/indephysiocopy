@@ -24,3 +24,4 @@ export {default as Installment} from './Installements/Index';
 export {default as Quiz} from './Quiz/Index';
 export {default as MarksImage} from './MarksImage/Index';
 export {default as Leaderboard} from './LeaderBoard/Index';
+export {default as FilterRecording} from './FilterRecording/Index';
