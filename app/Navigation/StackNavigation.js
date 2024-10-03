@@ -23,6 +23,7 @@ import {
   MarksImage,
   Leaderboard,
   FilterRecording,
+  Assessment,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -133,6 +134,18 @@ const StackNavigation = () => {
         }}
         // component={AppUsageTracker}
         component={Portal}
+      />
+      <Stack.Screen
+        name={ROUTES.ASSESSMENTS}
+        options={{
+          headerTitle: 'Assessments',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
+        component={Assessment}
       />
 
       <Stack.Screen

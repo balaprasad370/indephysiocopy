@@ -44,6 +44,7 @@ const Index = ({
   };
 
   const toggleModal = option => {
+    console.log('option', option);
     if (option === 'Quiz') {
       navigation.navigate(ROUTES.QUIZ, {
         module_id: unique_id,
@@ -69,6 +70,13 @@ const Index = ({
     } else if (option === 'Flash Card') {
       navigation.navigate(ROUTES.FLASH, {
         flash_id: unique_id,
+        order_id: order_id,
+        chapter_id: parent_module_id,
+        unique_id: unique_id,
+      });
+    } else if (option === 'Assessments') {
+      navigation.navigate(ROUTES.ASSESSMENTS, {
+        assessment_id: unique_id,
         order_id: order_id,
         chapter_id: parent_module_id,
         unique_id: unique_id,
@@ -175,6 +183,7 @@ const Index = ({
           )}
           {status &&
           (optionClick === 'Flash Card' ||
+            optionClick === 'Assessments' ||
             optionClick === 'Reading Material') ? (
             <Text
               style={{

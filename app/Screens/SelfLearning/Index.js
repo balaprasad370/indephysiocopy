@@ -43,6 +43,7 @@ const Index = ({route, navigation}) => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setContent(res.data);
     } catch (error) {
       console.log('error', error.response);
@@ -77,6 +78,8 @@ const Index = ({route, navigation}) => {
                 ? 'Flash Card'
                 : item.schedule_live_class_id
                 ? 'Live class'
+                : item.type === 'assessments'
+                ? 'Assessments'
                 : 'Quiz'
             }
             unique_id={item.read_id || item.flash_id || item.id}

@@ -607,7 +607,6 @@ const Index = ({route}) => {
               <Text style={styled.quiztitle}>
                 Q{questionIndex + 1}) {item.question}
               </Text>
-              <Text>{item.id}</Text>
               {item.imageURL && renderImage(item.imageURL)}
               {renderTrueFalse(item, item.id)}
             </>

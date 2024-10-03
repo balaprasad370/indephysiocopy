@@ -25,3 +25,4 @@ export {default as Quiz} from './Quiz/Index';
 export {default as MarksImage} from './MarksImage/Index';
 export {default as Leaderboard} from './LeaderBoard/Index';
 export {default as FilterRecording} from './FilterRecording/Index';
+export {default as Assessment} from './Assessments/Index';

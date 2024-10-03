@@ -410,7 +410,7 @@ const Index = ({navigation}) => {
 
     // Determine the rounded progress percentage
     let displayedProgressPercentage;
-    if (progressPercentage >= 95) {
+    if (progressPercentage >= 99) {
       displayedProgressPercentage = 100;
     } else {
       displayedProgressPercentage = Math.floor(progressPercentage / 10) * 10;

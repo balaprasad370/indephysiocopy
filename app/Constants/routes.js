@@ -33,4 +33,5 @@ export const ROUTES = {
   LEADERBOARD: 'LeaderBoard',
   RECORDING: 'Recording',
   FILTER_RECORDING: 'Filter Recording',
+  ASSESSMENTS: 'Assessments',
 };

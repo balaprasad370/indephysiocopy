@@ -78,7 +78,8 @@ const AppNavigator = () => {
       console.error('Error saving time:', error);
     }
   };
-
+  const previousScreenParams = useRef(null);
+  const assessmentTimeRef = useRef(0);
   const flashTimeRef = useRef(0);
   const readingTimeRef = useRef(0);
   const quizTimeRef = useRef(0);
@@ -115,60 +116,7 @@ const AppNavigator = () => {
     }
   };
   // Create a reference to store params of the previous screen (Reading screen)
-  const previousScreenParams = useRef(null);
 
-  // const handleRouteChange = async (previousRouteName, currentRouteName) => {
-  //   const endTime = Date.now();
-  //   const timeSpent = endTime - startTimeRef.current;
-
-  //   if (previousRouteName) {
-  //     let activityType = null;
-
-  //     // Check which screen we are exiting and set the activity type
-  //     if (previousRouteName === 'Reading') {
-  //       activityType = 'reading_material';
-  //       readingTimeRef.current += timeSpent;
-  //     } else if (previousRouteName === 'Flash') {
-  //       activityType = 'flashcards';
-  //       flashTimeRef.current += timeSpent;
-  //     } else if (previousRouteName === 'Quiz') {
-  //       activityType = 'quiz';
-  //       quizTimeRef.current += timeSpent;
-  //     }
-  //     if (activityType) {
-  //       const {chapterId, orderId, unique_id} =
-  //         previousScreenParams.current || {};
-
-  //       if (chapterId && orderId && unique_id) {
-  //         // Send request to the backend
-  //         await storeTimeInDatabase({
-  //           chapterId,
-  //           activity: activityType,
-  //           orderId,
-  //           timeSpent,
-  //           unique_id,
-  //         });
-  //       }
-  //     }
-
-  //     await saveTimeForDay(previousRouteName, timeSpent);
-  //   }
-  //   if (
-  //     currentRouteName === 'Reading' ||
-  //     currentRouteName === 'Flash' ||
-  //     currentRouteName === 'Quiz'
-  //   ) {
-  //     const currentRoute = navigationRef.getCurrentRoute();
-  //     previousScreenParams.current = {
-  //       chapterId: currentRoute?.params?.chapter_id,
-  //       orderId: currentRoute?.params?.order_id,
-  //       unique_id: currentRoute?.params?.unique_id,
-  //     };
-  //   }
-
-  //   // Reset start time for the new screen
-  //   startTimeRef.current = Date.now();
-  // };
   const handleRouteChange = async (previousRouteName, currentRouteName) => {
     const endTime = Date.now();
     const timeSpent = endTime - startTimeRef.current;
@@ -186,6 +134,9 @@ const AppNavigator = () => {
       } else if (previousRouteName === 'Quiz') {
         activityType = 'quiz';
         quizTimeRef.current += timeSpent;
+      } else if (previousRouteName === 'Assessments') {
+        activityType = 'assessments';
+        assessmentTimeRef.current += timeSpent;
       }
 
       if (activityType) {
@@ -209,6 +160,8 @@ const AppNavigator = () => {
             flashTimeRef.current = 0;
           } else if (activityType === 'quiz') {
             quizTimeRef.current = 0;
+          } else if (activityType === 'assessments') {
+            assessmentTimeRef.current = 0;
           }
         }
       }
@@ -219,6 +172,7 @@ const AppNavigator = () => {
     if (
       currentRouteName === 'Reading' ||
       currentRouteName === 'Flash' ||
+      currentRouteName === 'Assessments' ||
       currentRouteName === 'Quiz'
     ) {
       const currentRoute = navigationRef.getCurrentRoute();
@@ -259,6 +213,7 @@ const AppNavigator = () => {
             flash_time: flashTimeRef.current,
             reading_time: readingTimeRef.current,
             quiz_time: quizTimeRef.current,
+            assessment_time: assessmentTimeRef.current,
           },
           {
             headers: {
@@ -274,6 +229,7 @@ const AppNavigator = () => {
         flashTimeRef.current = 0;
         readingTimeRef.current = 0;
         quizTimeRef.current = 0;
+        assessmentTimeRef.current = 0;
       } catch (error) {
         console.error('Error sending total app usage data:', error);
       }

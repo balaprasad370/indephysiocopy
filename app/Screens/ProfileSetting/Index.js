@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
@@ -26,9 +27,12 @@ import UserIcon from 'react-native-vector-icons/FontAwesome';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import axios from 'axios';
+import {PermissionsAndroid, Platform} from 'react-native';
 
 const Index = () => {
   const navigation = useNavigation();
+
+  const [loading, setLoading] = useState(false);
 
   const {isDark, setIsDark, userData, isAuthenticate, setIsAuthenticate, path} =
     useContext(AppContext);
@@ -68,20 +72,22 @@ const Index = () => {
 
   // Function to handle camera image capture
   const takePhoto = async () => {
-    const result = await launchCamera({
-      mediaType: 'photo',
-      quality: 1, // Capture the highest quality photo
-      saveToPhotos: true,
-    });
-
-    if (result.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (result.errorCode) {
-      console.log('Error: ', result.errorMessage);
-      Alert.alert('Error', result.errorMessage);
-    } else if (result.assets) {
-      // Compress the image after capture
-      setImage(result.assets[0]);
+    const hasPermission = await requestCameraPermission();
+    if (hasPermission) {
+      const result = await launchCamera({
+        mediaType: 'photo',
+        cameraType: 'back',
+        quality: 1,
+      });
+      if (result.didCancel) {
+        Alert.alert('Cancelled', 'No image selected');
+      } else if (result.errorMessage) {
+        Alert.alert('Error', result.errorMessage);
+      } else {
+        setImage(result.assets[0]); // Set the selected image
+      }
+    } else {
+      Alert.alert('Error', 'Camera permission is required');
     }
   };
 
@@ -101,13 +107,36 @@ const Index = () => {
       setImage(result.assets[0]);
     }
   };
+
+  const requestCameraPermission = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs camera access to take pictures.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      }
+      return true;
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  };
+
   const uploadFileToServer = async file => {
     const token = await storage.getStringAsync('token');
     let name = file.fileName;
     file.name = name;
     const formData = new FormData();
     formData.append('file', file);
-    // return;
+    setLoading(true);
 
     try {
       const response = await axios.post(
@@ -139,6 +168,8 @@ const Index = () => {
       );
 
       console.log(updateResponse.data.message);
+      setImage(null);
+      setLoading(false);
       // return response.data.filepath;
     } catch (error) {
       console.log('Error uploading file:', error);
@@ -160,8 +191,26 @@ const Index = () => {
               alignItems: 'center',
               marginBottom: 20,
             }}>
-            <TouchableOpacity>
-              <Image
+            <TouchableOpacity style={{width: 90, height: 90, borderRadius: 45}}>
+              {loading ? (
+                <ActivityIndicator size="large" color={color.darkPrimary} />
+              ) : (
+                <Image
+                  source={
+                    image
+                      ? {uri: image.uri}
+                      : userData && userData.profile_pic
+                      ? {
+                          uri: `https://d2c9u2e33z36pz.cloudfront.net/${userData?.profile_pic}`,
+                        }
+                      : {
+                          uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                        }
+                  }
+                  style={{width: 90, height: 90, borderRadius: 45}}
+                />
+              )}
+              {/* <Image
                 source={
                   userData && userData.profile_pic
                     ? {
@@ -172,7 +221,7 @@ const Index = () => {
                       }
                 }
                 style={{width: 90, height: 90, borderRadius: 45}}
-              />
+              /> */}
             </TouchableOpacity>
           </View>
 
@@ -219,6 +268,7 @@ const Index = () => {
           </View>
           {image && (
             <TouchableOpacity
+              disabled={loading}
               onPress={() => uploadFileToServer(image)} // Choose an image from gallery
               style={{
                 backgroundColor: color.darkPrimary,
@@ -370,22 +420,3 @@ const styles = StyleSheet.create({
     paddingTop: 2,
   },
 });
-
-// app.post('/student/updateProfilePhoto', async (req, res) => {
-//   const student_id = req.authData.studentId;
-//   const {filePath} = req.body;
-//   try {
-//     const sql = 'UPDATE students SET address = ? WHERE student_id = ?';
-//     const values = [filePath, student_id];
-
-//     const result = await manageQuery(sql, values);
-//     if (result.affectedRows === 1) {
-//       res.status(200).json({message: 'Profile photo updated successfully'});
-//     } else {
-//       res.status(404).json({message: 'Student not found'});
-//     }
-//   } catch (error) {
-//     console.error('Error updating profile photo:', error);
-//     res.status(500).json({message: 'Internal server error'});
-//   }
-// });
