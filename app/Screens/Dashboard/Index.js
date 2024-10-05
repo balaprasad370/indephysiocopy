@@ -84,6 +84,33 @@ const Index = ({navigation}) => {
     },
   ];
 
+  const [data, setData] = useState();
+
+  const getChapterStatus = async () => {
+    const token = await storage.getStringAsync('token');
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${path}/chapter/v2/student/status`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('res', res.data);
+      setData(res.data);
+    } catch (error) {
+      console.log('error', error.response);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getChapterStatus();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   const renderItem = ({item}) => {
     return (
       <SafeAreaView>
@@ -91,9 +118,6 @@ const Index = ({navigation}) => {
           <View style={styles.textstyle}>
             <Text style={style.textWel}>Welcome back</Text>
             <Text style={style.candName}>
-              {/* {userData
-                ? `${userData?.first_name} ${userData?.last_name} `
-                : null} */}
               {userData
                 ? `${userData.first_name} ${userData.last_name}`.length > 20
                   ? `${userData.first_name} ${userData.last_name}`.slice(
@@ -191,6 +215,7 @@ const Index = ({navigation}) => {
             lock={lockImage}
             isLocked={false}
             ROUTE="Self learn"
+            data={data}
           />
           <Menu
             name="Mock test"
@@ -280,6 +305,19 @@ const Index = ({navigation}) => {
               </Text>
             </TouchableOpacity>
           </View>
+          {/* {data ? (
+            <View>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
+                    parent_module_id: data.chapter_id,
+                    title: 'Progress Chapter',
+                  })
+                }>
+                <Text>Running Chapter</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null} */}
           <ProfileLevel />
         </View>
       </SafeAreaView>

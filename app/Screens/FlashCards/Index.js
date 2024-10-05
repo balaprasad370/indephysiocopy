@@ -187,23 +187,21 @@ const Index = ({route}) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View
+      <TouchableOpacity
+        onPress={() => submitFlashcardCompletion()}
         style={{
           backgroundColor: color.lightPrimary,
           paddingVertical: 8,
           borderRadius: 9,
           width: '95%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignSelf: 'center',
         }}>
-        <TouchableOpacity
-          onPress={() => submitFlashcardCompletion()}
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignSelf: 'center',
-          }}>
-          <Text style={{fontSize: 18, color: 'black'}}>Marks as read</Text>
-        </TouchableOpacity>
-      </View>
+        <Text style={{fontSize: 18, color: 'black', textAlign: 'center'}}>
+          Marks as read
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };

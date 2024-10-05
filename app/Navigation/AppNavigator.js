@@ -17,6 +17,7 @@ const AppNavigator = () => {
   const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef(null);
   const startTimeRef = useRef(null);
+  const appStartTimeRef = useRef(null);
   const appStateRef = useRef(AppState.currentState);
 
   // Helper function to convert milliseconds to hours, minutes, and seconds
@@ -68,12 +69,8 @@ const AppNavigator = () => {
       const savedTime = storage.getString(key) || '0';
       const totalTime = parseInt(savedTime, 10) + timeSpent;
       storage.setString(key, totalTime.toString());
-
-      // Format the total time for better readability
       const {hours, minutes, seconds} = formatTime(totalTime);
-      // console.log(
-      //   `Total time spent on ${screenName} today: ${hours}h ${minutes}m ${seconds}s`,
-      // );
+      console.log(`totalTime`, totalTime);
     } catch (error) {
       console.error('Error saving time:', error);
     }
@@ -115,7 +112,6 @@ const AppNavigator = () => {
       console.error('Error storing time spent data:', error);
     }
   };
-  // Create a reference to store params of the previous screen (Reading screen)
 
   const handleRouteChange = async (previousRouteName, currentRouteName) => {
     const endTime = Date.now();
@@ -139,6 +135,8 @@ const AppNavigator = () => {
         assessmentTimeRef.current += timeSpent;
       }
 
+      let timeSpent2 = timeSpent / 1000;
+
       if (activityType) {
         const {chapterId, orderId, unique_id} =
           previousScreenParams.current || {};
@@ -149,24 +147,13 @@ const AppNavigator = () => {
             chapterId,
             activity: activityType,
             orderId,
-            timeSpent,
+            timeSpent: timeSpent2,
             unique_id,
           });
-
-          // Clear the time after it's sent
-          if (activityType === 'reading_material') {
-            readingTimeRef.current = 0;
-          } else if (activityType === 'flashcards') {
-            flashTimeRef.current = 0;
-          } else if (activityType === 'quiz') {
-            quizTimeRef.current = 0;
-          } else if (activityType === 'assessments') {
-            assessmentTimeRef.current = 0;
-          }
         }
       }
 
-      await saveTimeForDay(previousRouteName, timeSpent);
+      // await saveTimeForDay(previousRouteName, timeSpent);
     }
 
     if (
@@ -187,33 +174,94 @@ const AppNavigator = () => {
     startTimeRef.current = Date.now();
   };
 
+  // const handleAppStateChange = async nextAppState => {
+  //   if (nextAppState === 'active') {
+  //     appStartTimeRef.current = Date.now();
+  //     startTimeRef.current = Date.now();
+  //     console.log('startTimeRef.current', startTimeRef.current);
+  //     await saveOpenTime(); // Store open time
+  //   }
+
+  //   // Check if the app is going to the background or inactive
+  //   if (
+  //     appStateRef.current === 'active' &&
+  //     nextAppState.match(/inactive|background/)
+  //   ) {
+  //     const endTime = Date.now();
+  //     const timeSpent1 = endTime - startTimeRef.current;
+  //     let timeSpent2 = timeSpent1 / 1000;
+  //     // Send app exit time
+  //     await saveExitTime();
+
+  //     const token = await storage.getString('token');
+  //     let flashTime2 = flashTimeRef.current / 1000;
+  //     let readingTime2 = readingTimeRef.current / 1000;
+  //     let quizTime2 = quizTimeRef.current / 1000;
+  //     let assessmentTime2 = assessmentTimeRef.current / 1000;
+
+  //     try {
+  //       await axios.post(
+  //         `${path}/store-app-usage`,
+  //         {
+  //           total_app_time: timeSpent2,
+  //           flash_time: flashTime2,
+  //           reading_time: readingTime2,
+  //           quiz_time: quizTime2,
+  //           assessment_time: assessmentTime2,
+  //         },
+  //         {
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         },
+  //       );
+
+  //       console.log('Total app time sent successfully');
+
+  //       // Clear the times after successful submission
+  //       flashTimeRef.current = 0;
+  //       readingTimeRef.current = 0;
+  //       quizTimeRef.current = 0;
+  //       assessmentTimeRef.current = 0;
+  //     } catch (error) {
+  //       console.error('Error sending total app usage data:', error);
+  //     }
+  //   }
+
+  //   appStateRef.current = nextAppState; // Update the app state
+  // };
+
   const handleAppStateChange = async nextAppState => {
     if (nextAppState === 'active') {
-      startTimeRef.current = Date.now(); // Reset the start time
+      appStartTimeRef.current = Date.now(); // Reset the app-specific start time
       await saveOpenTime(); // Store open time
     }
 
-    // Check if the app is going to the background or inactive
     if (
       appStateRef.current === 'active' &&
       nextAppState.match(/inactive|background/)
     ) {
       const endTime = Date.now();
-      const timeSpent = endTime - startTimeRef.current;
+      const timeSpentInApp = endTime - appStartTimeRef.current; // Use app-specific start time
 
-      // Send app exit time
-      await saveExitTime();
+      const timespent2 = timeSpentInApp / 1000;
 
       const token = await storage.getString('token');
+      let flashTime2 = flashTimeRef.current / 1000;
+      let readingTime2 = readingTimeRef.current / 1000;
+      let quizTime2 = quizTimeRef.current / 1000;
+      let assessmentTime2 = assessmentTimeRef.current / 1000;
+
       try {
         await axios.post(
           `${path}/store-app-usage`,
           {
-            total_app_time: timeSpent,
-            flash_time: flashTimeRef.current,
-            reading_time: readingTimeRef.current,
-            quiz_time: quizTimeRef.current,
-            assessment_time: assessmentTimeRef.current,
+            total_app_time: timespent2, // Convert to seconds
+            flash_time: flashTime2,
+            reading_time: readingTime2,
+            quiz_time: quizTime2,
+            assessment_time: assessmentTime2,
           },
           {
             headers: {

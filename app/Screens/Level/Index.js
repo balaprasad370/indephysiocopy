@@ -40,12 +40,15 @@ const Index = ({route}) => {
         console.log('my', lang_id);
 
         if (token) {
-          const response = await axios.get(`${path}/levels/${lang_id}`, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
+          const response = await axios.get(
+            `${path}/admin/v2/levels/${lang_id}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
             },
-          });
+          );
           console.log('response', response.data.data);
 
           if (response.data.status) {

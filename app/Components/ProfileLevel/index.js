@@ -220,7 +220,7 @@ const Index = () => {
       data={[{key: 'renderItem'}]}
       renderItem={ProfileComponent}
       keyExtractor={item => item.key}
-      style={{padding: scale(4)}}
+      style={{padding: scale(0)}}
       showsVerticalScrollIndicator={false}
     />
   );

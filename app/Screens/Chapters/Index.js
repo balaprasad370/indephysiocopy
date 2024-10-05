@@ -337,7 +337,8 @@ const Index = ({navigation}) => {
     useContext(AppContext);
   const [chapter, setChapter] = useState([]);
   const [progressData, setProgressData] = useState({});
-  let newPackageId = packageId;
+
+  console.log(packageId, level_id);
 
   const style = isDark ? DarkTheme : LighTheme;
 
@@ -346,10 +347,11 @@ const Index = ({navigation}) => {
     if (token) {
       setLoader(true);
       try {
-        const response = await axios.get(`${path}/chapters`, {
+        const response = await axios.get(`${path}/admin/v2/chapters`, {
           params: {
             level_id: level_id,
             client_id: clientId,
+            package_id: packageId,
           },
           headers: {
             'Content-Type': 'application/json',
@@ -371,7 +373,7 @@ const Index = ({navigation}) => {
     if (token) {
       try {
         const response = await axios.get(
-          `${path}/chapter/v1/admin/${chapterId}/progress`,
+          `${path}/chapter/v2/admin/${chapterId}/progress`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -379,6 +381,8 @@ const Index = ({navigation}) => {
             },
           },
         );
+
+        console.log('response', response.data);
         // Update the progressData state with the fetched completion_percentage
         setProgressData(prev => ({
           ...prev,

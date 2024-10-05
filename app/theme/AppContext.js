@@ -137,7 +137,7 @@ export const AuthProvider = ({children}) => {
 
   const getPackageId = async () => {
     try {
-      let level = '';
+      let level = 'A2';
       const token = await storage.getStringAsync('token');
 
       if (token && student_id) {

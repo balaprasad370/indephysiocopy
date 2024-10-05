@@ -7,14 +7,17 @@ import {Image} from 'react-native';
 import color from '../../Constants/color';
 import liveclassTrue from '../../assets/colorlive.png';
 import darkDoc from '../../assets/darkdoc.png';
-const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
+const Index = ({name, iconImage, lock, isLocked, ROUTE, data}) => {
   const navigation = useNavigation();
 
-  const changeRoute = option => {
+  const changeRoute = (option, data) => {
     if (option === 'Quiz') {
       setModalVisible(!modalVisible);
     } else if (option === 'Self learn') {
-      navigation.navigate(ROUTES.SELF_LEARN);
+      navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
+        parent_module_id: data.chapter_id,
+        title: 'Progress Chapter',
+      });
     } else if (option === 'Live') {
       navigation.navigate(ROUTES.LIVE_CLASS);
     } else if (option === 'Documents') {
@@ -25,7 +28,7 @@ const Index = ({name, iconImage, lock, isLocked, ROUTE}) => {
   return (
     <TouchableOpacity
       hitSlop={{x: 25, y: 15}}
-      onPress={() => changeRoute(`${ROUTE}`)}
+      onPress={() => changeRoute(`${ROUTE}`, data)}
       style={{
         marginTop: 15,
         display: 'flex',

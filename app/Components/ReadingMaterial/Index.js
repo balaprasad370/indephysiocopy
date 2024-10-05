@@ -225,22 +225,28 @@ const Index = ({route}) => {
         source={{html: htmlData}}
         showsVerticalScrollIndicator={false}
       />
-      <View
+      <TouchableOpacity
+        onPress={submitReadStatus}
         style={{
           backgroundColor: color.lightPrimary,
           paddingVertical: 8,
           borderRadius: 9,
+          display: 'flex',
+          justifyContent: 'center',
+          alignSelf: 'center',
+
+          width: '100%',
         }}>
-        <TouchableOpacity
-          onPress={submitReadStatus}
+        {/* <TouchableOpacity
+          
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignSelf: 'center',
-          }}>
-          <Text style={{fontSize: 18, color: 'black'}}>Marks as read</Text>
-        </TouchableOpacity>
-      </View>
+            
+          }}> */}
+        <Text style={{fontSize: 18, color: 'black', textAlign: 'center'}}>
+          Marks as read
+        </Text>
+        {/* </TouchableOpacity> */}
+      </TouchableOpacity>
     </View>
   );
 };

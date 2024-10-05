@@ -27,6 +27,7 @@ const Index = ({route, navigation}) => {
   const [content, setContent] = useState([]);
 
   const {title} = route.params;
+  console.log(parent_module_id);
 
   useEffect(() => {
     navigation.setOptions({title});
@@ -37,13 +38,12 @@ const Index = ({route, navigation}) => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${path}/chapter/v1/admin/${parent_module_id}`,
+        url: `${path}/chapter/v2/admin/${parent_module_id}`,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
-
       setContent(res.data);
     } catch (error) {
       console.log('error', error.response);

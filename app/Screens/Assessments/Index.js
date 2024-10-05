@@ -150,39 +150,80 @@ const Index = ({route, navigation}) => {
     }
   };
 
+  // const handleSubmit = async () => {
+  //   if (inputText || image) {
+  //     try {
+  //       // Only upload the image if it's provided
+  //       const image_url = image ? await uploadFileToServer(image) : null;
+
+  //       const token = await storage.getStringAsync('token');
+  //       const response = await axios.post(
+  //         `${path}/student/assessmentresult`,
+  //         {
+  //           ass_id: assessment_id,
+  //           text_answer: inputText,
+  //           image_answer: image_url,
+  //           completed: true,
+  //         },
+  //         {
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         },
+  //       );
+
+  //       console.log('Submission response:', response.data);
+  //       navigation.goBack(); // Navigate back after successful submission
+  //     } catch (error) {
+  //       console.error('Submission error:', error);
+  //       Alert.alert('Error', 'Failed to submit assessment');
+  //     } finally {
+  //       setLoading(false); // Ensure loading is reset
+  //     }
+  //   } else {
+  //     Alert.alert('Error', 'Please provide a response or upload an image');
+  //   }
+  // };
   const handleSubmit = async () => {
-    if (inputText || image) {
-      try {
-        // Only upload the image if it's provided
-        const image_url = image ? await uploadFileToServer(image) : null;
+    if (!inputText && !image) {
+      Alert.alert(
+        'Error',
+        'One of the following is required: response or image.',
+      );
+      return; // Exit the function if both are empty
+    }
 
-        const token = await storage.getStringAsync('token');
-        const response = await axios.post(
-          `${path}/student/assessmentresult`,
-          {
-            ass_id: assessment_id,
-            text_answer: inputText,
-            image_answer: image_url,
-            completed: true,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+    try {
+      const image_url = image ? await uploadFileToServer(image) : null;
 
-        console.log('Submission response:', response.data);
-        navigation.goBack(); // Navigate back after successful submission
-      } catch (error) {
-        console.error('Submission error:', error);
-        Alert.alert('Error', 'Failed to submit assessment');
-      } finally {
-        setLoading(false); // Ensure loading is reset
-      }
-    } else {
-      Alert.alert('Error', 'Please provide a response or upload an image');
+      console.log('image_url', image_url);
+
+      const token = await storage.getStringAsync('token');
+      console.log('token', inputText, image_url);
+      // return;
+
+      // Post the assessment result
+      const response = await axios.post(
+        `${path}/student/assessmentresult`,
+        {
+          ass_id: assessment_id,
+          text_answer: inputText || '',
+          image_answer: image_url || '',
+          completed: true,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      console.log('Submission response:', response.data);
+      navigation.goBack(); // Navigate back after successful submission
+    } catch (error) {
+      Alert.alert('Error', 'Failed to submit assessment');
     }
   };
 

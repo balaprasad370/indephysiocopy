@@ -233,7 +233,7 @@ const Index = ({
                           ? {fontSize: 12, color: color.black, opacity: 0.5}
                           : {fontSize: 12, color: color.black}
                       }>
-                      You have spent: {formatTime(time_spent)}
+                      You have spent: {formatTime(time_spent * 1000)}
                     </Text>
                   )}
               </View>
@@ -297,7 +297,7 @@ const Index = ({
                         ? {fontSize: 12, color: color.black, opacity: 0.5}
                         : {fontSize: 12, color: color.black}
                     }>
-                    You have spent: {formatTime(time_spent)}
+                    You have spent: {formatTime(time_spent * 1000)}
                   </Text>
                 )}
             </>
