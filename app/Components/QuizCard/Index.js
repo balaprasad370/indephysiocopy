@@ -1,5 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {TouchableOpacity, View, Text, StyleSheet, Alert} from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  Platform,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
@@ -127,6 +134,14 @@ const Index = ({
           {optionClick === 'Live class' && (
             <TouchableOpacity
               hitSlop={{x: 25, y: 15}}
+              style={{
+                backgroundColor: color.darkPrimary,
+                paddingLeft: 10,
+                paddingRight: 10,
+                paddingTop: 5,
+                paddingBottom: 5,
+                borderRadius: 20,
+              }}
               onPress={() => {
                 // Navigate based on the status
                 if (status === 1) {
@@ -139,18 +154,7 @@ const Index = ({
                   });
                 }
               }}>
-              <Text
-                style={{
-                  backgroundColor: color.darkPrimary,
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                  paddingTop: 5,
-                  paddingBottom: 5,
-                  borderRadius: 20,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: color.white,
-                }}>
+              <Text style={{fontSize: 13, fontWeight: 600, color: color.white}}>
                 {status === 1 ? 'Recording' : 'Join now'}
               </Text>
             </TouchableOpacity>
@@ -158,6 +162,14 @@ const Index = ({
           {optionClick === 'Quiz' && status && (
             <TouchableOpacity
               hitSlop={{x: 25, y: 15}}
+              style={{
+                backgroundColor: '#ED1C25',
+                paddingLeft: 10,
+                paddingRight: 10,
+                paddingTop: 5,
+                borderRadius: 20,
+                paddingBottom: 5,
+              }}
               onPress={() =>
                 !locked
                   ? navigation.navigate(ROUTES.MARKS, {
@@ -165,18 +177,7 @@ const Index = ({
                     })
                   : null
               }>
-              <Text
-                style={{
-                  backgroundColor: '#ED1C25',
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                  paddingTop: 5,
-                  paddingBottom: 5,
-                  borderRadius: 20,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: color.white,
-                }}>
+              <Text style={{color: color.white, fontSize: 13, fontWeight: 600}}>
                 Result
               </Text>
             </TouchableOpacity>
@@ -185,20 +186,24 @@ const Index = ({
           (optionClick === 'Flash Card' ||
             optionClick === 'Assessments' ||
             optionClick === 'Reading Material') ? (
-            <Text
-              style={{
-                backgroundColor: '#7ED957',
-                paddingLeft: 10,
-                paddingRight: 10,
-                paddingTop: 5,
-                paddingBottom: 5,
-                borderRadius: 20,
-                fontSize: 13,
-                fontWeight: 600,
-                color: color.black,
-              }}>
-              Completed
-            </Text>
+            <TouchableOpacity
+              disabled={true}
+              style={[
+                {
+                  backgroundColor: '#7ED957',
+                  paddingLeft: 10,
+                  borderRadius: 20,
+                  paddingRight: 10,
+                  paddingTop: 5,
+                  paddingBottom: 5,
+                  fontSize: 13,
+                  fontWeight: '600',
+                  color: color.black,
+                },
+                Platform.OS === 'ios' ? {borderRadius: 20} : {borderRadius: 20},
+              ]}>
+              <Text>Completed</Text>
+            </TouchableOpacity>
           ) : null}
         </View>
         <LinearGradient

@@ -338,8 +338,6 @@ const Index = ({navigation}) => {
   const [chapter, setChapter] = useState([]);
   const [progressData, setProgressData] = useState({});
 
-  console.log(packageId, level_id);
-
   const style = isDark ? DarkTheme : LighTheme;
 
   const chapterData = async () => {

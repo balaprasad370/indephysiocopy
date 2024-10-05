@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   leftBox: {
     flex: 1,
     flexWrap: 'wrap',
-    paddingTop: scale(18),
+    paddingTop: scale(15),
     justifyContent: 'flex-start',
     width: '100%',
   },
