@@ -310,6 +310,7 @@
 import {
   FlatList,
   Image,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -345,7 +346,7 @@ const Index = ({navigation}) => {
     if (token) {
       setLoader(true);
       try {
-        const response = await axios.get(`${path}/admin/v2/chapters`, {
+        const response = await axios.get(`${path}/admin/v3/chapters`, {
           params: {
             level_id: level_id,
             client_id: clientId,
@@ -379,8 +380,6 @@ const Index = ({navigation}) => {
             },
           },
         );
-
-        console.log('response', response.data);
         // Update the progressData state with the fetched completion_percentage
         setProgressData(prev => ({
           ...prev,
@@ -438,7 +437,23 @@ const Index = ({navigation}) => {
             });
           }
         }}
-        style={{marginVertical: 6}}>
+        style={
+          Platform.OS === 'ios'
+            ? {
+                marginVertical: 6,
+                marginHorizontal: 10,
+                shadowColor: '#000000',
+                shadowOpacity: 0.05,
+                shadowRadius: 100,
+                shadowOffset: {
+                  width: 50,
+                  height: 60,
+                },
+              }
+            : {
+                marginVertical: 6,
+              }
+        }>
         <LinearGradient
           style={[styles.chapterBox]}
           colors={

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import axios from 'axios';
 import {AppContext} from '../../theme/AppContext';
@@ -14,10 +15,15 @@ import color from '../../Constants/color';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Tts from 'react-native-tts';
+import {Animated} from 'react-native';
+
+const av = new Animated.Value(0);
 
 const {width, height} = Dimensions.get('window');
 
-const Flashcard = ({question, answer, showAnswer, onCardPress}) => {
+const Flashcard = ({question, answer, showAnswer, onCardPress, onSpeak}) => {
   return (
     <TouchableOpacity
       hitSlop={{x: 25, y: 15}}
@@ -28,6 +34,11 @@ const Flashcard = ({question, answer, showAnswer, onCardPress}) => {
         <Text style={showAnswer ? styles.answerText : styles.questionText}>
           {showAnswer ? answer : question}
         </Text>
+        {!showAnswer ? (
+          <TouchableOpacity style={styles.speakerIcon} onPress={onSpeak}>
+            <Icon name="volume-up" size={36} color={color.black} />
+          </TouchableOpacity>
+        ) : null}
       </View>
     </TouchableOpacity>
   );
@@ -96,8 +107,6 @@ const Index = ({route}) => {
                   },
                 },
               );
-
-              console.log('Response:', response.data.msg);
               navigation.goBack();
               // Alert.alert('Success', response.data.msg); // Show success alert
             } catch (error) {
@@ -116,6 +125,20 @@ const Index = ({route}) => {
 
   useEffect(() => {
     getFlashcardQuestions(flash_id);
+
+    // Register TTS event listeners and store them in variables to remove later
+    const startListener = Tts.addEventListener('tts-start', () => {});
+    const progressListener = Tts.addEventListener('tts-progress', () => {});
+    const finishListener = Tts.addEventListener('tts-finish', () => {});
+    const cancelListener = Tts.addEventListener('tts-cancel', () => {});
+
+    return () => {
+      // Clean up listeners when the component unmounts
+      startListener.remove();
+      progressListener.remove();
+      finishListener.remove();
+      cancelListener.remove();
+    };
   }, []);
 
   const swipeCard = () => {
@@ -140,10 +163,24 @@ const Index = ({route}) => {
     );
   }
 
+  const speakAnswer = () => {
+    const {flash_question} = flashcards[currentIndex];
+    Tts.speak(flash_question, {
+      androidParams: {
+        language: 'de-DE',
+        KEY_PARAM_PAN: -1,
+        KEY_PARAM_VOLUME: 0.5,
+        KEY_PARAM_STREAM: 'STREAM_MUSIC',
+      },
+      // iosVoiceId: 'com.apple.ttsbundle.Moira-compact',
+      rate: 0.5,
+    });
+  };
+
   const {flash_question, flash_answer} = flashcards[currentIndex];
 
   return (
-    <View style={style.flashCardcontainer}>
+    <SafeAreaView style={style.flashCardcontainer}>
       <View style={style.flashCardcontainer}>
         <View style={styles.progressContainer}>
           <Text style={styles.progressText}>
@@ -164,6 +201,7 @@ const Index = ({route}) => {
           answer={flash_answer}
           showAnswer={showAnswer}
           onCardPress={swipeCard}
+          onSpeak={speakAnswer}
         />
 
         <View style={styles.buttonContainer}>
@@ -191,7 +229,8 @@ const Index = ({route}) => {
         onPress={() => submitFlashcardCompletion()}
         style={{
           backgroundColor: color.lightPrimary,
-          paddingVertical: 8,
+          paddingVertical: 17,
+          paddingHorizontal: 18,
           borderRadius: 9,
           width: '95%',
           display: 'flex',
@@ -202,7 +241,7 @@ const Index = ({route}) => {
           Marks as read
         </Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -283,5 +322,10 @@ const styles = StyleSheet.create({
   progress: {
     height: '100%',
     backgroundColor: color.darkPrimary,
+  },
+  speakerIcon: {
+    position: 'absolute',
+    right: 20,
+    top: 10,
   },
 });

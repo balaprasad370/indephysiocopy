@@ -78,28 +78,71 @@ const Index = ({route}) => {
 
   const [correctAnswers, setCorrectAnswers] = useState({});
 
+  // const getDetails = async () => {
+  //   const token = await storage.getStringAsync('token');
+  //   console.log('Token:', token);
+  //   await axios
+  //     .post(`${path}/student/v3/questions/details`, {
+  //       module_id: module_id, //279
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //     .then(res => {
+  //       const correctAnswerIndices = {};
+  //       res.data.forEach(item => {
+  //         if (item.subQuestions && item.subQuestions.length > 0) {
+  //           item.subQuestions.forEach(subQuestion => {
+  //             correctAnswerIndices[subQuestion.id] =
+  //               subQuestion.correctAnswerIndex;
+  //           });
+  //         } else {
+  //           correctAnswerIndices[item.id] = item.correctAnswerIndex;
+  //         }
+  //       });
+  //       console.log('Correct Answer Indices:', correctAnswerIndices);
+  //       setCorrectAnswers(correctAnswerIndices);
+  //       setQuestion(res.data);
+  //       console.log('Question:', res.data);
+  //     })
+  //     .catch(error => console.log('error', error));
+  // };
   const getDetails = async () => {
-    await axios
-      .post(`${path}/questions/details`, {
-        module_id: module_id, //279
-      })
-      .then(res => {
-        const correctAnswerIndices = {};
-        res.data.forEach(item => {
-          if (item.subQuestions && item.subQuestions.length > 0) {
-            item.subQuestions.forEach(subQuestion => {
-              correctAnswerIndices[subQuestion.id] =
-                subQuestion.correctAnswerIndex;
-            });
-          } else {
-            correctAnswerIndices[item.id] = item.correctAnswerIndex;
-          }
-        });
-        console.log('Correct Answer Indices:', correctAnswerIndices);
-        setCorrectAnswers(correctAnswerIndices);
-        setQuestion(res.data);
-      })
-      .catch(error => console.log('error', error));
+    try {
+      const token = await storage.getStringAsync('token');
+
+      const response = await axios.post(
+        `${path}/student/v3/questions/details`,
+        {
+          module_id: module_id, //279
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const correctAnswerIndices = {};
+      response.data.forEach(item => {
+        if (item.subQuestions && item.subQuestions.length > 0) {
+          item.subQuestions.forEach(subQuestion => {
+            correctAnswerIndices[subQuestion.id] =
+              subQuestion.correctAnswerIndex;
+          });
+        } else {
+          correctAnswerIndices[item.id] = item.correctAnswerIndex;
+        }
+      });
+
+      console.log('Correct Answer Indices:', correctAnswerIndices);
+      setCorrectAnswers(correctAnswerIndices);
+      setQuestion(response.data);
+    } catch (error) {
+      console.log('Error fetching details:', error);
+    }
   };
 
   useEffect(() => {
@@ -346,6 +389,72 @@ const Index = ({route}) => {
     );
   };
 
+  const [matchData, setMatchData] = useState([]);
+
+  // Function to fetch match data
+  const fetchMatchData = async () => {
+    const token = await storage.getStringAsync('token');
+    try {
+      const response = await axios.post(
+        `${path}/student/v3/questions/match-details`,
+        {
+          moduleId: module_id, // Send the moduleId in the request body
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      setMatchData(response.data);
+    } catch (error) {
+      console.error('Error fetching match data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMatchData();
+  }, []);
+
+  const renderMatch = (items, index, item) => {
+    // Split and clean up matchQuestionLeft and matchQuestionRight to get individual IDs
+    const matchQuestionLeftIds = item.matchQuestionLeft
+      .split(',')
+      .map(id => id.trim());
+    const matchQuestionRightIds = item.matchQuestionRight
+      .split(',')
+      .map(id => id.trim());
+
+    return (
+      <View key={index} style={styled.matchContainer}>
+        {matchQuestionLeftIds.map((leftId, idx) => {
+          const leftMatch = matchData.find(match => match.match_id == leftId);
+          const rightId = matchQuestionRightIds[idx]; // Get the corresponding right match for the same index
+          const rightMatch = matchData.find(match => match.match_id == rightId);
+
+          return (
+            <View key={idx} style={styled.inlineContainer}>
+              {/* Left Match */}
+              {leftMatch && (
+                <View style={styled.leftContainer}>
+                  <Text style={{fontSize: 18}}>{leftMatch.match_data}</Text>
+                </View>
+              )}
+
+              {/* Right Match */}
+              {rightMatch && (
+                <View style={styled.rightContainer}>
+                  <Text style={{fontSize: 18}}>{rightMatch.match_data}</Text>
+                </View>
+              )}
+            </View>
+          );
+        })}
+      </View>
+    );
+  };
+
   // const [countdown, setCountdown] = useState(200);
   // const endTimeRef = useRef(null);
   // const animationFrameRef = useRef(null);
@@ -579,7 +688,12 @@ const Index = ({route}) => {
               <Text style={styled.quiztitle}>
                 Q: {questionIndex + 1} {item.question}
               </Text>
-              <Text>JumbledSentences</Text>
+              {renderMatch(item, questionIndex, item)}
+              {/* {matchData.length > 0 ? (
+                matchData.map((items, index) => renderMatch(items, index, item))
+              ) : (
+                <Text>No match data available.</Text>
+              )} */}
             </>
           );
         case 'Audio':
@@ -617,7 +731,11 @@ const Index = ({route}) => {
               <Text style={styled.quiztitle}>
                 Q{questionIndex + 1}) {item.question}
               </Text>
-              <VoiceComponent item={item.question} />
+              <VoiceComponent
+                item={item.question}
+                score={score}
+                setScore={setScore}
+              />
             </>
           );
         default:
@@ -939,5 +1057,26 @@ const styled = StyleSheet.create({
     borderWidth: 1,
     borderColor: color.darkPrimary,
     backgroundColor: color.darkPrimary,
+  },
+  matchContainer: {
+    marginVertical: 10,
+  },
+  inlineContainer: {
+    flexDirection: 'row', // Align items in a row
+    justifyContent: 'space-between', // Create space between left and right content
+    marginBottom: 10,
+  },
+  leftContainer: {
+    flex: 1, // Take up equal space for left content
+    paddingRight: 10, // Add some space between left and right
+    borderWidth: 1,
+    padding: 5,
+    marginRight: 8,
+  },
+  rightContainer: {
+    flex: 1, // Take up equal space for right content
+    paddingLeft: 10, // Add some space between right and left
+    borderWidth: 1,
+    padding: 5,
   },
 });

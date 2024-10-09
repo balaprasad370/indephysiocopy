@@ -24,6 +24,7 @@ import {
   Leaderboard,
   FilterRecording,
   Assessment,
+  Offline,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -132,8 +133,20 @@ const StackNavigation = () => {
           },
           headerTintColor: isDark ? '#fff' : '#000',
         }}
-        // component={AppUsageTracker}
+        // component={Offline}
         component={Portal}
+      />
+      <Stack.Screen
+        name={ROUTES.OFFLINE}
+        options={{
+          headerTitle: 'No Internet',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
+        component={Offline}
       />
       <Stack.Screen
         name={ROUTES.ASSESSMENTS}

@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Cross from 'react-native-vector-icons/Entypo';
 import UserIcon from 'react-native-vector-icons/FontAwesome';
+import BookIcon from 'react-native-vector-icons/Foundation';
 // import user from '../../Constants';
 import CourseCard from '../../Components/CourseCard/Index';
 import Menu from '../../Components/Menu/Index';
@@ -97,7 +98,6 @@ const Index = ({navigation}) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('res', res.data);
       setData(res.data);
     } catch (error) {
       console.log('error', error.response);
@@ -147,30 +147,7 @@ const Index = ({navigation}) => {
             onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
             style={{
               paddingRight: '3%',
-              // width: 55,
-              // height: 55,
             }}>
-            {/* <Image
-              source={require('../../Constants/person.jpg')}
-              style={{
-                width: 55,
-                height: 55,
-                borderRadius: 50,
-              }}
-            /> */}
-            {/* <UserIcon
-              name="user-circle"
-              style={{
-                color: isDark ? 'black' : 'white',
-                paddingLeft: 8,
-                paddingRight: 8,
-                paddingTop: 8,
-                paddingBottom: 8,
-                borderRadius: 100,
-                fontSize: 32,
-                backgroundColor: isDark ? 'white' : 'black',
-              }}
-            /> */}
             <Image
               source={
                 userData && userData?.profile_pic
@@ -185,6 +162,50 @@ const Index = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          style={{
+            marginTop: 20,
+            borderTopEndRadius: 20,
+            borderTopStartRadius: 20,
+            borderBottomEndRadius: 15,
+            backgroundColor: color.lowPrimary,
+            paddingBottom: 8,
+            borderBottomEndRadius: 20,
+            borderBottomStartRadius: 20,
+          }}>
+          <View
+            style={{
+              display: 'flex',
+              borderTopEndRadius: 20,
+              borderTopStartRadius: 20,
+              borderBottomEndRadius: 20,
+              borderBottomStartRadius: 20,
+              backgroundColor: color.darkPrimary,
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}>
+            <View style={{padding: 10}}>
+              <Text style={{color: 'white', fontSize: 16}}>
+                {(() => {
+                  const text = 'Level :A2, Chapter: Hobby and Numbers';
+                  return text.length > 20 ? text.slice(0, 32) + '...' : text;
+                })()}
+              </Text>
+              <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>
+                Quiz Attempted: 2/15
+              </Text>
+            </View>
+            <View
+              style={{
+                width: 2,
+                backgroundColor: 'white',
+                height: '100%',
+              }}></View>
+            <View style={{padding: 10}}>
+              <BookIcon name="book-bookmark" size={40} color={color.white} />
+            </View>
+          </View>
+        </TouchableOpacity>
         <FlatList
           data={courseData}
           horizontal

@@ -3266,9 +3266,9 @@ __metadata:
   linkType: hard
 
 "@types/hammerjs@npm:^2.0.36":
-  version: 2.0.45
-  resolution: "@types/hammerjs@npm:2.0.45"
-  checksum: 40a29067c485a2a1f4345718104218fcf769adb1dbe091cdb6f679b3293dfa0798b207eb498ee7fd79ae8664c999117738fa0c01753f7465a639128f38c3ff5b
+  version: 2.0.46
+  resolution: "@types/hammerjs@npm:2.0.46"
+  checksum: caba6ec788d19905c71092670b58514b3d1f5eee5382bf9205e8df688d51e7857b7994e2dd7aed57fac8977bdf0e456d67fbaf23440a4385b8ce25fe2af1ec39
   languageName: node
   linkType: hard
 
@@ -3324,20 +3324,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 22.7.4
-  resolution: "@types/node@npm:22.7.4"
+  version: 22.7.5
+  resolution: "@types/node@npm:22.7.5"
   dependencies:
     undici-types: ~6.19.2
-  checksum: a3f4154147639369aed08fe6f8d62eff637cf87b187bb252d7bbccdc82884626007af424b08a653c53f2182adfa0340001b4888cb7cbb942cef351210fc742a5
+  checksum: 1a8bbb504efaffcef7b8491074a428e5c0b5425b0c0ffb13e7262cb8462c275e8cc5eaf90a38d8fbf52a1eeda7c01ab3b940673c43fc2414140779c973e40ec6
   languageName: node
   linkType: hard
 
 "@types/node@npm:^18.0.0":
-  version: 18.19.54
-  resolution: "@types/node@npm:18.19.54"
+  version: 18.19.55
+  resolution: "@types/node@npm:18.19.55"
   dependencies:
     undici-types: ~5.26.4
-  checksum: d85bacc7430c2913bcd2cf293f312bc1f9108819707ac25b58404185c3b8f9ca9e3e93c396672f457c18e65f5ba86cc8363803f830207c6b7dd14fd74e1455b0
+  checksum: 943d57804dfe2b65fc8b5522b4aba49da0627f914381dbe01ecfc0867c2bc218cc7fa363a64cf8152830bf7ba252a9010c72302841e3a0ee8dd310543d3c46d6
   languageName: node
   linkType: hard
 
@@ -4372,9 +4372,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001663":
-  version: 1.0.30001666
-  resolution: "caniuse-lite@npm:1.0.30001666"
-  checksum: 505407ced34d6225c13da98ee18a640e58bbbfc8567687507a67c8837ae0ae798ad246602e81f0c7d7982fab22ee140c30312028d541299577e54d09822b973c
+  version: 1.0.30001667
+  resolution: "caniuse-lite@npm:1.0.30001667"
+  checksum: f3c6a40c3e4115c6e5fb46c47884d903191285d29ec8a8b092546efbc9cdedcbd7183cce72dd3cab7dfc16c4d5b2745892876b3d6dda75d4cba49f9389239aa9
   languageName: node
   linkType: hard
 
@@ -5199,9 +5199,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.28":
-  version: 1.5.31
-  resolution: "electron-to-chromium@npm:1.5.31"
-  checksum: 578fe8930948e0dc9ae45196f2a0db9686649c86883748c918436bf10305104bee9f1dd913fc9bb37e5353d4555628b329ec2c9916768d0a1132a8e8d99c46a1
+  version: 1.5.33
+  resolution: "electron-to-chromium@npm:1.5.33"
+  checksum: 945916e1fbaf53cb388835822108b5f373fdd985a9fc6d3abfd5bdc8a799da28c74a1537e7bdd81033cd021132d3e7b39ecf377c6c301d1b6c2ac1382e26155d
   languageName: node
   linkType: hard
 
@@ -6546,11 +6546,11 @@ __metadata:
   linkType: hard
 
 "i18next-http-backend@npm:^2.2.1":
-  version: 2.6.1
-  resolution: "i18next-http-backend@npm:2.6.1"
+  version: 2.6.2
+  resolution: "i18next-http-backend@npm:2.6.2"
   dependencies:
     cross-fetch: 4.0.0
-  checksum: 8fcf4c6abd12d07356ea85a99eab42a39d2e49f24b35aa9431c803e5f73366eab5c5dd6fdd10061fa65c586fea51b60b825bb542ddf7681fdcbe5a18ad6a10a1
+  checksum: 987227cc0a215054c92d4287656d9ce66ac3580fc2fc27f7cdce413ee91a61b9521aebfdc8971f2b03cec1ad5000ce57fbb9fee5f48d718a03ac04dd4aed64a7
   languageName: node
   linkType: hard
 
@@ -6708,6 +6708,7 @@ __metadata:
     react-native-splash-screen: 3.3.0
     react-native-svg: 13.13.0
     react-native-svg-transformer: ^1.5.0
+    react-native-tts: ^4.1.1
     react-native-ui-datepicker: ^2.0.4
     react-native-vector-icons: ^10.1.0
     react-native-video: 6.0.0-alpha.11
@@ -7249,15 +7250,15 @@ __metadata:
   linkType: hard
 
 "iterator.prototype@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "iterator.prototype@npm:1.1.2"
+  version: 1.1.3
+  resolution: "iterator.prototype@npm:1.1.3"
   dependencies:
     define-properties: ^1.2.1
     get-intrinsic: ^1.2.1
     has-symbols: ^1.0.3
     reflect.getprototypeof: ^1.0.4
     set-function-name: ^2.0.1
-  checksum: d8a507e2ccdc2ce762e8a1d3f4438c5669160ac72b88b648e59a688eec6bc4e64b22338e74000518418d9e693faf2a092d2af21b9ec7dbf7763b037a54701168
+  checksum: 7d2a1f8bcbba7b76f72e956faaf7b25405f4de54430c9d099992e6fb9d571717c3044604e8cdfb8e624cb881337d648030ee8b1541d544af8b338835e3f47ebe
   languageName: node
   linkType: hard
 
@@ -10026,6 +10027,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-tts@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "react-native-tts@npm:4.1.1"
+  checksum: 16508a701ce446341aa2e6d0107d214d53f80ee09f0ac967f79757e5e44bfa3e797caf5847de23265524b983a58bafb6a0f98c6cf970cbb40f1f6f88783b092e
+  languageName: node
+  linkType: hard
+
 "react-native-ui-datepicker@npm:^2.0.4":
   version: 2.0.4
   resolution: "react-native-ui-datepicker@npm:2.0.4"
@@ -10437,13 +10445,13 @@ __metadata:
   linkType: hard
 
 "regjsparser@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "regjsparser@npm:0.11.0"
+  version: 0.11.1
+  resolution: "regjsparser@npm:0.11.1"
   dependencies:
     jsesc: ~3.0.2
   bin:
     regjsparser: bin/parser
-  checksum: d18a8d5029217c12b5259eb31917fc29099b1da59f84a92d383216d4644f202a5c9ef4b6094c9845bcffb241072a5ec0667be22d8327e06240d4b88ee67ae4f6
+  checksum: 231d60810ca12a760393d65d149aa9501ea28b02c27a61c551b4f9162fe3cf48b289423515b73b1aea52949346e78c76cd552ac7169817d31f34df348db90fb4
   languageName: node
   linkType: hard
 

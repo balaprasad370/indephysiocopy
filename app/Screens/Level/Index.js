@@ -21,6 +21,12 @@ import LighTheme from '../../theme/LighTheme';
 import LinearGradient from 'react-native-linear-gradient';
 import Loading from '../../Components/Loading/Loading';
 import IconTimer from 'react-native-vector-icons/Ionicons';
+import {Animated} from 'react-native';
+
+const av = new Animated.Value(0);
+av.addListener(() => {
+  return;
+});
 
 const Index = ({route}) => {
   const {path, langId, clientId, isDark, loader, setLoader} =
@@ -37,11 +43,10 @@ const Index = ({route}) => {
       try {
         setLoader(true);
         const token = await storage.getStringAsync('token');
-        console.log('my', lang_id);
 
         if (token) {
           const response = await axios.get(
-            `${path}/admin/v2/levels/${lang_id}`,
+            `${path}/admin/v3/levels/${lang_id}`,
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -49,8 +54,6 @@ const Index = ({route}) => {
               },
             },
           );
-          console.log('response', response.data.data);
-
           if (response.data.status) {
             setLevels(response.data?.data);
           } else {
@@ -191,12 +194,9 @@ const styles = StyleSheet.create({
   level: {
     flexDirection: 'row',
     alignItems: 'center',
-    // marginBottom: 20,
     padding: 5,
-    marginHorizontal: 5,
-    marginVertical: 8,
-    // height: 120,
-    // backgroundColor: color.lowPrimary,
+    marginHorizontal: 10,
+    marginVertical: 5,
     borderRadius: 10,
     shadowColor: color.lowPrimary,
     shadowOffset: {width: 0, height: 5},

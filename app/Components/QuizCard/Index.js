@@ -33,6 +33,7 @@ const Index = ({
   order_id,
   time_spent,
   locked,
+  live_class_end_date,
 }) => {
   const navigation = useNavigation();
   const {userData, path, isDark} = useContext(AppContext);
@@ -51,7 +52,6 @@ const Index = ({
   };
 
   const toggleModal = option => {
-    console.log('option', option);
     if (option === 'Quiz') {
       navigation.navigate(ROUTES.QUIZ, {
         module_id: unique_id,
@@ -116,9 +116,21 @@ const Index = ({
           />
         )}
       </View>
+
       <TouchableOpacity
         hitSlop={{x: 25, y: 15}}
-        style={style.cardBox}
+        style={[
+          style.cardBox,
+          {
+            shadowColor: '#000000',
+            shadowOpacity: 0.05,
+            shadowRadius: 100,
+            shadowOffset: {
+              width: 50,
+              height: 60,
+            },
+          },
+        ]}
         onPress={locked ? null : () => toggleModal(optionClick)}>
         <View
           style={[
@@ -293,6 +305,12 @@ const Index = ({
               <Text style={[styles.cardSubtitle, locked && {opacity: 0.5}]}>
                 {secondOption}
               </Text>
+              {live_class_end_date && (
+                <Text>
+                  Class happened{' '}
+                  {new Date(live_class_end_date).toLocaleString()}
+                </Text>
+              )}
               {time_spent !== undefined &&
                 time_spent !== 0 &&
                 time_spent !== null && (

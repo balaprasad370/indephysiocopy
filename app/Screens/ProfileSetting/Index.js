@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   StyleSheet,
@@ -39,17 +40,48 @@ const Index = () => {
 
   const style = isDark ? DarkTheme : LighTheme;
 
+  // const logoutButton = async () => {
+  //   try {
+  //     storage.setBoolAsync('isLoggedIn', false);
+  //     storage.removeItem('token');
+  //     storage.removeItem('show');
+  //     storage.removeItem('email');
+  //     setIsAuthenticate(false);
+  //     navigation.navigate(ROUTES.LOGIN);
+  //   } catch (error) {
+  //     console.log('Error during logout:', error);
+  //   }
+  // };
+
   const logoutButton = async () => {
-    try {
-      storage.setBoolAsync('isLoggedIn', false);
-      storage.removeItem('token');
-      storage.removeItem('show');
-      storage.removeItem('email');
-      setIsAuthenticate(false);
-      navigation.navigate(ROUTES.LOGIN);
-    } catch (error) {
-      console.log('Error during logout:', error);
-    }
+    Alert.alert(
+      'Logout Confirmation',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Logout cancelled'),
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            try {
+              await storage.setBoolAsync('isLoggedIn', false);
+              storage.removeItem('token');
+              storage.removeItem('show');
+              storage.removeItem('email');
+              setIsAuthenticate(false);
+              navigation.navigate(ROUTES.LOGIN);
+            } catch (error) {
+              console.log('Error during logout:', error);
+            }
+          },
+          style: 'destructive', // Optional: Set style to indicate danger (for destructive actions like logout)
+        },
+      ],
+      {cancelable: true},
+    );
   };
 
   useEffect(() => {

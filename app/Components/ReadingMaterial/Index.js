@@ -229,13 +229,13 @@ const Index = ({route}) => {
         onPress={submitReadStatus}
         style={{
           backgroundColor: color.lightPrimary,
-          paddingVertical: 8,
+          paddingVertical: 17,
+          paddingHorizontal: 18,
           borderRadius: 9,
+          width: '95%',
           display: 'flex',
           justifyContent: 'center',
           alignSelf: 'center',
-
-          width: '100%',
         }}>
         {/* <TouchableOpacity
           

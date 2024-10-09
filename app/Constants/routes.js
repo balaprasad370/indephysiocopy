@@ -34,4 +34,5 @@ export const ROUTES = {
   RECORDING: 'Recording',
   FILTER_RECORDING: 'Filter Recording',
   ASSESSMENTS: 'Assessments',
+  OFFLINE: 'Offline',
 };

@@ -1,5 +1,5 @@
 import {StatusBar, StyleSheet, View, AppState} from 'react-native';
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import StackNavigation from './StackNavigation';
 import AuthNavigator from './AuthNavigator';
 import {
@@ -10,6 +10,8 @@ import {AppContext} from '../theme/AppContext';
 import Toast from '../Components/Toast/Index';
 import storage from '../Constants/storage';
 import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import {ROUTES} from '../Constants/routes';
 
 const AppNavigator = () => {
   const {isAuthenticate, isDark, show, path} = useContext(AppContext);
@@ -19,6 +21,7 @@ const AppNavigator = () => {
   const startTimeRef = useRef(null);
   const appStartTimeRef = useRef(null);
   const appStateRef = useRef(AppState.currentState);
+  const [isConnected, setIsConnected] = useState(true);
 
   // Helper function to convert milliseconds to hours, minutes, and seconds
   const formatTime = timeInMillis => {
@@ -174,64 +177,6 @@ const AppNavigator = () => {
     startTimeRef.current = Date.now();
   };
 
-  // const handleAppStateChange = async nextAppState => {
-  //   if (nextAppState === 'active') {
-  //     appStartTimeRef.current = Date.now();
-  //     startTimeRef.current = Date.now();
-  //     console.log('startTimeRef.current', startTimeRef.current);
-  //     await saveOpenTime(); // Store open time
-  //   }
-
-  //   // Check if the app is going to the background or inactive
-  //   if (
-  //     appStateRef.current === 'active' &&
-  //     nextAppState.match(/inactive|background/)
-  //   ) {
-  //     const endTime = Date.now();
-  //     const timeSpent1 = endTime - startTimeRef.current;
-  //     let timeSpent2 = timeSpent1 / 1000;
-  //     // Send app exit time
-  //     await saveExitTime();
-
-  //     const token = await storage.getString('token');
-  //     let flashTime2 = flashTimeRef.current / 1000;
-  //     let readingTime2 = readingTimeRef.current / 1000;
-  //     let quizTime2 = quizTimeRef.current / 1000;
-  //     let assessmentTime2 = assessmentTimeRef.current / 1000;
-
-  //     try {
-  //       await axios.post(
-  //         `${path}/store-app-usage`,
-  //         {
-  //           total_app_time: timeSpent2,
-  //           flash_time: flashTime2,
-  //           reading_time: readingTime2,
-  //           quiz_time: quizTime2,
-  //           assessment_time: assessmentTime2,
-  //         },
-  //         {
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         },
-  //       );
-
-  //       console.log('Total app time sent successfully');
-
-  //       // Clear the times after successful submission
-  //       flashTimeRef.current = 0;
-  //       readingTimeRef.current = 0;
-  //       quizTimeRef.current = 0;
-  //       assessmentTimeRef.current = 0;
-  //     } catch (error) {
-  //       console.error('Error sending total app usage data:', error);
-  //     }
-  //   }
-
-  //   appStateRef.current = nextAppState; // Update the app state
-  // };
-
   const handleAppStateChange = async nextAppState => {
     if (nextAppState === 'active') {
       appStartTimeRef.current = Date.now(); // Reset the app-specific start time
@@ -245,6 +190,8 @@ const AppNavigator = () => {
       const endTime = Date.now();
       const timeSpentInApp = endTime - appStartTimeRef.current; // Use app-specific start time
 
+      console.log(timeSpentInApp);
+
       const timespent2 = timeSpentInApp / 1000;
 
       const token = await storage.getString('token');
@@ -252,6 +199,7 @@ const AppNavigator = () => {
       let readingTime2 = readingTimeRef.current / 1000;
       let quizTime2 = quizTimeRef.current / 1000;
       let assessmentTime2 = assessmentTimeRef.current / 1000;
+      await saveExitTime();
 
       try {
         await axios.post(
@@ -285,6 +233,19 @@ const AppNavigator = () => {
 
     appStateRef.current = nextAppState; // Update the app state
   };
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+      if (!state.isConnected) {
+        navigationRef.navigate(ROUTES.OFFLINE); // Redirect to Offline screen when no internet
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const subscription = AppState.addEventListener(

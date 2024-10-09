@@ -11,7 +11,7 @@ import {
 import Voice from '@react-native-community/voice';
 import color from '../../Constants/color';
 
-export default function TextToSpeech({item}) {
+export default function TextToSpeech({item, score, setScore}) {
   const [pitch, setPitch] = useState('');
   const [error, setError] = useState('');
   const [started, setStarted] = useState('');
@@ -36,7 +36,7 @@ export default function TextToSpeech({item}) {
     }
 
     function onSpeechResults(e) {
-      console.log('onSpeechResults: ', e);
+      // console.log('onSpeechResults: ', e);
       setResults(e.value);
     }
 
@@ -46,7 +46,7 @@ export default function TextToSpeech({item}) {
     }
 
     function onSpeechVolumeChanged(e) {
-      console.log('onSpeechVolumeChanged: ', e);
+      // console.log('onSpeechVolumeChanged: ', e);
       setPitch(e.value);
     }
 
@@ -76,7 +76,7 @@ export default function TextToSpeech({item}) {
     setEnd('');
 
     try {
-      await Voice.start('en-US');
+      await Voice.start('de-DE');
       // await Voice.start('de-DE'); // Changed to German language
     } catch (e) {
       console.error(e);
@@ -113,6 +113,28 @@ export default function TextToSpeech({item}) {
     setPartialResults([]);
     setEnd('');
   };
+
+  // Effect to compare results with item and set marks
+  useEffect(() => {
+    if (results.length > 0) {
+      const cleanItem = item
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+        .trim()
+        .toLowerCase(); // Remove punctuation from item
+      const isMatch = results.some(
+        result =>
+          result
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+            .trim()
+            .toLowerCase() === cleanItem,
+      );
+      setScore(isMatch ? score + 1 : score); // Set score as 1 if match, otherwise 0
+    }
+  }, [results, item]);
+
+  useEffect(() => {
+    console.log('Item:', item, 'Results:', results, 'Score:', score);
+  }, [item, results]);
 
   return (
     <View style={{}}>
