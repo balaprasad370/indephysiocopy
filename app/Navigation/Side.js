@@ -34,7 +34,7 @@ const DrawerContent = props => {
       setIsAuthenticate(false);
       navigation.navigate(ROUTES.LOGIN);
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.log('Error during logout:', error);
     }
   };
 

@@ -34,6 +34,7 @@ const Index = ({
   time_spent,
   locked,
   live_class_end_date,
+  level_id,
 }) => {
   const navigation = useNavigation();
   const {userData, path, isDark} = useContext(AppContext);
@@ -59,6 +60,7 @@ const Index = ({
         order_id: order_id,
         chapter_id: parent_module_id,
         unique_id: unique_id,
+        level_id: level_id,
       });
     } else if (option === 'Reading Material') {
       navigation.navigate(ROUTES.READING, {
@@ -235,7 +237,9 @@ const Index = ({
                 justifyContent: 'space-between',
               }}>
               <View style={{width: '80%'}}>
-                <Text style={[styles.cardTitle, locked && {opacity: 0.5}]}>
+                <Text
+                  selectable={true}
+                  style={[styles.cardTitle, locked && {opacity: 0.5}]}>
                   {Title}
                 </Text>
                 <Text style={[styles.cardSubtitle, locked && {opacity: 0.5}]}>

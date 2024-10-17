@@ -11,7 +11,7 @@ const useScreenTimeTracker = screenName => {
     try {
       await storage.setItem(`${screenName}_time`, totalScreenTime.toString());
     } catch (error) {
-      console.error(`Error saving time for ${screenName}:`, error);
+      console.log(`Error saving time for ${screenName}:`, error);
     }
   };
 
@@ -29,7 +29,7 @@ const useScreenTimeTracker = screenName => {
 
       await saveScreenTime(totalScreenTime); // Save the updated total time
     } catch (error) {
-      console.error(`Error calculating time for ${screenName}:`, error);
+      console.log(`Error calculating time for ${screenName}:`, error);
     }
   };
 

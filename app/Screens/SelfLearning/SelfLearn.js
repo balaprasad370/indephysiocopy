@@ -4,6 +4,7 @@ import {
   FlatList,
   Image,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -50,13 +51,42 @@ const SelfLearn = () => {
 
   return (
     <SafeAreaView style={style.selfLearn}>
-      <View style={style.example}>
-        <View style={{width: '90%', alignSelf: 'center'}}>
-          <Text style={style.exampleScreen}>Subjects</Text>
+      <ScrollView>
+        <View style={style.example}>
+          <View style={{width: '90%', alignSelf: 'center'}}>
+            <Text style={style.exampleScreen}>Subjects</Text>
+          </View>
         </View>
-      </View>
 
-      {languages && languages.length > 0 ? (
+        {languages && languages.length > 0 ? (
+          languages.map((item, index) => {
+            return (
+              <View key={index} style={{marginVertical: 8}}>
+                <Example
+                  route={ROUTES.LEVEL}
+                  lang_id={item.lang_id}
+                  id={index}
+                  img={`https://d2c9u2e33z36pz.cloudfront.net/${item.lang_img}`}
+                  name={item.language_name}
+                  description={item.language_description}
+                />
+              </View>
+            );
+          })
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={{fontSize: 18, fontWeight: '900'}}>
+              There is no content
+            </Text>
+          </View>
+        )}
+
+        {/* {languages && languages.length > 0 ? (
         <View>
           <FlatList
             data={languages}
@@ -87,7 +117,8 @@ const SelfLearn = () => {
             There is no content
           </Text>
         </View>
-      )}
+      )} */}
+      </ScrollView>
     </SafeAreaView>
   );
 };

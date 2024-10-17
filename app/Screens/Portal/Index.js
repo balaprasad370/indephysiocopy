@@ -27,7 +27,7 @@ const ReferralScreen = () => {
     try {
       await Share.open(shareOptions);
     } catch (error) {
-      console.error('Error sharing referral code:', error);
+      console.log('Error sharing referral code:', error);
     }
   };
 

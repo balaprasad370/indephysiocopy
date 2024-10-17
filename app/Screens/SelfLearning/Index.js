@@ -19,14 +19,14 @@ import axios from 'axios';
 import storage from '../../Constants/storage';
 
 const Index = ({route, navigation}) => {
-  const {parent_module_id} = route.params;
+  const {parent_module_id, title, level_id} = route.params;
   const {isDark, path} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
   const [content, setContent] = useState([]);
 
-  const {title} = route.params;
+  // const {title, level_id} = route.params;
 
   useEffect(() => {
     navigation.setOptions({title});
@@ -89,6 +89,7 @@ const Index = ({route, navigation}) => {
             time_spent={item.time_spent}
             locked={item.locked}
             live_class_end_date={item.live_class_end_date}
+            level_id={level_id}
           />
         ),
     [parent_module_id],

@@ -1,6 +1,9 @@
 import {
   Alert,
+  Animated,
+  AppState,
   Button,
+  FlatList,
   Image,
   Modal,
   ScrollView,
@@ -17,14 +20,14 @@ import React, {
   useState,
 } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import axios from 'axios';
+import axios, {all} from 'axios';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconTimer from 'react-native-vector-icons/MaterialCommunityIcons';
 import {styles} from '../../Components/QuizCard/QuizStyle';
 import {TextInput} from 'react-native-gesture-handler';
 import WebView from 'react-native-webview';
 import AudioComponent from '../../Components/QuizCard/AudioComponent';
-import scale from '../../utils/utils';
+import scale, {consoleLog} from '../../utils/utils';
 import color from '../../Constants/color';
 import {AppContext} from '../../theme/AppContext';
 import {useNavigation} from '@react-navigation/native';
@@ -32,17 +35,97 @@ import storage from '../../Constants/storage';
 import VoiceComponent from './VoiceComponent';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
+import DraggableFlatList from 'react-native-draggable-flatlist';
+import RenderMatch from './RenderMatch';
+import JumbledSentence from './JumbledSentence';
+import JumbledWords from './JumbledWords';
+import {PinchGestureHandler, State} from 'react-native-gesture-handler';
 
 const Index = ({route}) => {
-  const {module_id, title, order_id, chapter_id, unique_id} = route.params;
+  const {
+    module_id,
+    title,
+    order_id,
+    chapter_id,
+    unique_id,
+    level_id,
+    previousAnswers,
+    currentQuestionIndex,
+  } = route.params;
+
+  // console.log(module_id, title, order_id, chapter_id, unique_id, level_id);
   const {path, grandScore, setGrandScore, userData, student_id, isDark} =
     useContext(AppContext);
   const navigation = useNavigation();
 
   const style = isDark ? DarkTheme : LighTheme;
 
-  const [questionIndex, setQuestionIndex] = useState(0);
+  const animatedValue = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    animatedValue.addListener(({value}) => {
+      //   console.log('Animated Value:', value);
+    });
+    Animated.timing(animatedValue, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+    return () => {
+      animatedValue.removeAllListeners();
+    };
+  }, [animatedValue]);
+
+  const [newScale, setNewScale] = useState(1);
+
+  const onPinchEvent = event => {
+    console.log('event', event.nativeEvent.scale);
+    setNewScale(event.nativeEvent.scale);
+  };
+
+  const onPinchStateChange = event => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      setNewScale(1); // Reset to original scale when gesture ends
+    }
+  };
+
+  const objectAnswers = previousAnswers ? JSON.parse(previousAnswers) : {};
+
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [combinedData, setCombinedData] = useState([]);
+  const [answerData, setAnswerData] = useState([]);
+  const [studentAnswer, setStudentAnswer] = useState([]);
+
+  const [allCombinedData, setAllCombinedData] = useState(
+    previousAnswers ? objectAnswers : {},
+  );
+
+  const handleSetCombinedData = (index, data, item) => {
+    const questionIds = data.map(item => item.questionId);
+    const matchAnswerSingle = item.matchAnswerSingle
+      .split(',')
+      .map(id => id.trim());
+
+    setAnswerData(prevState => ({
+      ...prevState,
+      [index]: matchAnswerSingle,
+    }));
+    setStudentAnswer(prevState => ({
+      ...prevState,
+      [index]: questionIds,
+    }));
+
+    setAllCombinedData(prevState => ({
+      ...prevState,
+      [index]: data,
+    }));
+  };
+
+  const [questionIndex, setQuestionIndex] = useState(
+    previousAnswers ? currentQuestionIndex - 1 : 0,
+  );
+
   const [score, setScore] = useState(0);
+  const [completed, setCompleted] = useState(0);
   const [question, setQuestion] = useState([]);
   const closeModal = () => {
     Alert.alert(
@@ -70,44 +153,9 @@ const Index = ({route}) => {
     );
   };
 
-  // const [correctAnswers, setCorrectAnswers] = useState([]);
-  // Audio module Id - 58 -> Ongoing
-  // Fill in the blanks module id - 126 -> Completed
-  // Normal module id - 130 - > Completed
-  // True false Module id - 72 - > Completed
-
   const [correctAnswers, setCorrectAnswers] = useState({});
+  const [questionType, setQuestionType] = useState('');
 
-  // const getDetails = async () => {
-  //   const token = await storage.getStringAsync('token');
-  //   console.log('Token:', token);
-  //   await axios
-  //     .post(`${path}/student/v3/questions/details`, {
-  //       module_id: module_id, //279
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //     .then(res => {
-  //       const correctAnswerIndices = {};
-  //       res.data.forEach(item => {
-  //         if (item.subQuestions && item.subQuestions.length > 0) {
-  //           item.subQuestions.forEach(subQuestion => {
-  //             correctAnswerIndices[subQuestion.id] =
-  //               subQuestion.correctAnswerIndex;
-  //           });
-  //         } else {
-  //           correctAnswerIndices[item.id] = item.correctAnswerIndex;
-  //         }
-  //       });
-  //       console.log('Correct Answer Indices:', correctAnswerIndices);
-  //       setCorrectAnswers(correctAnswerIndices);
-  //       setQuestion(res.data);
-  //       console.log('Question:', res.data);
-  //     })
-  //     .catch(error => console.log('error', error));
-  // };
   const getDetails = async () => {
     try {
       const token = await storage.getStringAsync('token');
@@ -115,7 +163,8 @@ const Index = ({route}) => {
       const response = await axios.post(
         `${path}/student/v3/questions/details`,
         {
-          module_id: module_id, //279
+          // module_id: 114,
+          module_id: module_id,
         },
         {
           headers: {
@@ -124,7 +173,7 @@ const Index = ({route}) => {
           },
         },
       );
-
+      setQuestionType(response.data[0].type);
       const correctAnswerIndices = {};
       response.data.forEach(item => {
         if (item.subQuestions && item.subQuestions.length > 0) {
@@ -138,6 +187,7 @@ const Index = ({route}) => {
       });
 
       console.log('Correct Answer Indices:', correctAnswerIndices);
+
       setCorrectAnswers(correctAnswerIndices);
       setQuestion(response.data);
     } catch (error) {
@@ -162,43 +212,9 @@ const Index = ({route}) => {
     setSelectedOption(null);
     setIsPlaying(false);
     setIsAttempted(false);
+
     setQuestionIndex(prevIndex => prevIndex + 1);
   };
-  // const submitNow = async () => {
-  //   const token = await storage.getStringAsync('token');
-  //   setSelectedOption(null);
-  //   setQuestionIndex(0);
-
-  //   if (sound) {
-  //     sound.pause();
-  //   }
-  //   const newScore = score == 0 ? 0 : score;
-  //   try {
-  //     await axios.post(
-  //       `${path}/student/saveMarks`,
-  //       {
-  //         student_id: student_id,
-  //         module_id: module_id,
-  //         marks: newScore,
-  //         total: question.length,
-  //       },
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       },
-  //     );
-  //     setScore(0);
-  //     setIsPlaying(false);
-  //     setIsAttempted(false);
-  //     navigation.goBack();
-  //     console.log('Marks saved successfully');
-  //   } catch (error) {
-  //     console.log('Error saving marks:', error.message);
-  //   }
-  // };
-
   const submitNow = async () => {
     // Show confirmation alert before proceeding
     Alert.alert(
@@ -221,7 +237,7 @@ const Index = ({route}) => {
               sound.pause();
             }
 
-            const newScore = score === 0 ? 0 : score; // Fixed == to ===
+            const newScore = score === 0 ? 0 : score;
             try {
               // Save the marks using POST request
               await axios.post(
@@ -230,7 +246,7 @@ const Index = ({route}) => {
                   student_id: student_id,
                   module_id: module_id,
                   marks: newScore,
-                  total: question.length,
+                  total: totalQuestionMarks,
                 },
                 {
                   headers: {
@@ -240,26 +256,78 @@ const Index = ({route}) => {
                 },
               );
 
+              // After marks are saved successfully, delete the quiz data
+              await axios.delete(`${path}/admin/v3/deleteQuizData`, {
+                data: {
+                  module_id: module_id,
+                },
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+
+              const studentAnswers = JSON.stringify(selectedOptions);
+
+              const newInputValue = JSON.stringify(inputValue);
+
+              let finalStudentAnswers =
+                questionType === 'JumbledSentences'
+                  ? JSON.stringify(studentAnswer)
+                  : studentAnswers == '{}'
+                  ? newInputValue
+                  : studentAnswers;
+
+              let teacherAnswers =
+                questionType === 'JumbledSentences'
+                  ? JSON.stringify(answerData)
+                  : JSON.stringify(correctAnswers);
+
+              let quizType = questionType === 'JumbledSentences' ? 1 : 0;
+              // return;
+              if (
+                questionType !== 'Record' &&
+                questionType !== 'Speaking' &&
+                questionType !== 'Match' &&
+                questionType !== 'JumbledWords'
+              ) {
+                await axios.post(
+                  `${path}/admin/v4/studentAnswers`,
+                  {
+                    module_id: module_id,
+                    student_answers: finalStudentAnswers,
+                    teacher_answers: teacherAnswers,
+                    type: quizType,
+                  },
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${token}`,
+                    },
+                  },
+                );
+              }
+
               // Reset states and navigate back
               setScore(0);
               setIsPlaying(false);
+              setCompleted(1);
               setIsAttempted(false);
               navigation.goBack();
               console.log('Marks saved successfully');
             } catch (error) {
-              console.log('Error saving marks:', error.message);
+              console.log('Error saving marks:', error.response);
             }
           },
         },
       ],
-      {cancelable: false}, // Prevent dismissing the alert by tapping outside
+      {cancelable: false},
     );
   };
 
   const handlePrev = () => {
-    console.log('first');
     if (questionIndex <= 0) {
-      setSelectedOptions({});
+      // setSelectedOptions({});
       return;
     }
     if (sound) {
@@ -272,11 +340,39 @@ const Index = ({route}) => {
     setSelectedOption(null);
   };
 
+  const createLinearArray = objectAnswers => {
+    const keys = Object.keys(objectAnswers)
+      .map(Number)
+      .sort((a, b) => a - b);
+    if (keys.length === 0) return [];
+
+    const minKey = keys[0];
+    const result = [];
+
+    for (let i = 0; i < keys.length; i++) {
+      const index = keys[i] - minKey;
+      result.push(index);
+    }
+
+    return result;
+  };
+
+  const linearArray = createLinearArray(objectAnswers);
+
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAttempted, setIsAttempted] = useState(false);
-  const [attemptedQuestions, setAttemptedQuestions] = useState([]);
+  const [attemptedQuestions, setAttemptedQuestions] = useState(
+    linearArray.length > 0 ? linearArray : [],
+  );
   const [finalScore, setFinalScore] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState({}); // Object to store selected options for each question/subquestion
+  const [selectedOptions, setSelectedOptions] = useState(
+    previousAnswers ? objectAnswers : {},
+  );
+
+  // console.log('selectedOptions', selectedOptions);
+  // console.log('attemptedQuestions', attemptedQuestions);
+  // console.log('questionIndex', questionIndex);
+  // console.log('previousAnswers', previousAnswers);
 
   const handleOptionSelect = (
     selectedIndex,
@@ -289,8 +385,27 @@ const Index = ({route}) => {
       ...prevState,
       [id]: selectedIndex,
     }));
-    setAttemptedQuestions(prev => [...prev, questionIndex]);
+    if (!attemptedQuestions.includes(id)) {
+      setAttemptedQuestions(prev => [...prev, questionIndex]);
+    }
+    // setAttemptedQuestions(prev => [...prev, questionIndex]);
   };
+
+  // const handleOptionSelect = (
+  //   selectedIndex,
+  //   optionKey,
+  //   correctAnswerIndex,
+  //   number,
+  //   id,
+  // ) => {
+  //   setSelectedOptions(prevState => ({
+  //     ...prevState,
+  //     [id]: selectedIndex,
+  //   }));
+  //   if (!attemptedQuestions.includes(id)) {
+  //     setAttemptedQuestions(prev => [...prev, id]);
+  //   }
+  // };
 
   const handleOptionTrueSelect = (selectedIndex, questionNumber) => {
     setSelectedOptions(prev => ({
@@ -330,7 +445,11 @@ const Index = ({route}) => {
               <TouchableOpacity
                 hitSlop={{x: 25, y: 15}}
                 key={index}
-                style={[styled.optionBtn, isSelected && styled.selectedOption]}
+                style={[
+                  styled.optionBtn,
+                  isSelected && styled.selectedOption,
+                  {opacity: animatedValue},
+                ]}
                 onPress={() =>
                   handleOptionSelect(
                     index + 1,
@@ -359,13 +478,13 @@ const Index = ({route}) => {
   };
 
   const renderTrueFalse = (options, id) => {
-    const labels = ['True', 'False']; // Labels for the true/false options
-    const correctAnswerIndex = options.correctAnswerIndex; // Assuming the correct answer index is either 1 or 2
+    const labels = [options.option1, options.option2];
+    const correctAnswerIndex = options.correctAnswerIndex;
 
     return (
       <View style={styled.options}>
         {labels.map((label, index) => {
-          const isSelected = selectedOptions[id] === index + 1; // Check if the selected option matches the index (1 for True, 2 for False)
+          const isSelected = selectedOptions[id] === index + 1;
           return (
             <TouchableOpacity
               hitSlop={{x: 25, y: 15}}
@@ -373,7 +492,6 @@ const Index = ({route}) => {
               style={[styled.optionBtn, isSelected && styled.selectedOption]}
               onPress={() => handleOptionTrueSelect(index + 1, id)}>
               <Text style={styled.optionText}>{label}</Text>
-              {/* Display True or False */}
               <View
                 style={
                   isSelected ? styled.selectOptionRound : styled.optionRound
@@ -391,14 +509,13 @@ const Index = ({route}) => {
 
   const [matchData, setMatchData] = useState([]);
 
-  // Function to fetch match data
   const fetchMatchData = async () => {
     const token = await storage.getStringAsync('token');
     try {
       const response = await axios.post(
         `${path}/student/v3/questions/match-details`,
         {
-          moduleId: module_id, // Send the moduleId in the request body
+          moduleId: module_id,
         },
         {
           headers: {
@@ -407,89 +524,16 @@ const Index = ({route}) => {
           },
         },
       );
+
       setMatchData(response.data);
     } catch (error) {
-      console.error('Error fetching match data:', error);
+      console.log('Error fetching match data:', error);
     }
   };
 
   useEffect(() => {
     fetchMatchData();
-  }, []);
-
-  const renderMatch = (items, index, item) => {
-    // Split and clean up matchQuestionLeft and matchQuestionRight to get individual IDs
-    const matchQuestionLeftIds = item.matchQuestionLeft
-      .split(',')
-      .map(id => id.trim());
-    const matchQuestionRightIds = item.matchQuestionRight
-      .split(',')
-      .map(id => id.trim());
-
-    return (
-      <View key={index} style={styled.matchContainer}>
-        {matchQuestionLeftIds.map((leftId, idx) => {
-          const leftMatch = matchData.find(match => match.match_id == leftId);
-          const rightId = matchQuestionRightIds[idx]; // Get the corresponding right match for the same index
-          const rightMatch = matchData.find(match => match.match_id == rightId);
-
-          return (
-            <View key={idx} style={styled.inlineContainer}>
-              {/* Left Match */}
-              {leftMatch && (
-                <View style={styled.leftContainer}>
-                  <Text style={{fontSize: 18}}>{leftMatch.match_data}</Text>
-                </View>
-              )}
-
-              {/* Right Match */}
-              {rightMatch && (
-                <View style={styled.rightContainer}>
-                  <Text style={{fontSize: 18}}>{rightMatch.match_data}</Text>
-                </View>
-              )}
-            </View>
-          );
-        })}
-      </View>
-    );
-  };
-
-  // const [countdown, setCountdown] = useState(200);
-  // const endTimeRef = useRef(null);
-  // const animationFrameRef = useRef(null);
-
-  // const updateCountdown = useCallback(() => {
-  //   if (!endTimeRef.current) return;
-
-  //   const currentTime = Date.now();
-  //   const remainingTime = Math.max(
-  //     0,
-  //     Math.floor((endTimeRef.current - currentTime) / 1000),
-  //   );
-
-  //   setCountdown(remainingTime);
-
-  //   if (remainingTime === 0) {
-  //     cancelAnimationFrame(animationFrameRef.current);
-  //     setSelectedOption(null);
-  //     setQuestionIndex(0);
-  //   } else {
-  //     animationFrameRef.current = requestAnimationFrame(updateCountdown);
-  //   }
-  // }, [setSelectedOption, setQuestionIndex]);
-
-  // const startCountdown = () => {
-  //   endTimeRef.current = Date.now() + 200 * 1000;
-  //   animationFrameRef.current = requestAnimationFrame(updateCountdown);
-  // };
-
-  // if (!endTimeRef.current) {
-  //   startCountdown();
-  // }
-
-  // const minutes = Math.floor(countdown / 60);
-  // const seconds = countdown % 60;
+  }, [module_id]);
 
   const [inputWidth, setInputWidth] = useState(50);
 
@@ -568,12 +612,102 @@ const Index = ({route}) => {
       </View>
     );
   };
+  const renderQuestionWithBlanksQuestion = (
+    questionText,
+    correctAnswerIndex,
+    questionId,
+    questionType,
+    audioURL,
+    quesIndex,
+  ) => {
+    const parts = questionText.split('_');
+
+    return (
+      <View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            width: '100%',
+          }}>
+          <Text style={[styled.quiztitle, {flexShrink: 1}]}>
+            Q{quesIndex}) {parts[0]}
+          </Text>
+          {parts.length > 1 ? (
+            <>
+              <TextInput
+                style={{
+                  marginLeft: scale(4),
+                  marginRight: scale(4),
+                  borderBottomWidth: scale(1),
+                  borderColor: color.black,
+                  paddingLeft: scale(4),
+                  width: 100,
+                  paddingRight: scale(4),
+                  fontSize: 14,
+                  textAlign: 'center',
+                }}
+                placeholder="Type answer"
+                onChangeText={text =>
+                  handleTextInput(text, correctAnswerIndex, questionId)
+                }
+                value={inputValue[questionId] || ''}
+              />
+
+              {/* Render the remaining part of the question after the blank */}
+              <Text
+                style={[
+                  styled.quiztitle,
+                  {flexShrink: 1, marginTop: scale(4)},
+                ]}>
+                {parts.slice(1).join('_')} {/* Rejoin remaining parts */}
+              </Text>
+            </>
+          ) : (
+            <>
+              {/* If no underscore, show entire question with TextInput after it */}
+              <TextInput
+                style={{
+                  marginLeft: scale(4),
+                  marginRight: scale(4),
+                  borderBottomWidth: scale(1),
+                  borderColor: color.black,
+                  paddingLeft: scale(4),
+                  width: 100,
+                  paddingRight: scale(4),
+                  fontSize: 14,
+                  textAlign: 'center',
+                }}
+                placeholder="Type answer"
+                onChangeText={text =>
+                  handleTextInput(text, correctAnswerIndex, questionId)
+                }
+                value={inputValue[questionId] || ''}
+              />
+            </>
+          )}
+        </View>
+        {questionType === 'TextAudio' && (
+          <AudioComponent
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
+            sound={sound}
+            setSound={setSound}
+            pauseAudio={pauseAudio}
+            audioURL={audioURL}
+          />
+        )}
+      </View>
+    );
+  };
 
   const [correctness, setCorrectness] = useState({});
 
   const handleTextInput = (input, answer, index) => {
     const normalizedInput = input.toLowerCase();
-    const normalizedAnswer = answer.toLowerCase();
+    const normalizedAnswer = answer ? answer.toLowerCase() : '';
 
     const isCorrect = normalizedInput === normalizedAnswer;
 
@@ -619,6 +753,17 @@ const Index = ({route}) => {
     });
     return count;
   };
+  const getTotalQuestionsCountMarks = questions => {
+    let count = 0;
+    questions.forEach(question => {
+      if (question.subQuestions && question.subQuestions.length > 0) {
+        count += question.subQuestions.length;
+      } else {
+        count += 1;
+      }
+    });
+    return count;
+  };
 
   const [sound, setSound] = useState(null);
   const pauseAudio = () => {
@@ -648,59 +793,104 @@ const Index = ({route}) => {
 
   const renderImage = useCallback(
     url => (
-      <Image
-        source={{uri: `https://d2c9u2e33z36pz.cloudfront.net/${url}`}}
-        style={{
-          width: '100%',
-          height: 200,
-          marginBottom: 10,
-        }}
-        resizeMode="contain"
-      />
+      <>
+        <PinchGestureHandler
+          onGestureEvent={onPinchEvent}
+          onHandlerStateChange={onPinchStateChange}>
+          <Image
+            source={{uri: `https://d2c9u2e33z36pz.cloudfront.net/${url}`}}
+            style={{
+              width: '100%',
+              height: 200,
+              marginBottom: 10,
+            }}
+            resizeMode="contain"
+          />
+        </PinchGestureHandler>
+      </>
     ),
     [],
   );
 
   const renderQuestionContent = useCallback(
-    item => {
+    (item, index) => {
       switch (item.type) {
         case 'TextNormal':
         case 'TextImage':
+        case 'MultiQuestionsImage':
         case 'TextAudio':
           return (
             <>
-              {renderQuestionWithBlanks(
-                item.question,
-                item.correctAnswerIndex,
-                item.id,
-                item.type,
-                item.audioURL,
-                questionIndex + 1,
+              {item.subQuestions.length > 1 ? (
+                <>
+                  {renderQuestionWithBlanks(
+                    item.question,
+                    item.correctAnswerIndex,
+                    item.id,
+                    item.type,
+                    item.audioURL,
+                    questionIndex,
+                  )}
+                  {item.imageURL && renderImage(item.imageURL)}
+                </>
+              ) : (
+                <>
+                  {renderQuestionWithBlanksQuestion(
+                    item.question,
+                    item.correctAnswerIndex,
+                    item.id,
+                    item.type,
+                    item.audioURL,
+                    questionIndex,
+                  )}
+                  {item.imageURL && renderImage(item.imageURL)}
+                </>
               )}
-              {item.imageURL && renderImage(item.imageURL)}
             </>
           );
 
         case 'Match':
+          return (
+            <>
+              <Text selectable={true} style={styled.quiztitle}>
+                Q: {questionIndex + 1} {item.question}
+              </Text>
+              <RenderMatch
+                matchData={matchData}
+                item={item}
+                setScore={setScore}
+                score={score}
+                combinedData={combinedData}
+                setCombinedData={setCombinedData}
+              />
+            </>
+          );
         case 'JumbledSentences':
           return (
             <>
-              <Text style={styled.quiztitle}>
+              <Text selectable={true} style={styled.quiztitle}>
                 Q: {questionIndex + 1} {item.question}
               </Text>
-              {renderMatch(item, questionIndex, item)}
-              {/* {matchData.length > 0 ? (
-                matchData.map((items, index) => renderMatch(items, index, item))
-              ) : (
-                <Text>No match data available.</Text>
-              )} */}
+              <JumbledSentence
+                matchData={matchData}
+                item={item}
+                setScore={setScore}
+                score={score}
+                // combinedData={combinedData}
+                // setCombinedData={setCombinedData}
+                combinedData={allCombinedData[item.id] || []} // Pass stored combined data or empty array
+                setCombinedData={data =>
+                  handleSetCombinedData(item.id, data, item)
+                } // Update combined data in parent
+                setAnswerData={setAnswerData}
+              />
             </>
           );
         case 'Audio':
         case 'MultiQuestionsAudio':
           return (
             <>
-              <Text style={styled.quiztitle}>
+              <Text selectable={true} style={styled.quiztitle}>
                 Q: {questionIndex + 1} {item.question}
               </Text>
               <AudioComponent
@@ -718,9 +908,10 @@ const Index = ({route}) => {
         case 'TrueFalse':
           return (
             <>
-              <Text style={styled.quiztitle}>
+              <Text selectable={true} style={styled.quiztitle}>
                 Q{questionIndex + 1}) {item.question}
               </Text>
+              {/* <Text>{item.type}</Text> */}
               {item.imageURL && renderImage(item.imageURL)}
               {renderTrueFalse(item, item.id)}
             </>
@@ -728,7 +919,7 @@ const Index = ({route}) => {
         case 'Record':
           return (
             <>
-              <Text style={styled.quiztitle}>
+              <Text selectable={true} style={styled.quiztitle}>
                 Q{questionIndex + 1}) {item.question}
               </Text>
               <VoiceComponent
@@ -741,7 +932,7 @@ const Index = ({route}) => {
         default:
           return (
             <>
-              <Text style={styled.quiztitle}>
+              <Text selectable={true} style={styled.quiztitle}>
                 Q{questionIndex + 1}) {item.question}
               </Text>
               {item.imageURL && renderImage(item.imageURL)}
@@ -756,8 +947,6 @@ const Index = ({route}) => {
   const renderSubQuestions = useCallback(
     subQuestion => (
       <View key={subQuestion.id} style={styled.subQuestionContainer}>
-        {/* <Text style={styled.quiztitle}>{subQuestion.question}</Text> */}
-
         {(subQuestion.type === 'TextImage' ||
           subQuestion.type === 'TextNormal' ||
           subQuestion.type === 'TextAudio' ||
@@ -777,7 +966,9 @@ const Index = ({route}) => {
 
         {subQuestion.type === 'Audio' && (
           <>
-            <Text style={styled.quiztitle}>{subQuestion.question}</Text>
+            <Text selectable={true} style={styled.quiztitle}>
+              {subQuestion.question}
+            </Text>
             {subQuestion.imageURL && renderImage(subQuestion.imageURL)}
             <AudioComponent
               isPlaying={isPlaying}
@@ -794,7 +985,9 @@ const Index = ({route}) => {
           subQuestion.type === 'Normal' ||
           subQuestion.type === 'TrueFalse') && (
           <>
-            <Text style={styled.quiztitle}>{subQuestion.question}</Text>
+            <Text selectable={true} style={styled.quiztitle}>
+              {subQuestion.question}
+            </Text>
             {subQuestion.imageURL && renderImage(subQuestion.imageURL)}
           </>
         )}
@@ -814,6 +1007,76 @@ const Index = ({route}) => {
   };
 
   const totalQuestionsCount = getTotalQuestionsCount(question);
+  const totalQuestionMarks = getTotalQuestionsCountMarks(question);
+
+  // const isSelectedOptionsEmpty = () => {
+  //   console.log('Selected Options:', selectedOptions);
+  //   return Object.keys(selectedOptions).length === 0;
+  // };
+
+  // useEffect(() => {
+  //   const isEmpty = isSelectedOptionsEmpty();
+  //   console.log('Is selectedOptions empty?', isEmpty);
+  // }, [selectedOptions]);
+
+  const savedQuiz = async () => {
+    const finalAnswers =
+      Object.keys(selectedOptions).length === 0
+        ? allCombinedData
+        : selectedOptions;
+
+    try {
+      // Prepare the quiz data you want to send to the backend
+      let quizData = {
+        module_id: module_id,
+        completed: completed,
+        level: level_id,
+        chapter: chapter_id,
+        answers: JSON.stringify(finalAnswers), // Always stringify the latest selectedOptions
+        score: score,
+        currentQuestionIndex: questionIndex + 1,
+        totalQuestions: totalQuestionsCount,
+      };
+      const token = await storage.getStringAsync('token');
+      const response = await axios.post(
+        `${path}/student/v3/saveQuizData`,
+        quizData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      console.log('Quiz data saved successfully:', response.data);
+    } catch (error) {
+      console.log('Error saving quiz state:', error);
+    }
+  };
+
+  useEffect(() => {
+    const handleAppStateChange = nextAppState => {
+      if (
+        // appState.match(/active/) && // If the app was active
+        // nextAppState === 'inactive' ||
+        nextAppState === 'background' // And is going to background or inactive
+      ) {
+        savedQuiz(); // Call the function to save quiz state
+      }
+      setAppState(nextAppState); // Update the app state
+    };
+
+    // Add event listener for app state changes
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      subscription.remove();
+    };
+  }, [appState, selectedOptions, score, questionIndex, totalQuestionsCount]);
   return (
     <View style={style.quizScreen}>
       <View style={styles.modalOverlay}>
@@ -831,25 +1094,6 @@ const Index = ({route}) => {
               </TouchableOpacity>
               <Text style={style.modalQuizText}>{truncateTitle(title, 3)}</Text>
             </View>
-            {/* <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <IconTimer
-                name="timer"
-                style={{
-                  fontSize: 20,
-                  marginRight: 8,
-                  color: color.darkPrimary,
-                  fontWeight: 'bold',
-                }}
-              />
-              <Text style={styled.leftQuestion}>
-                {minutes} min {seconds < 10 ? `0${seconds}` : seconds} sec
-              </Text>
-            </View> */}
           </View>
           <LinearGradient
             colors={[color.black, color.black, color.lowPrimary]}
@@ -858,32 +1102,33 @@ const Index = ({route}) => {
             style={styled.completeStatus}
           />
           <View style={styled.quizContent}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {question.slice(questionIndex, questionIndex + 1).map(item => {
-                return (
-                  <View key={item.id}>
-                    <Text style={styled.quizContentCount}>
-                      Question {questionIndex + 1}/{totalQuestionsCount}
-                    </Text>
-                    <View
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        flexWrap: 'wrap',
-                      }}>
-                      {renderQuestionStatus()}
-                    </View>
-
-                    <View style={styled.questionContainer}>
-                      {renderQuestionContent(item)}
-                    </View>
-
-                    {item.subQuestions &&
-                      item.subQuestions.map(renderSubQuestions)}
+            <FlatList
+              data={question.slice(questionIndex, questionIndex + 1)} // Slice the data as before
+              keyExtractor={item => item.id.toString()} // Use item.id as the key
+              showsVerticalScrollIndicator={false}
+              renderItem={({item}) => (
+                <View key={item.id}>
+                  <Text style={styled.quizContentCount}>
+                    Question {questionIndex + 1}/{totalQuestionsCount}
+                  </Text>
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                    }}>
+                    {renderQuestionStatus()}
                   </View>
-                );
-              })}
-            </ScrollView>
+
+                  <View style={styled.questionContainer}>
+                    {renderQuestionContent(item)}
+                  </View>
+
+                  {item.subQuestions &&
+                    item.subQuestions.map(renderSubQuestions)}
+                </View>
+              )}
+            />
             {question.length >= 2 ? (
               <View style={styled.bottomButton}>
                 <TouchableOpacity
@@ -1057,26 +1302,5 @@ const styled = StyleSheet.create({
     borderWidth: 1,
     borderColor: color.darkPrimary,
     backgroundColor: color.darkPrimary,
-  },
-  matchContainer: {
-    marginVertical: 10,
-  },
-  inlineContainer: {
-    flexDirection: 'row', // Align items in a row
-    justifyContent: 'space-between', // Create space between left and right content
-    marginBottom: 10,
-  },
-  leftContainer: {
-    flex: 1, // Take up equal space for left content
-    paddingRight: 10, // Add some space between left and right
-    borderWidth: 1,
-    padding: 5,
-    marginRight: 8,
-  },
-  rightContainer: {
-    flex: 1, // Take up equal space for right content
-    paddingLeft: 10, // Add some space between right and left
-    borderWidth: 1,
-    padding: 5,
   },
 });

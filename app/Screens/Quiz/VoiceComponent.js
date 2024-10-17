@@ -7,6 +7,8 @@ import {
   Image,
   TouchableHighlight,
   ScrollView,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import Voice from '@react-native-community/voice';
 import color from '../../Constants/color';
@@ -18,6 +20,40 @@ export default function TextToSpeech({item, score, setScore}) {
   const [results, setResults] = useState([]);
   const [partialResults, setPartialResults] = useState([]);
   const [end, setEnd] = useState('');
+
+  const requestAudioPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          {
+            title: 'Audio Permission',
+            message:
+              'This app needs access to your microphone to recognize speech.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('You can use the microphone');
+        } else {
+          console.log('Microphone permission denied');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    } else if (Platform.OS === 'ios') {
+      // For iOS, you don't need to explicitly request permission in code
+      console.log('For iOS, permission is handled via Info.plist');
+      // You may want to inform users to enable permissions in settings if denied.
+    }
+  };
+
+  // Call this function at the start of your component
+  useEffect(() => {
+    requestAudioPermission();
+  }, []);
 
   useEffect(() => {
     function onSpeechStart(e) {
@@ -36,7 +72,7 @@ export default function TextToSpeech({item, score, setScore}) {
     }
 
     function onSpeechResults(e) {
-      // console.log('onSpeechResults: ', e);
+      console.log('onSpeechResults: ', e);
       setResults(e.value);
     }
 
@@ -64,7 +100,7 @@ export default function TextToSpeech({item, score, setScore}) {
 
   const _startRecognizing = async () => {
     if (!Voice) {
-      console.error('Voice is not initialized properly');
+      console.log('Voice is not initialized properly');
       return;
     }
 
@@ -76,10 +112,11 @@ export default function TextToSpeech({item, score, setScore}) {
     setEnd('');
 
     try {
+      // await Voice.start('en-US');
       await Voice.start('de-DE');
       // await Voice.start('de-DE'); // Changed to German language
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
   };
 
@@ -87,7 +124,7 @@ export default function TextToSpeech({item, score, setScore}) {
     try {
       await Voice.stop();
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
   };
 
@@ -95,7 +132,7 @@ export default function TextToSpeech({item, score, setScore}) {
     try {
       await Voice.cancel();
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
   };
 
@@ -103,7 +140,7 @@ export default function TextToSpeech({item, score, setScore}) {
     try {
       await Voice.destroy();
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
 
     setPitch('');

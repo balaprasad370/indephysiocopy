@@ -30,7 +30,11 @@ export default function Example({id, lang_id, img, name, description, route}) {
       colors={[color.lightPrimary, color.lowPrimary]} // Gradient colors
       start={{x: 0, y: 0}} // Start from the left
       end={{x: 1, y: 0}} // End at the right
-      style={{borderRadius: 10, width: '90%', alignSelf: 'center'}}>
+      style={{
+        borderRadius: 10,
+        width: '90%',
+        alignSelf: 'center',
+      }}>
       {lang_id !== 1344 ? (
         <TouchableOpacity
           hitSlop={{x: 25, y: 15}}
@@ -188,10 +192,11 @@ const styles = StyleSheet.create({
   cardTop: {
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
+    height: 160,
   },
   cardImg: {
     width: '100%',
-    height: 140,
+    height: '100%',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },

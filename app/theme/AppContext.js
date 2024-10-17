@@ -56,7 +56,7 @@ export const AuthProvider = ({children}) => {
         setUserData(res.data);
       }
     } catch (error) {
-      console.error('Error fetching user data:', error.message);
+      console.log('Error fetching user data:', error.message);
       if (error.response?.status === 403) {
         console.warn('Token expired or invalid');
         await storage.setBoolAsync('isLoggedIn', false);
@@ -82,7 +82,7 @@ export const AuthProvider = ({children}) => {
         console.log('Chapters fetched successfully:', response.data);
       }
     } catch (error) {
-      console.error('Error fetching chapters:', error);
+      console.log('Error fetching chapters:', error);
     }
   };
 
@@ -115,7 +115,7 @@ export const AuthProvider = ({children}) => {
         setIsAuthenticate(true);
       }
     } catch (storageError) {
-      console.error('Error fetching token or isLoggedIn state:', storageError);
+      console.log('Error fetching token or isLoggedIn state:', storageError);
     }
   };
 
@@ -130,14 +130,23 @@ export const AuthProvider = ({children}) => {
         });
         setDocumentStatus(response.data.status);
       } catch (error) {
-        console.error('Error fetching document status:', error);
+        console.log('Error fetching document status:', error);
       }
     }
   };
 
+  // const newFUnction = async () => {
+  //   let newToken =
+  //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM3NywicmVmZXJyYWxJZCI6OTQzNzA5LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3Mjg4Nzc4MDYsImV4cCI6MTczNjY1MzgwNn0.eQLzFUtmhawH3PIhZwhRm7WGdbdxODOAf7kZSckA-PY';
+  //   await storage.setStringAsync('token', newToken);
+  // };
+  // useEffect(() => {
+  //   newFUnction();
+  // }, []);
+
   const getPackageId = async () => {
     try {
-      let level = 'A2';
+      let level = '';
       const token = await storage.getStringAsync('token');
 
       if (token && student_id) {
@@ -146,7 +155,6 @@ export const AuthProvider = ({children}) => {
             package_name: userData?.package, // Using the correct property here
             client_id: clientId,
             level: level,
-            // lang_id:langId, for future purpose
           },
           headers: {
             'Content-Type': 'application/json',
@@ -159,7 +167,7 @@ export const AuthProvider = ({children}) => {
         }
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.log('Error:', error);
     }
   };
 

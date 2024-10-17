@@ -28,6 +28,7 @@ import UserIcon from 'react-native-vector-icons/FontAwesome';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import axios from 'axios';
+import scale from '../../utils/utils';
 import {PermissionsAndroid, Platform} from 'react-native';
 
 const Index = () => {
@@ -116,7 +117,7 @@ const Index = () => {
       } else if (result.errorMessage) {
         Alert.alert('Error', result.errorMessage);
       } else {
-        setImage(result.assets[0]); // Set the selected image
+        setImage(result.assets[0]);
       }
     } else {
       Alert.alert('Error', 'Camera permission is required');
@@ -215,6 +216,7 @@ const Index = () => {
           style={{
             display: 'flex',
             justifyContent: 'space-around',
+            marginBottom: scale(10),
           }}>
           <View
             style={{
@@ -266,16 +268,18 @@ const Index = () => {
             <TouchableOpacity
               onPress={takePhoto}
               style={{
-                backgroundColor: color.white,
+                backgroundColor: isDark ? 'rgba(256,256,256,0.1)' : color.white,
                 padding: 8,
+                justifyContent: 'center', // Centers vertically
+                alignItems: 'center',
                 borderRadius: 10,
                 width: '45%',
               }}>
               <Text
                 style={{
                   textAlign: 'center',
-                  fontSize: 16,
-                  color: isDark ? color.black : color.black,
+                  fontSize: scale(14),
+                  color: isDark ? color.white : color.black,
                 }}>
                 Take a photo
               </Text>
@@ -283,7 +287,7 @@ const Index = () => {
             <TouchableOpacity
               onPress={chooseFromGallery}
               style={{
-                backgroundColor: color.white,
+                backgroundColor: isDark ? 'rgba(256,256,256,0.1)' : color.white,
                 padding: 8,
                 borderRadius: 10,
                 width: '45%',
@@ -291,8 +295,8 @@ const Index = () => {
               <Text
                 style={{
                   textAlign: 'center',
-                  fontSize: 16,
-                  color: isDark ? color.black : color.black,
+                  fontSize: scale(14),
+                  color: isDark ? color.white : color.black,
                 }}>
                 Choose from gallery
               </Text>
@@ -313,7 +317,7 @@ const Index = () => {
               <Text
                 style={{
                   textAlign: 'center',
-                  fontSize: 16,
+                  fontSize: scale(14),
                   color: isDark ? color.white : color.black,
                 }}>
                 Upload
@@ -342,15 +346,6 @@ const Index = () => {
         {/* App Setting section */}
         <Text style={style.upperText}>App Setting</Text>
         <View style={style.commonBackground}>
-          {/* <TouchableOpacity style={style.commonTouch}>
-            <View style={style.settingLeft}>
-              <Icon name="bells" style={style.settingIcon} />
-              <Text style={style.commonText}>Notification</Text>
-            </View>
-            <View>
-              <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
-            </View>
-          </TouchableOpacity> */}
           <TouchableOpacity hitSlop={{x: 25, y: 15}} style={style.commonTouch}>
             <View style={style.settingLeft}>
               <FontAwesome name="moon-o" style={style.settingIcon} />
@@ -362,37 +357,6 @@ const Index = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Accessibility and Media Section  */}
-        {/* <Text style={style.upperText}>Accessibility and Media</Text> */}
-        {/* <View style={style.commonBackground}>
-          <TouchableOpacity style={style.commonTouch}>
-            <View style={style.settingLeft}>
-              <Icon name="download" style={style.settingIcon} />
-              <Text style={style.commonText}>Download Setting</Text>
-            </View>
-            <View>
-              <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.commonTouch}>
-            <View style={style.settingLeft}>
-              <Feather name="users" style={style.settingIcon} />
-              <Text style={style.commonText}>Accessibility</Text>
-            </View>
-            <View>
-              <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.commonTouch}>
-            <View style={style.settingLeft}>
-              <Ionicons name="language" style={style.settingIcon} />
-              <Text style={style.commonText}>Language</Text>
-            </View>
-            <View>
-              <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
-            </View>
-          </TouchableOpacity>
-        </View> */}
         <Text style={style.upperText}>More info</Text>
         <View style={style.commonBackground}>
           <TouchableOpacity
@@ -407,15 +371,6 @@ const Index = () => {
               <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
             </View>
           </TouchableOpacity>
-          {/* <TouchableOpacity style={style.commonTouch}>
-            <View style={style.settingLeft}>
-              <Icon name="infocirlceo" style={style.settingIcon} />
-              <Text style={style.commonText}>About</Text>
-            </View>
-            <View>
-              <ArrowIcon name="chevron-thin-right" style={style.settingIcon} />
-            </View>
-          </TouchableOpacity> */}
         </View>
         <TouchableOpacity
           hitSlop={{x: 25, y: 15}}
@@ -426,6 +381,11 @@ const Index = () => {
             <Text style={style.logoutText}>Logout</Text>
           </View>
         </TouchableOpacity>
+        {/* <Text style={{textAlign: 'center', fontSize: scale(14), marginTop: 20}}>
+          To delete your account, please contact our support team at
+          info@indephysio.com or call us at +91-9894604603. Our team will assist
+          you with the account deletion process.
+        </Text> */}
       </View>
     );
   };

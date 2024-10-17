@@ -1,4 +1,11 @@
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import WebView from 'react-native-webview';
 import axios from 'axios';
@@ -9,6 +16,7 @@ import LighTheme from '../../theme/LighTheme';
 import color from '../../Constants/color';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
+import scale from '../../utils/utils';
 
 const Index = ({route}) => {
   const [htmlData, setHtmlData] = useState('');
@@ -38,6 +46,7 @@ const Index = ({route}) => {
         <style>
           body {
             background-color: black;
+            padding:10px;
           }
           p{
             font-size:38px;
@@ -97,6 +106,7 @@ const Index = ({route}) => {
       <style>
         body {
           background-color: white;
+          padding:20px;
         }
         p{
           font-size:38px;
@@ -202,7 +212,7 @@ const Index = ({route}) => {
               navigation.goBack();
               // Alert.alert('Success', response.data.msg); // Show success alert
             } catch (error) {
-              console.error('Error submitting flashcard:', error);
+              console.log('Error submitting flashcard:', error);
               Alert.alert(
                 'Error',
                 'There was a problem submitting the flashcard.',
@@ -219,7 +229,7 @@ const Index = ({route}) => {
   }, []);
 
   return (
-    <View style={style.reading}>
+    <SafeAreaView style={[style.reading]}>
       <WebView
         originWhitelist={['*']}
         source={{html: htmlData}}
@@ -229,25 +239,20 @@ const Index = ({route}) => {
         onPress={submitReadStatus}
         style={{
           backgroundColor: color.lightPrimary,
-          paddingVertical: 17,
-          paddingHorizontal: 18,
+          paddingVertical: scale(14),
+          paddingHorizontal: scale(16),
           borderRadius: 9,
-          width: '95%',
+          width: '97%',
           display: 'flex',
           justifyContent: 'center',
           alignSelf: 'center',
         }}>
-        {/* <TouchableOpacity
-          
-          style={{
-            
-          }}> */}
-        <Text style={{fontSize: 18, color: 'black', textAlign: 'center'}}>
+        <Text
+          style={{fontSize: scale(16), color: 'black', textAlign: 'center'}}>
           Marks as read
         </Text>
-        {/* </TouchableOpacity> */}
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 

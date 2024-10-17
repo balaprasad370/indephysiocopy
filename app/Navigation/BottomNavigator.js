@@ -1,5 +1,11 @@
 import React, {useContext} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import LinearGradient from 'react-native-linear-gradient'; // Import LinearGradient
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -44,7 +50,7 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
   const style = isDark ? DarkTheme : LighTheme;
 
   return (
-    <View style={style.bottomTab}>
+    <SafeAreaView style={style.bottomTab}>
       <LinearGradient
         colors={[color.first, color.second, color.third]} // Gradient colors
         start={{x: 0, y: 0}} // Start from the left
@@ -53,7 +59,7 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
         <TouchableOpacity
           hitSlop={{x: 25, y: 15}}
           onPress={() => handleNavigateScreen(0)}
-          style={index === 0 ? styles.activeTabButton : {}}>
+          style={index === 0 ? [styles.activeTabButton] : {}}>
           <Ionicons
             name="view-dashboard"
             style={{marginLeft: 0}}
@@ -101,7 +107,7 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
           {index === 3 && <Text style={styles.tabLabel}>SELF LEARN</Text>}
         </TouchableOpacity>
       </LinearGradient>
-    </View>
+    </SafeAreaView>
   );
 };
 const BottomNavigator = () => {
@@ -113,7 +119,6 @@ const BottomNavigator = () => {
       }}>
       <Tab.Screen name={ROUTES.HOME} component={Dashboard} />
       <Tab.Screen name={ROUTES.LIVE_CLASS} component={LiveClasses} />
-      {/* <Tab.Screen name={ROUTES.DOCUMENTS} component={Documents} /> */}
       <Tab.Screen name={ROUTES.SELF_LEARN} component={SelfLearn} />
     </Tab.Navigator>
   );
@@ -127,7 +132,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 6,
     marginRight: 6,
-    marginBottom: 8,
+    marginBottom: 4,
     paddingTop: 6,
     paddingBottom: 6,
     flexDirection: 'row',
@@ -135,6 +140,7 @@ const styles = StyleSheet.create({
   },
   activeTabButton: {
     display: 'flex',
+    justifyContent: 'center',
     borderWidth: 0.8,
     borderColor: 'white',
     borderRadius: 50,

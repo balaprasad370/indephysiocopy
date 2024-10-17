@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Cross from 'react-native-vector-icons/Entypo';
 import UserIcon from 'react-native-vector-icons/FontAwesome';
-import BookIcon from 'react-native-vector-icons/Foundation';
+
 // import user from '../../Constants';
 import CourseCard from '../../Components/CourseCard/Index';
 import Menu from '../../Components/Menu/Index';
@@ -41,6 +41,8 @@ import liveclass from '../../assets/live.png';
 import mock from '../../assets/mock.png';
 import docs from '../../assets/doc.png';
 import book from '../../assets/book.png';
+import LastComponent from './LastComponent';
+import CurrentStatusComponent from './CurrentStatusComponent';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
@@ -50,8 +52,17 @@ const Index = ({navigation}) => {
     setModalVisible(!modalVisible);
   };
 
-  const {isDark, setIsDark, userData, documentStatus, path, setDocumentStatus} =
-    useContext(AppContext);
+  const {
+    isDark,
+    setIsDark,
+    userData,
+    documentStatus,
+    path,
+    setDocumentStatus,
+    packageId,
+    clientId,
+    levelId,
+  } = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
 
   let locked = true;
@@ -89,15 +100,22 @@ const Index = ({navigation}) => {
 
   const getChapterStatus = async () => {
     const token = await storage.getStringAsync('token');
+
     try {
       const res = await axios({
         method: 'get',
-        url: `${path}/chapter/v2/student/status`,
+        url: `${path}/chapter/v4/student/status`,
+        params: {
+          level_id: levelId,
+          client_id: clientId,
+          package_id: packageId,
+        },
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log('res', res.data);
       setData(res.data);
     } catch (error) {
       console.log('error', error.response);
@@ -162,50 +180,8 @@ const Index = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={{
-            marginTop: 20,
-            borderTopEndRadius: 20,
-            borderTopStartRadius: 20,
-            borderBottomEndRadius: 15,
-            backgroundColor: color.lowPrimary,
-            paddingBottom: 8,
-            borderBottomEndRadius: 20,
-            borderBottomStartRadius: 20,
-          }}>
-          <View
-            style={{
-              display: 'flex',
-              borderTopEndRadius: 20,
-              borderTopStartRadius: 20,
-              borderBottomEndRadius: 20,
-              borderBottomStartRadius: 20,
-              backgroundColor: color.darkPrimary,
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-            }}>
-            <View style={{padding: 10}}>
-              <Text style={{color: 'white', fontSize: 16}}>
-                {(() => {
-                  const text = 'Level :A2, Chapter: Hobby and Numbers';
-                  return text.length > 20 ? text.slice(0, 32) + '...' : text;
-                })()}
-              </Text>
-              <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>
-                Quiz Attempted: 2/15
-              </Text>
-            </View>
-            <View
-              style={{
-                width: 2,
-                backgroundColor: 'white',
-                height: '100%',
-              }}></View>
-            <View style={{padding: 10}}>
-              <BookIcon name="book-bookmark" size={40} color={color.white} />
-            </View>
-          </View>
-        </TouchableOpacity>
+        <CurrentStatusComponent data={data} />
+        {/* <LastComponent /> */}
         <FlatList
           data={courseData}
           horizontal

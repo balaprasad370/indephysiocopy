@@ -25,7 +25,7 @@ const LeaderboardScreen = ({route}) => {
         });
         setStudents(response.data);
       } catch (error) {
-        console.error('Error fetching marks:', error);
+        console.log('Error fetching marks:', error);
       }
     };
 

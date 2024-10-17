@@ -38,7 +38,7 @@ const Recovery = () => {
       });
       setMessage('Your request has been submitted. Please check your email.');
     } catch (error) {
-      console.error('Error:', error.message);
+      console.log('Error:', error.message);
       setMessage('Error sending password reset link.');
     } finally {
       setLoading(false); // End loading

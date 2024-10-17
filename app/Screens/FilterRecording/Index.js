@@ -82,7 +82,7 @@ const App = () => {
           setLevels(response.data.data);
         }
       } catch (error) {
-        console.error('Error fetching levels:', error);
+        console.log('Error fetching levels:', error);
       }
     };
 
@@ -106,7 +106,7 @@ const App = () => {
         });
         setChapters(response.data);
       } catch (error) {
-        console.error('Error fetching chapters:', error);
+        console.log('Error fetching chapters:', error);
       } finally {
         setLoader(false);
       }
@@ -139,10 +139,10 @@ const App = () => {
       if (response.data.success) {
         setLiveClasses(response.data.live_classes);
       } else {
-        console.error('Error fetching live classes: ', response.data.message);
+        console.log('Error fetching live classes: ', response.data.message);
       }
     } catch (error) {
-      console.error('Error fetching live classes:', error);
+      console.log('Error fetching live classes:', error);
     }
   };
 

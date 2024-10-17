@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
@@ -23,7 +24,6 @@ const Certificate = ({route}) => {
   const viewShotRef = useRef();
   const {module_id} = route.params;
 
-  console.log(module_id);
   const {path, isDark, userData} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
@@ -31,6 +31,11 @@ const Certificate = ({route}) => {
   const [marks, setMarks] = useState(null);
   const [total, setTotal] = useState(0);
   const [date, setDate] = useState();
+  const [studentAnswers, setStudentAnswers] = useState({});
+  const [teacherAnswers, setTeacherAnswers] = useState({});
+  const [question_name, setQuestionName] = useState({});
+  const [showAllQuestions, setShowAllQuestions] = useState(true);
+  const [wrongAnswers, setWrongAnswers] = useState([]);
 
   useEffect(() => {
     const fetchMarks = async () => {
@@ -49,88 +54,195 @@ const Certificate = ({route}) => {
         setDate(response.data?.result?.modified_date);
         setTotal(response.data?.result?.total);
       } catch (error) {
-        console.error('Error fetching marks:', error);
+        console.log('Error fetching marks:', error);
       }
     };
 
     fetchMarks();
   }, [module_id]);
 
+  const fetchAttemptedQuestions = async () => {
+    const token = await storage.getStringAsync('token');
+
+    try {
+      const response = await axios.get(`${path}/admin/v3/submitAnswers`, {
+        params: {module_id},
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+      });
+      const studentAns = response.data?.student_answers;
+      const teacherAns = response.data?.teacher_answers;
+      setStudentAnswers(studentAns);
+      setTeacherAnswers(teacherAns);
+      setQuestionName(response.data?.question_name);
+    } catch (error) {
+      console.log('Error fetching attempted questions:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAttemptedQuestions();
+  }, [module_id]);
+
   const captureAndShareScreenshot = () => {
-    Alert.alert('');
+    Alert.alert('Captured');
     viewShotRef.current.capture().then(uri => {});
   };
 
   return (
-    <ScrollView style={{flex: 1}}>
-      <View style={style.marksContainer}>
-        <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.9}}>
-          {/* <View style={styles.certificateCard}> */}
-          <LinearGradient
-            colors={['#2A89C6', '#3397CB', '#0C5CB4']}
-            start={{x: 0, y: 0}} // Start from the left
-            end={{x: 1, y: 0}}
-            style={styles.certificateCard}>
-            {/* Certificate Border */}
-            <View style={styles.border}>
-              {/* Logo at the top */}
-              <Image source={logo} style={styles.logo} />
-
-              {/* Certificate Title */}
-              <Text style={styles.certificateTitle}>
-                Certificate of Achievement
-              </Text>
-
-              {/* Decorative Line */}
-              <View style={styles.decorativeLine} />
-
-              {/* Student Name */}
-              <Text style={styles.studentName}>
-                {userData?.first_name} {userData?.last_name}
-              </Text>
-              <Text style={styles.descriptionText}>
-                has successfully completed
-              </Text>
-
-              {/* Exam Title */}
-              <Text style={styles.examTitle}>Mathematics End-of-Term Exam</Text>
-
-              {/* Score Section */}
-              <View style={styles.scoreSection}>
-                <Text style={styles.scoreLabel}>Score:</Text>
-                <Text style={styles.score}>
-                  {marks !== null ? `${marks} / ${total}` : 'Loading...'}
+    <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
+      <ScrollView style={{flex: 1, backgroundColor: '#FFF'}}>
+        <View style={style.marksContainer}>
+          <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.9}}>
+            <LinearGradient
+              colors={['#2A89C6', '#3397CB', '#0C5CB4']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
+              style={styles.certificateCard}>
+              <View style={styles.border}>
+                <Image source={logo} style={styles.logo} />
+                <Text style={styles.certificateTitle}>
+                  Certificate of Achievement
                 </Text>
+                <View style={styles.decorativeLine} />
+                <Text style={styles.studentName}>
+                  {userData?.first_name} {userData?.last_name}
+                </Text>
+                <Text style={styles.descriptionText}>
+                  has successfully completed
+                </Text>
+                <Text style={styles.examTitle}>German Language Quiz Exam </Text>
+
+                <View style={styles.scoreSection}>
+                  <Text style={styles.scoreLabel}>Score:</Text>
+                  <Text style={styles.score}>
+                    {marks !== null ? `${marks} / ${total}` : 'Loading...'}
+                  </Text>
+                </View>
+
+                <Text style={styles.date}>
+                  Date: {new Date(date).toLocaleDateString()}
+                </Text>
+                <Text style={styles.issuer}>
+                  Issued by: ABC Certification Board
+                </Text>
+
+                <View style={styles.signatureSection}>
+                  <View style={styles.signatureLine} />
+                  <Text style={styles.signatureText}>Authorized Signature</Text>
+                </View>
               </View>
+            </LinearGradient>
+          </ViewShot>
 
-              {/* Date and Issuer */}
-              <Text style={styles.date}>
-                Date: {new Date(date).toLocaleDateString()}
-              </Text>
+          {/* Share Button */}
+          <TouchableOpacity
+            style={styles.shareButton}
+            hitSlop={{x: 25, y: 15}}
+            onPress={captureAndShareScreenshot}>
+            <Text style={styles.shareText}>Share Certificate</Text>
+          </TouchableOpacity>
+          {studentAnswers && (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 20,
+                width: '100%',
+              }}>
+              <TouchableOpacity
+                onPress={() => setShowAllQuestions(true)}
+                style={{
+                  width: '50%',
+                  borderBottomWidth: 1,
+                  borderBottomColor: color.grey,
 
-              <Text style={styles.issuer}>
-                Issued by: ABC Certification Board
-              </Text>
-
-              {/* Signature */}
-              <View style={styles.signatureSection}>
-                <View style={styles.signatureLine} />
-                <Text style={styles.signatureText}>Authorized Signature</Text>
-              </View>
+                  padding: 10,
+                  alignItems: 'center',
+                  backgroundColor: showAllQuestions
+                    ? 'rgba(0, 0, 0, 0.2)'
+                    : color.white,
+                }}>
+                <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+                  All Questions
+                </Text>
+              </TouchableOpacity>
+              <View
+                style={{
+                  width: 2,
+                  height: '100%',
+                  backgroundColor: color.grey,
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => setShowAllQuestions(false)}
+                style={{
+                  width: '50%',
+                  borderBottomWidth: 1,
+                  borderBottomColor: color.grey,
+                  padding: 10,
+                  alignItems: 'center',
+                  borderTopRightRadius: 10,
+                  backgroundColor: !showAllQuestions
+                    ? 'rgba(0, 0, 0, 0.2)'
+                    : color.white,
+                }}>
+                <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+                  Wrong Answers
+                </Text>
+              </TouchableOpacity>
             </View>
-            {/* </View> */}
-          </LinearGradient>
-        </ViewShot>
+          )}
+          {studentAnswers && Object.keys(studentAnswers).length > 0 && (
+            <View style={styles.answersContainer}>
+              <Text style={styles.answersTitle}>Attempted Questions</Text>
 
-        {/* Share Button */}
-        <TouchableOpacity
-          style={styles.shareButton}
-          hitSlop={{x: 25, y: 15}}
-          onPress={captureAndShareScreenshot}>
-          <Text style={styles.shareText}>Share Certificate</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+              {/* Conditionally Render All Questions or Wrong Answers */}
+              {studentAnswers &&
+                Object.keys(studentAnswers).map(key => {
+                  const isCorrect = studentAnswers[key] === teacherAnswers[key];
+
+                  if (!showAllQuestions && isCorrect) {
+                    return null;
+                  }
+
+                  return (
+                    <View key={key} style={styles.answerCard}>
+                      <Text style={styles.questionLabel}>
+                        Question: {question_name[key]}
+                      </Text>
+
+                      {/* Student Answer */}
+                      <Text
+                        style={[
+                          styles.studentAnswer,
+                          {color: isCorrect ? 'green' : 'red'},
+                        ]}>
+                        <Text
+                          style={[
+                            styles.answerType,
+                            {color: isCorrect ? 'green' : 'red'},
+                          ]}>
+                          Student Answer:
+                        </Text>{' '}
+                        {studentAnswers[key]}
+                      </Text>
+
+                      {/* Teacher Answer */}
+                      <Text style={styles.teacherAnswer}>
+                        <Text style={styles.answerType}>Teacher Answer: </Text>
+                        {teacherAnswers[key] || 'Not available'}
+                      </Text>
+                    </View>
+                  );
+                })}
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -147,14 +259,22 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 10,
     width: '100%',
-    maxWidth: 400,
+    // maxWidth: 400,
   },
   border: {
-    borderColor: '#d4af37', // Gold-like border color
+    borderColor: '#d4af37',
     borderWidth: 4,
     padding: 20,
     borderRadius: 10,
     position: 'relative',
+  },
+  examTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#0056b3',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontFamily: 'sans-serif-medium',
   },
   logo: {
     width: 100,
@@ -170,14 +290,14 @@ const styles = StyleSheet.create({
     color: '#333',
     textTransform: 'uppercase',
     marginBottom: 10,
-    fontFamily: 'serif', // Elegant serif font
+    fontFamily: 'serif',
   },
-  decorativeLine: {
-    height: 2,
-    backgroundColor: '#d4af37',
-    width: '50%',
-    alignSelf: 'center',
-    marginVertical: 10,
+  descriptionText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#555',
+    marginBottom: 20,
+    fontFamily: 'sans-serif',
   },
   studentName: {
     fontSize: 24,
@@ -188,20 +308,42 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: 'serif',
   },
-  descriptionText: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#555',
-    marginBottom: 20,
-    fontFamily: 'sans-serif',
+
+  answersContainer: {
+    width: '95%',
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: color.white,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 2, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 5,
   },
-  examTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#0056b3',
+  answersTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
-    fontFamily: 'sans-serif-medium',
+
+    color: '#0056b3',
+  },
+  answerCard: {
+    marginBottom: 20,
+    padding: 15,
+    borderColor: '#eee',
+    borderBottomWidth: 1,
+  },
+  questionLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  studentAnswer: {
+    fontSize: 16,
+    color: '#333',
+    marginTop: 10,
   },
   scoreSection: {
     backgroundColor: '#f0f5ff',
@@ -225,34 +367,14 @@ const styles = StyleSheet.create({
     color: '#0056b3',
     fontFamily: 'serif',
   },
-  date: {
+  teacherAnswer: {
     fontSize: 16,
-    color: '#000',
-    marginBottom: 5,
-    textAlign: 'center',
-    fontFamily: 'sans-serif',
+    color: color.black,
+    marginTop: 5,
   },
-  issuer: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 20,
-    fontFamily: 'sans-serif-medium',
-  },
-  signatureSection: {
-    marginTop: 40,
-    alignItems: 'center',
-  },
-  signatureLine: {
-    width: 150,
-    height: 1,
-    backgroundColor: '#000',
-    marginBottom: 5,
-  },
-  signatureText: {
-    fontSize: 14,
-    color: '#555',
+  answerType: {
+    fontWeight: 'bold',
+    color: color.black,
   },
   shareButton: {
     marginTop: 20,
@@ -267,5 +389,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  signatureSection: {
+    marginTop: 40,
+    alignItems: 'center',
+  },
+  signatureLine: {
+    width: 150,
+    height: 1,
+    backgroundColor: '#000',
+    marginBottom: 5,
+  },
+  signatureText: {
+    fontSize: 14,
+    color: '#555',
   },
 });

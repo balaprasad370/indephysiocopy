@@ -25,6 +25,7 @@ const AuthInput = ({
             : styles.authSmallInput
         }>
         <TextInput
+          placeholderTextColor={color.grey}
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}

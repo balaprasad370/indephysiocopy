@@ -417,6 +417,7 @@ const LighTheme = StyleSheet.create({
   commonBackground: {
     borderRadius: 10,
     backgroundColor: COLOR.white,
+    marginBottom: scale(4),
   },
   commonTouchInput: {
     marginLeft: 5,
@@ -636,7 +637,7 @@ const LighTheme = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFF',
-    paddingHorizontal: 20,
+    // paddingHorizontal: 20,
   },
   documentContainer: {
     flex: 1,

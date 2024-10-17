@@ -109,7 +109,7 @@ const RecordingPlayer = ({route, navigation}) => {
           onLoad={onLoad}
           onProgress={onProgress}
           onBuffer={({isBuffering}) => setIsBuffering(isBuffering)} // Handle buffering
-          onError={error => console.error('Video Error:', error)}
+          onError={error => console.log('Video Error:', error)}
         />
 
         {isBuffering && (

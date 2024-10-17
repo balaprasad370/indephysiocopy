@@ -18,7 +18,7 @@ import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Tts from 'react-native-tts';
 import {Animated} from 'react-native';
-
+import scale from '../../utils/utils';
 const av = new Animated.Value(0);
 
 const {width, height} = Dimensions.get('window');
@@ -31,7 +31,9 @@ const Flashcard = ({question, answer, showAnswer, onCardPress, onSpeak}) => {
       onPress={onCardPress}>
       <View
         style={[styles.card, showAnswer ? styles.cardBack : styles.cardFront]}>
-        <Text style={showAnswer ? styles.answerText : styles.questionText}>
+        <Text
+          selectable={true}
+          style={showAnswer ? styles.answerText : styles.questionText}>
           {showAnswer ? answer : question}
         </Text>
         {!showAnswer ? (
@@ -71,7 +73,7 @@ const Index = ({route}) => {
         );
         setFlashcards(response.data);
       } catch (err) {
-        console.error('Error fetching flashcard questions:', err);
+        console.log('Error fetching flashcard questions:', err);
       }
     }
   };
@@ -110,7 +112,7 @@ const Index = ({route}) => {
               navigation.goBack();
               // Alert.alert('Success', response.data.msg); // Show success alert
             } catch (error) {
-              console.error('Error submitting flashcard:', error);
+              console.log('Error submitting flashcard:', error);
               Alert.alert(
                 'Error',
                 'There was a problem submitting the flashcard.',
@@ -172,7 +174,6 @@ const Index = ({route}) => {
         KEY_PARAM_VOLUME: 0.5,
         KEY_PARAM_STREAM: 'STREAM_MUSIC',
       },
-      // iosVoiceId: 'com.apple.ttsbundle.Moira-compact',
       rate: 0.5,
     });
   };
@@ -229,15 +230,16 @@ const Index = ({route}) => {
         onPress={() => submitFlashcardCompletion()}
         style={{
           backgroundColor: color.lightPrimary,
-          paddingVertical: 17,
-          paddingHorizontal: 18,
+          paddingVertical: scale(12),
+          paddingHorizontal: scale(16),
           borderRadius: 9,
-          width: '95%',
+          width: '97%',
           display: 'flex',
           justifyContent: 'center',
           alignSelf: 'center',
         }}>
-        <Text style={{fontSize: 18, color: 'black', textAlign: 'center'}}>
+        <Text
+          style={{fontSize: scale(17), color: 'black', textAlign: 'center'}}>
           Marks as read
         </Text>
       </TouchableOpacity>

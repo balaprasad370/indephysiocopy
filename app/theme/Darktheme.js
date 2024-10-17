@@ -431,6 +431,7 @@ const DarkTheme = StyleSheet.create({
   commonBackground: {
     borderRadius: 10,
     backgroundColor: 'rgba(256,256,256,0.1)',
+    marginBottom: scale(4),
   },
   commonTouch: {
     marginLeft: 5,
@@ -650,7 +651,7 @@ const DarkTheme = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#000',
-    paddingHorizontal: 20,
+    // paddingHorizontal: 20,
   },
   documentContainer: {
     flex: 1,

@@ -61,7 +61,7 @@ const AppNavigator = () => {
       );
       console.log('Open and exit times sent successfully');
     } catch (error) {
-      console.error('Error sending open and exit times:', error);
+      console.log('Error sending open and exit times:', error);
     }
   };
 
@@ -75,7 +75,7 @@ const AppNavigator = () => {
       const {hours, minutes, seconds} = formatTime(totalTime);
       console.log(`totalTime`, totalTime);
     } catch (error) {
-      console.error('Error saving time:', error);
+      console.log('Error saving time:', error);
     }
   };
   const previousScreenParams = useRef(null);
@@ -112,7 +112,7 @@ const AppNavigator = () => {
 
       // console.log('Time spent data stored successfully:', response.data);
     } catch (error) {
-      console.error('Error storing time spent data:', error);
+      console.log('Error storing time spent data:', error);
     }
   };
 
@@ -227,7 +227,7 @@ const AppNavigator = () => {
         quizTimeRef.current = 0;
         assessmentTimeRef.current = 0;
       } catch (error) {
-        console.error('Error sending total app usage data:', error);
+        console.log('Error sending total app usage data:', error);
       }
     }
 

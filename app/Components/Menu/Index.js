@@ -14,10 +14,11 @@ const Index = ({name, iconImage, lock, isLocked, ROUTE, data}) => {
     if (option === 'Quiz') {
       setModalVisible(!modalVisible);
     } else if (option === 'Self learn') {
-      navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
-        parent_module_id: data.chapter_id,
-        title: 'Progress Chapter',
-      });
+      // navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
+      //   parent_module_id: data.chapter_id,
+      //   title: 'Progress Chapter',
+      // });
+      navigation.navigate('Self Learn');
     } else if (option === 'Live') {
       navigation.navigate(ROUTES.LIVE_CLASS);
     } else if (option === 'Documents') {
