@@ -93,12 +93,12 @@ const LastComponent = () => {
             justifyContent: 'space-around',
           }}>
           <View style={{padding: 10}}>
-            <Text style={{color: 'white', fontSize: 16}}>
+            {/* <Text style={{color: 'white', fontSize: 16}}>
               {(() => {
                 const text = `Level: ${quizData.level_name}, Chapter: ${quizData.chapter_name}`;
                 return text.length > 32 ? text.slice(0, 32) + '...' : text;
               })()}
-            </Text>
+            </Text> */}
             <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>
               Quiz Attempted: {quizData.currentQuestionIndex}/
               {quizData.totalQuestions}

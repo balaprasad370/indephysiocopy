@@ -71,7 +71,7 @@ def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
     ndkVersion rootProject.ext.ndkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion 
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.inde.physio"
@@ -79,8 +79,8 @@ android {
         applicationId "com.inde.physio"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "7.0"
+        versionCode 700 // major.minor.patch
+        versionName "7.0.0" // major.minor.patch
     }
     signingConfigs {
         debug {

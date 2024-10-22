@@ -17,22 +17,22 @@ import QuizCard from '../../Components/QuizCard/Index';
 import {ROUTES} from '../../Constants/routes';
 import axios from 'axios';
 import storage from '../../Constants/storage';
+import Loading from '../../Components/Loading/Loading';
 
 const Index = ({route, navigation}) => {
   const {parent_module_id, title, level_id} = route.params;
-  const {isDark, path} = useContext(AppContext);
+  const {isDark, path, loader, setLoader} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
   const [content, setContent] = useState([]);
-
-  // const {title, level_id} = route.params;
 
   useEffect(() => {
     navigation.setOptions({title});
   }, [title]);
 
   const getAllChapterContent = async () => {
+    setLoader(true);
     const token = await storage.getStringAsync('token');
     try {
       const res = await axios({
@@ -44,8 +44,11 @@ const Index = ({route, navigation}) => {
         },
       });
       setContent(res.data);
+      setLoader(false);
     } catch (error) {
       console.log('error', error.response);
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -95,33 +98,30 @@ const Index = ({route, navigation}) => {
     [parent_module_id],
   );
 
+  if (loader) {
+    return <Loading />;
+  }
+
   return (
     <>
-      {content.length > 0 ? (
+      {!content || content.length === 0 ? (
+        <View style={styles.emptyContent}>
+          <Text style={styles.emptyText}>There is no content</Text>
+        </View>
+      ) : (
         <View style={style.selfLearnChapter}>
-          {/* <TouchableOpacity
-            style={styles.filterButton}
-            onPress={() => navigation.navigate(ROUTES.FILTER_RECORDING)}>
-            <Text style={styles.filterButtonText}>Filter Recording</Text>
-          </TouchableOpacity> */}
           <FlatList
             data={content}
             renderItem={renderItem}
             keyExtractor={item => Math.random().toString()} // Ensure unique keys
             showsVerticalScrollIndicator={false}
             removeClippedSubviews={true} // Unmount components that are not visible
-            getItemLayout={
-              (data, index) => ({
-                length: 100,
-                offset: 100 * index,
-                index,
-              }) // Assuming fixed height of 100
-            }
+            getItemLayout={(data, index) => ({
+              length: 100,
+              offset: 100 * index,
+              index,
+            })}
           />
-        </View>
-      ) : (
-        <View style={styles.emptyContent}>
-          <Text style={styles.emptyText}>There is no content</Text>
         </View>
       )}
     </>

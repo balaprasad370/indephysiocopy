@@ -3,6 +3,7 @@ import {
   Alert,
   FlatList,
   Image,
+  Linking,
   StyleSheet,
   Switch,
   Text,
@@ -161,6 +162,32 @@ const Index = () => {
       console.warn(err);
       return false;
     }
+  };
+
+  const deleteAccount = async () => {
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to delete your account?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: () => {
+            // Redirect to the website for account deletion
+            const websiteURL = 'https://indephysio.com/index/accountdelete';
+            Linking.openURL(websiteURL).catch(err =>
+              console.error("Couldn't load page", err),
+            );
+          },
+          style: 'destructive',
+        },
+      ],
+      {cancelable: true},
+    );
   };
 
   const uploadFileToServer = async file => {
@@ -372,6 +399,17 @@ const Index = () => {
             </View>
           </TouchableOpacity>
         </View>
+        {/* <View style={[style.commonBackground, {marginTop: scale(5)}]}>
+          <TouchableOpacity
+            hitSlop={{x: 25, y: 15}}
+            style={style.commonTouch}
+            onPress={() => deleteAccount()}>
+            <View style={style.settingLeft}>
+              <Ionicons name="trash-bin" style={style.settingIcon} />
+              <Text style={style.commonText}>Delete Account</Text>
+            </View>
+          </TouchableOpacity>
+        </View> */}
         <TouchableOpacity
           hitSlop={{x: 25, y: 15}}
           style={style.logoutBox}

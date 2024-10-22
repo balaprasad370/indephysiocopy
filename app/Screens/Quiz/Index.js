@@ -39,7 +39,7 @@ import DraggableFlatList from 'react-native-draggable-flatlist';
 import RenderMatch from './RenderMatch';
 import JumbledSentence from './JumbledSentence';
 import JumbledWords from './JumbledWords';
-import {PinchGestureHandler, State} from 'react-native-gesture-handler';
+import {ReactNativeZoomableView} from '@openspacelabs/react-native-zoomable-view';
 
 const Index = ({route}) => {
   const {
@@ -74,19 +74,6 @@ const Index = ({route}) => {
       animatedValue.removeAllListeners();
     };
   }, [animatedValue]);
-
-  const [newScale, setNewScale] = useState(1);
-
-  const onPinchEvent = event => {
-    console.log('event', event.nativeEvent.scale);
-    setNewScale(event.nativeEvent.scale);
-  };
-
-  const onPinchStateChange = event => {
-    if (event.nativeEvent.oldState === State.ACTIVE) {
-      setNewScale(1); // Reset to original scale when gesture ends
-    }
-  };
 
   const objectAnswers = previousAnswers ? JSON.parse(previousAnswers) : {};
 
@@ -284,6 +271,8 @@ const Index = ({route}) => {
                   : JSON.stringify(correctAnswers);
 
               let quizType = questionType === 'JumbledSentences' ? 1 : 0;
+
+              console.log(questionType, finalStudentAnswers, teacherAnswers);
               // return;
               if (
                 questionType !== 'Record' &&
@@ -600,14 +589,35 @@ const Index = ({route}) => {
         </View>
 
         {questionType === 'TextAudio' && (
-          <AudioComponent
-            isPlaying={isPlaying}
-            setIsPlaying={setIsPlaying}
-            sound={sound}
-            setSound={setSound}
-            pauseAudio={pauseAudio}
-            audioURL={audioURL}
-          />
+          <>
+            <AudioComponent
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              sound={sound}
+              setSound={setSound}
+              pauseAudio={pauseAudio}
+              audioURL={audioURL}
+            />
+            <TextInput
+              style={{
+                marginLeft: scale(4),
+                marginRight: scale(4),
+                borderBottomWidth: scale(1),
+                borderColor: color.black,
+                marginTop: scale(8),
+                width: '80%',
+                paddingRight: scale(4),
+                fontSize: 14,
+                paddingVertical: scale(10),
+                paddingHorizontal: scale(3),
+              }}
+              placeholder="Type answer"
+              onChangeText={text =>
+                handleTextInput(text, correctAnswerIndex, questionId)
+              }
+              value={inputValue[questionId] || ''}
+            />
+          </>
         )}
       </View>
     );
@@ -620,8 +630,9 @@ const Index = ({route}) => {
     audioURL,
     quesIndex,
   ) => {
+    // console.log(questionText);
     const parts = questionText.split('_');
-
+    // console.log(parts);
     return (
       <View>
         <View
@@ -655,19 +666,16 @@ const Index = ({route}) => {
                 }
                 value={inputValue[questionId] || ''}
               />
-
-              {/* Render the remaining part of the question after the blank */}
               <Text
                 style={[
                   styled.quiztitle,
                   {flexShrink: 1, marginTop: scale(4)},
                 ]}>
-                {parts.slice(1).join('_')} {/* Rejoin remaining parts */}
+                {parts.slice(1).join('_')}
               </Text>
             </>
           ) : (
             <>
-              {/* If no underscore, show entire question with TextInput after it */}
               <TextInput
                 style={{
                   marginLeft: scale(4),
@@ -794,19 +802,21 @@ const Index = ({route}) => {
   const renderImage = useCallback(
     url => (
       <>
-        <PinchGestureHandler
-          onGestureEvent={onPinchEvent}
-          onHandlerStateChange={onPinchStateChange}>
+        <ReactNativeZoomableView
+          maxZoom={30}
+          contentWidth={300}
+          contentHeight={150}>
           <Image
             source={{uri: `https://d2c9u2e33z36pz.cloudfront.net/${url}`}}
             style={{
+              height: scale(200),
               width: '100%',
-              height: 200,
+              // height: 250,
               marginBottom: 10,
             }}
             resizeMode="contain"
           />
-        </PinchGestureHandler>
+        </ReactNativeZoomableView>
       </>
     ),
     [],
@@ -821,6 +831,7 @@ const Index = ({route}) => {
         case 'TextAudio':
           return (
             <>
+              <Text>{item.subQuestions.length}</Text>
               {item.subQuestions.length > 1 ? (
                 <>
                   {renderQuestionWithBlanks(

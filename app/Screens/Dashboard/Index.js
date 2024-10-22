@@ -285,7 +285,8 @@ const Index = ({navigation}) => {
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: 17, color: 'black', fontWeight: 'bold'}}>
+            <Text
+              style={{fontSize: scale(14), color: 'black', fontWeight: 'bold'}}>
               Pathway: {userData?.package}
               {/* Pathway: Professionals */}
             </Text>
@@ -297,7 +298,12 @@ const Index = ({navigation}) => {
                 padding: scale(8),
                 borderRadius: scale(8),
               }}>
-              <Text style={{color: 'white', textAlign: 'center'}}>
+              <Text
+                style={{
+                  fontSize: scale(11),
+                  color: 'white',
+                  textAlign: 'center',
+                }}>
                 Check Regular Pathway
               </Text>
             </TouchableOpacity>

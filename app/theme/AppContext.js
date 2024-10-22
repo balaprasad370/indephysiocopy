@@ -137,7 +137,7 @@ export const AuthProvider = ({children}) => {
 
   // const newFUnction = async () => {
   //   let newToken =
-  //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM3NywicmVmZXJyYWxJZCI6OTQzNzA5LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3Mjg4Nzc4MDYsImV4cCI6MTczNjY1MzgwNn0.eQLzFUtmhawH3PIhZwhRm7WGdbdxODOAf7kZSckA-PY';
+  //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM2OCwicmVmZXJyYWxJZCI6OTQzNzAwLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3Mjg4Nzc4MDYsImV4cCI6MTczNjY1MzgwNn0.N60gWZCg7hmx715h_gs7MYhBMXeaa_hErBFgDTprRvY';
   //   await storage.setStringAsync('token', newToken);
   // };
   // useEffect(() => {
@@ -150,7 +150,7 @@ export const AuthProvider = ({children}) => {
       const token = await storage.getStringAsync('token');
 
       if (token && student_id) {
-        const response = await axios.get(`${path}/package/alias`, {
+        const response = await axios.get(`${path}/v4/package/alias`, {
           params: {
             package_name: userData?.package, // Using the correct property here
             client_id: clientId,
