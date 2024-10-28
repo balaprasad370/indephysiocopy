@@ -28,8 +28,8 @@ const Index = ({route}) => {
   const {read_id, order_id, chapter_id, unique_id} = route.params;
 
   const readingMaterial = async read_id => {
-    const token = await storage.getStringAsync('token');
     setLoader(true);
+    const token = await storage.getStringAsync('token');
     if (token) {
       try {
         const response = await axios.get(
@@ -170,6 +170,8 @@ const Index = ({route}) => {
         setLoader(false);
       } catch (error) {
         console.log('Error from reading material:', error);
+      } finally {
+        setLoader(false);
       }
     }
   };

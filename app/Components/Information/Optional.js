@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import color from '../../Constants/color';
 
@@ -8,6 +8,12 @@ import Cross from 'react-native-vector-icons/Entypo';
 
 const Index = ({optionalData}) => {
   const [toggle, setToggle] = useState(true);
+
+  const openWebsite = url => {
+    Linking.openURL(url).catch(err =>
+      console.error('Failed to open URL:', err),
+    );
+  };
 
   return (
     <>
@@ -56,7 +62,8 @@ const Index = ({optionalData}) => {
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => openWebsite(optionalData[0]?.action)}>
                   <Action name="action-redo" size={25} color="white" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setToggle(false)}>

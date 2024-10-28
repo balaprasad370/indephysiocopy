@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useContext} from 'react';
 import color from '../../Constants/color';
 import Icon from 'react-native-vector-icons/Feather';
@@ -7,6 +7,12 @@ import {AppContext} from '../../theme/AppContext';
 
 const Index = ({informationData}) => {
   const {path} = useContext(AppContext);
+
+  const openWebsite = url => {
+    Linking.openURL(url).catch(err =>
+      console.error('Failed to open URL:', err),
+    );
+  };
 
   return (
     <TouchableOpacity
@@ -54,7 +60,8 @@ const Index = ({informationData}) => {
               <Text style={{color: 'white'}}>No information available</Text>
             )}
           </View>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity
+            onPress={() => openWebsite(informationData[0]?.action)}>
             <Action name="action-redo" size={25} color="white" />
           </TouchableOpacity>
         </View>
