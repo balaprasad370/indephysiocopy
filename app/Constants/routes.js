@@ -21,7 +21,7 @@ export const ROUTES = {
   FLASH: 'Flash',
 
   DASHBOARD: 'Dashboard',
-  PROFILE_SETTING: 'Profile Setting',
+  PROFILE_SETTING: 'Profile',
   WELCOME: 'Welcome',
   FAQ: 'FAQ',
   REGULAR: 'Regular Pathway',

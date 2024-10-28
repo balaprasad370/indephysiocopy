@@ -43,13 +43,50 @@ import docs from '../../assets/doc.png';
 import book from '../../assets/book.png';
 import LastComponent from './LastComponent';
 import CurrentStatusComponent from './CurrentStatusComponent';
+import Notfications from '../Notifications/Index';
+
+import Information from '../../Components/Information/Index';
+import Optional from '../../Components/Information/Optional';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [informationData, setInformationData] = useState();
+  const [optionalData, setOptionalData] = useState();
+
   const toggleModal = () => {
     setModalVisible(!modalVisible);
+  };
+
+  const getInformation = async () => {
+    const token = await storage.getStringAsync('token');
+
+    if (token) {
+      try {
+        const response = await axios.get(`${path}/admin/v1/information`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const informationData = response.data.data;
+
+        const optionalData = informationData.filter(
+          item => item.type === 'optional',
+        );
+        const strictData = informationData.filter(
+          item => item.type === 'strict',
+        );
+
+        // Set the filtered data to state
+        setOptionalData(optionalData);
+        setInformationData(strictData);
+      } catch (error) {
+        console.log('error occurred from getInformation:', error);
+      }
+    }
   };
 
   const {
@@ -64,6 +101,7 @@ const Index = ({navigation}) => {
     levelId,
   } = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
+  // const [optionalToggle, setOptional] = useState(true);
 
   let locked = true;
 
@@ -100,11 +138,10 @@ const Index = ({navigation}) => {
 
   const getChapterStatus = async () => {
     const token = await storage.getStringAsync('token');
-
     try {
       const res = await axios({
         method: 'get',
-        url: `${path}/chapter/v4/student/status`,
+        url: `${path}/chapter/v5/student/status`,
         params: {
           level_id: levelId,
           client_id: clientId,
@@ -125,6 +162,7 @@ const Index = ({navigation}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getChapterStatus();
+      getInformation();
     });
     return unsubscribe;
   }, [navigation]);
@@ -135,7 +173,7 @@ const Index = ({navigation}) => {
         <View style={style.uppDash}>
           <View style={styles.textstyle}>
             <Text style={style.textWel}>Welcome back</Text>
-            <Text style={style.candName}>
+            <Text style={[style.candName, {textTransform: 'capitalize'}]}>
               {userData
                 ? `${userData.first_name} ${userData.last_name}`.length > 20
                   ? `${userData.first_name} ${userData.last_name}`.slice(
@@ -162,7 +200,8 @@ const Index = ({navigation}) => {
           </View>
           <TouchableOpacity
             hitSlop={{x: 25, y: 15}}
-            onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
+            onPress={() => navigation.openDrawer()}
+            // onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
             style={{
               paddingRight: '3%',
             }}>
@@ -180,7 +219,12 @@ const Index = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
-        <CurrentStatusComponent data={data} />
+        {/* <Notfications /> */}
+        <Information informationData={informationData} />
+        <Optional optionalData={optionalData} />
+        {data && data.chapter_id !== null && (
+          <CurrentStatusComponent data={data} />
+        )}
         {/* <LastComponent /> */}
         <FlatList
           data={courseData}

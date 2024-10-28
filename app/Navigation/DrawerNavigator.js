@@ -1,15 +1,31 @@
 // src/DrawerNavigator.js
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import BottomNavigator from './BottomNavigator';
 import DrawerContent from './Side'; // Import the custom drawer content
 import {ROUTES} from '../Constants/routes';
-import {Dashboard, LiveClasses, Documents, SelfLearn} from '../Screens';
+import {
+  Dashboard,
+  LiveClasses,
+  Documents,
+  SelfLearn,
+  ProfileSetting,
+} from '../Screens';
 import COLOR from '../Constants/color';
+import {AppContext} from '../theme/AppContext';
+import DarkTheme from '../theme/Darktheme';
+import LighTheme from '../theme/LighTheme';
+import storage from '../Constants/storage';
+import axios from 'axios';
+import {useNavigation} from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = () => {
+  const {isDark, fetchTime} = useContext(AppContext);
+
+  const style = isDark ? DarkTheme : LighTheme;
+
   return (
     <Drawer.Navigator
       initialRouteName="HomeTabs"
@@ -31,20 +47,43 @@ const DrawerNavigator = () => {
         component={BottomNavigator}
         options={{headerShown: false}}
       />
+
       <Drawer.Screen
         name={ROUTES.LIVE_CLASS}
         component={LiveClasses}
-        options={{headerShown: true}}
+        options={{
+          headerTitle: 'Live classes',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
       />
-      {/* <Drawer.Screen
-        name={ROUTES.DOCUMENTS}
-        component={Documents}
-        options={{headerShown: false}}
-      /> */}
       <Drawer.Screen
         name={ROUTES.SELF_LEARN}
         component={SelfLearn}
-        options={{headerShown: true}}
+        options={{
+          headerTitle: 'Self Learn',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
+        // options={{headerShown: true}}
+      />
+      <Drawer.Screen
+        name={ROUTES.PROFILE_SETTING}
+        component={ProfileSetting}
+        options={{
+          headerTitle: 'Profile',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
       />
       <Drawer.Screen
         name=" "

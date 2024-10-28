@@ -34,7 +34,7 @@ const AppNavigator = () => {
   let appOpenTime = '';
 
   const saveOpenTime = () => {
-    appOpenTime = Date.now(); // Save the open time in UTC
+    appOpenTime = Date.now();
     console.log(`App opened at (UTC): ${appOpenTime}`);
   };
 
@@ -180,7 +180,7 @@ const AppNavigator = () => {
   const handleAppStateChange = async nextAppState => {
     if (nextAppState === 'active') {
       appStartTimeRef.current = Date.now(); // Reset the app-specific start time
-      await saveOpenTime(); // Store open time
+      saveOpenTime(); // Store open time
     }
 
     if (
@@ -189,8 +189,6 @@ const AppNavigator = () => {
     ) {
       const endTime = Date.now();
       const timeSpentInApp = endTime - appStartTimeRef.current; // Use app-specific start time
-
-      console.log(timeSpentInApp);
 
       const timespent2 = timeSpentInApp / 1000;
 
@@ -247,7 +245,21 @@ const AppNavigator = () => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   const subscription = AppState.addEventListener(
+  //     'change',
+  //     handleAppStateChange,
+  //   );
+
+  //   return () => {
+  //     if (subscription) subscription.remove();
+  //   };
+  // }, []);
   useEffect(() => {
+    // Immediately check the current app state on mount
+    const currentAppState = AppState.currentState;
+    handleAppStateChange(currentAppState);
+
     const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,

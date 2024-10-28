@@ -17,17 +17,19 @@ import color from '../../Constants/color';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
 import scale from '../../utils/utils';
+import Loading from '../Loading/Loading';
 
 const Index = ({route}) => {
   const [htmlData, setHtmlData] = useState('');
 
-  const {path, isDark} = useContext(AppContext);
+  const {path, isDark, loader, setLoader} = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
 
   const {read_id, order_id, chapter_id, unique_id} = route.params;
 
   const readingMaterial = async read_id => {
     const token = await storage.getStringAsync('token');
+    setLoader(true);
     if (token) {
       try {
         const response = await axios.get(
@@ -41,6 +43,7 @@ const Index = ({route}) => {
         );
 
         let readingText = response.data[0]?.reading_text;
+
         const customCss = isDark
           ? `
         <style>
@@ -162,11 +165,9 @@ const Index = ({route}) => {
         }
       </style>
     `;
-
-        // Prepend the CSS to the readingText
         readingText = customCss + readingText;
-
         setHtmlData(readingText);
+        setLoader(false);
       } catch (error) {
         console.log('Error from reading material:', error);
       }
@@ -224,9 +225,21 @@ const Index = ({route}) => {
       {cancelable: false}, // Prevent dismissing by clicking outside
     );
   };
+  // useEffect(() => {
+  //   readingMaterial(read_id);
+  //   setLoader(false);
+  // }, [navigation]);
+
   useEffect(() => {
-    readingMaterial(read_id);
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      readingMaterial(read_id);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  if (loader) {
+    return <Loading />;
+  }
 
   return (
     <SafeAreaView style={[style.reading]}>

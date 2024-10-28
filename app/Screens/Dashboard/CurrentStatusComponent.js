@@ -31,6 +31,7 @@ const CurrentStatusComponent = ({data}) => {
   }, [animatedValue]);
 
   const toggleModal = (option, order_id) => {
+    console.log('hi', option);
     if (option == 'Quiz') {
       navigation.navigate(ROUTES.QUIZ, {
         module_id: data.id,
@@ -67,7 +68,7 @@ const CurrentStatusComponent = ({data}) => {
       <TouchableOpacity
         onPress={() => toggleModal(data && data.type, data.order_id)}
         style={{
-          marginTop: 20,
+          marginTop: 10,
           borderTopEndRadius: 20,
           borderTopStartRadius: 20,
           borderBottomEndRadius: 15,
@@ -85,12 +86,16 @@ const CurrentStatusComponent = ({data}) => {
             borderBottomStartRadius: 20,
             backgroundColor: color.darkPrimary,
             flexDirection: 'row',
-            justifyContent: 'space-around',
+            paddingHorizontal: 10,
+            justifyContent: 'space-between',
           }}>
-          <View style={{padding: 10}}>
+          <View
+            style={{paddingHorizontal: 5, paddingVertical: 10, width: '80%'}}>
             <Text style={{color: 'white', fontSize: 16}}>
               {(() => {
-                const text = `Your next goal ${data && data.type}`;
+                const text = ` ${data && data.level_name}, ${
+                  data.chapter_name
+                }`;
                 return text.length > 32 ? text.slice(0, 32) + '...' : text;
               })()}
             </Text>
@@ -108,7 +113,7 @@ const CurrentStatusComponent = ({data}) => {
               backgroundColor: 'white',
               height: '100%',
             }}></View>
-          <View style={{padding: 10}}>
+          <View style={{padding: 10, alignSelf: 'center'}}>
             <BookIcon name="book-bookmark" size={40} color={color.white} />
           </View>
         </View>

@@ -65,7 +65,7 @@ const Certificate = ({route}) => {
     const token = await storage.getStringAsync('token');
 
     try {
-      const response = await axios.get(`${path}/admin/v3/submitAnswers`, {
+      const response = await axios.get(`${path}/admin/v4/submitAnswers`, {
         params: {module_id},
         headers: {
           'Content-Type': 'application/json',

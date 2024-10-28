@@ -53,7 +53,6 @@ const Index = ({route}) => {
     currentQuestionIndex,
   } = route.params;
 
-  // console.log(module_id, title, order_id, chapter_id, unique_id, level_id);
   const {path, grandScore, setGrandScore, userData, student_id, isDark} =
     useContext(AppContext);
   const navigation = useNavigation();
@@ -203,18 +202,17 @@ const Index = ({route}) => {
     setQuestionIndex(prevIndex => prevIndex + 1);
   };
   const submitNow = async () => {
-    // Show confirmation alert before proceeding
     Alert.alert(
       'Confirm Submission',
       'Are you sure you want to submit your marks?',
       [
         {
-          text: 'No', // If "No" is pressed, do nothing
+          text: 'No',
           onPress: () => console.log('Submission cancelled'),
           style: 'cancel',
         },
         {
-          text: 'Yes', // If "Yes" is pressed, proceed with submitNow logic
+          text: 'Yes',
           onPress: async () => {
             const token = await storage.getStringAsync('token');
             setSelectedOption(null);
@@ -258,12 +256,54 @@ const Index = ({route}) => {
 
               const newInputValue = JSON.stringify(inputValue);
 
-              let finalStudentAnswers =
-                questionType === 'JumbledSentences'
-                  ? JSON.stringify(studentAnswer)
-                  : studentAnswers == '{}'
-                  ? newInputValue
-                  : studentAnswers;
+              let finalStudentAnswers = '';
+              // if (questionType === 'JumbledSentences') {
+              //   finalStudentAnswers = JSON.stringify(studentAnswer);
+              // } else {
+              //   finalStudentAnswers =
+              //     studentAnswers !== '{}' && newInputValue !== '""'
+              //       ? {
+              //         let obj1 = JSON.parse(studentAnswers);
+              //         let obj2  = JSON.parse(newInputValue);
+              //         const mergedObject = { ...obj1, ...obj2 };
+              //         finalStudentAnswers = JSON.stringify(mergedObject);
+              //       }
+
+              //       : studentAnswers === '{}'
+              //       ? newInputValue
+              //       : studentAnswers;
+              // }
+
+              console.log(questionType, 'questionType');
+              if (questionType === 'JumbledSentences') {
+                finalStudentAnswers = JSON.stringify(studentAnswer);
+              } else {
+                if (studentAnswers !== '{}' && newInputValue !== '""') {
+                  const obj1 = JSON.parse(studentAnswers);
+                  const obj2 = JSON.parse(newInputValue);
+
+                  // Merge the objects
+                  const mergedObject = {...obj1, ...obj2};
+
+                  // Convert merged object back to JSON string
+                  finalStudentAnswers = JSON.stringify(mergedObject);
+                } else {
+                  // If only one of the objects has data, use that one
+                  finalStudentAnswers =
+                    studentAnswers === '{}' ? newInputValue : studentAnswers;
+                }
+              }
+
+              console.log(finalStudentAnswers);
+
+              // return;
+
+              // let finalStudentAnswers =
+              //   questionType === 'JumbledSentences'
+              //     ? JSON.stringify(studentAnswer)
+              //     : studentAnswers == '{}'
+              //     ? newInputValue
+              //     : studentAnswers;
 
               let teacherAnswers =
                 questionType === 'JumbledSentences'
@@ -272,8 +312,6 @@ const Index = ({route}) => {
 
               let quizType = questionType === 'JumbledSentences' ? 1 : 0;
 
-              console.log(questionType, finalStudentAnswers, teacherAnswers);
-              // return;
               if (
                 questionType !== 'Record' &&
                 questionType !== 'Speaking' &&
@@ -357,11 +395,6 @@ const Index = ({route}) => {
   const [selectedOptions, setSelectedOptions] = useState(
     previousAnswers ? objectAnswers : {},
   );
-
-  // console.log('selectedOptions', selectedOptions);
-  // console.log('attemptedQuestions', attemptedQuestions);
-  // console.log('questionIndex', questionIndex);
-  // console.log('previousAnswers', previousAnswers);
 
   const handleOptionSelect = (
     selectedIndex,
@@ -565,18 +598,18 @@ const Index = ({route}) => {
                   borderBottomWidth: scale(1),
                   borderColor: color.black,
                   paddingLeft: scale(4),
+                  borderBottomStyle: 'dotted',
                   width: 100,
                   paddingRight: scale(4),
                   fontSize: 14,
                   textAlign: 'center',
                 }}
-                placeholder="Type answer"
+                placeholder="Type answers"
                 onChangeText={text =>
                   handleTextInput(text, correctAnswerIndex, questionId)
                 }
                 value={inputValue[questionId] || ''}
               />
-
               <Text
                 style={[
                   styled.quiztitle,
@@ -632,7 +665,7 @@ const Index = ({route}) => {
   ) => {
     // console.log(questionText);
     const parts = questionText.split('_');
-    // console.log(parts);
+
     return (
       <View>
         <View
@@ -643,8 +676,12 @@ const Index = ({route}) => {
             alignItems: 'center',
             width: '100%',
           }}>
+          {/* <Text style={[styled.quiztitle, {flexShrink: 1}]}>
+            Q{questionIndex + 1}/{totalQuestionsCount}
+            {')'}
+          </Text> */}
           <Text style={[styled.quiztitle, {flexShrink: 1}]}>
-            Q{quesIndex}) {parts[0]}
+            Q{quesIndex + 1}) {parts[0]}
           </Text>
           {parts.length > 1 ? (
             <>
@@ -657,6 +694,7 @@ const Index = ({route}) => {
                   paddingLeft: scale(4),
                   width: 100,
                   paddingRight: scale(4),
+                  borderBottomStyle: 'dotted',
                   fontSize: 14,
                   textAlign: 'center',
                 }}
@@ -682,6 +720,7 @@ const Index = ({route}) => {
                   marginRight: scale(4),
                   borderBottomWidth: scale(1),
                   borderColor: color.black,
+                  borderBottomStyle: 'dotted',
                   paddingLeft: scale(4),
                   width: 100,
                   paddingRight: scale(4),
@@ -737,6 +776,9 @@ const Index = ({route}) => {
           const newScore = prevScore - 1;
           return newScore;
         });
+      }
+      if (!attemptedQuestions.includes(index)) {
+        setAttemptedQuestions(prev => [...prev, questionIndex]);
       }
 
       return {
@@ -831,8 +873,7 @@ const Index = ({route}) => {
         case 'TextAudio':
           return (
             <>
-              <Text>{item.subQuestions.length}</Text>
-              {item.subQuestions.length > 1 ? (
+              {item.subQuestions.length > 0 ? (
                 <>
                   {renderQuestionWithBlanks(
                     item.question,
@@ -854,6 +895,7 @@ const Index = ({route}) => {
                     item.audioURL,
                     questionIndex,
                   )}
+
                   {item.imageURL && renderImage(item.imageURL)}
                 </>
               )}
@@ -963,7 +1005,7 @@ const Index = ({route}) => {
           subQuestion.type === 'TextAudio' ||
           subQuestion.type === 'Text') && (
           <>
-            {renderQuestionWithBlanks(
+            {renderQuestionWithBlanksQuestion(
               subQuestion.question,
               subQuestion.correctAnswerIndex,
               subQuestion.id,
@@ -1035,7 +1077,6 @@ const Index = ({route}) => {
       Object.keys(selectedOptions).length === 0
         ? allCombinedData
         : selectedOptions;
-
     try {
       // Prepare the quiz data you want to send to the backend
       let quizData = {

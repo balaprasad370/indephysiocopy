@@ -90,15 +90,11 @@ const LastComponent = () => {
             borderBottomStartRadius: 20,
             backgroundColor: color.darkPrimary,
             flexDirection: 'row',
-            justifyContent: 'space-around',
+            justifyContent: 'space-between',
+            paddingHorizontal: 10,
           }}>
-          <View style={{padding: 10}}>
-            {/* <Text style={{color: 'white', fontSize: 16}}>
-              {(() => {
-                const text = `Level: ${quizData.level_name}, Chapter: ${quizData.chapter_name}`;
-                return text.length > 32 ? text.slice(0, 32) + '...' : text;
-              })()}
-            </Text> */}
+          <View
+            style={{paddingHorizontal: 5, paddingVertical: 10, width: '80%'}}>
             <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>
               Quiz Attempted: {quizData.currentQuestionIndex}/
               {quizData.totalQuestions}

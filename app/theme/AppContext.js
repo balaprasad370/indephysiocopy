@@ -4,6 +4,7 @@ import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import LighTheme from './LighTheme';
 import {DarkTheme} from '@react-navigation/native';
+import {Alert} from 'react-native';
 
 // Create the context
 export const AppContext = createContext();
@@ -37,6 +38,8 @@ export const AuthProvider = ({children}) => {
   const [error, setError] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [referralcode, setReferralCode] = useState();
+
+  const [fetchTime, setFetchTime] = useState();
 
   const getDatFunc = async () => {
     try {
@@ -135,9 +138,39 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  const fetchClockTime = async () => {
+    const token = await storage.getStringAsync('token');
+    if (token) {
+      try {
+        // Retrieve the token from storage
+
+        // Make the GET request with token in the Authorization header
+        const response = await axios.get(`${path}/student/v1/appusagetime`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // console.log('res', response.data);
+        // Handle the response data (assuming it's in response.data)
+        const appUsageData = response.data;
+
+        if (appUsageData.success) {
+          setFetchTime(appUsageData.data);
+          // console.log('App usage time:', appUsageData.data);
+          // You can update your UI or handle the data here
+        } else {
+          console.log('Error', 'Failed to retrieve app usage time');
+        }
+      } catch (error) {
+        console.log('Error fetching app usage time:', error);
+      }
+    }
+  };
+
   // const newFUnction = async () => {
   //   let newToken =
-  //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM2OCwicmVmZXJyYWxJZCI6OTQzNzAwLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3Mjg4Nzc4MDYsImV4cCI6MTczNjY1MzgwNn0.N60gWZCg7hmx715h_gs7MYhBMXeaa_hErBFgDTprRvY';
+  //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjQxOCwicmVmZXJyYWxJZCI6OTQzNzM3LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3Mjk4NzcwNTIsImV4cCI6MTczNzY1MzA1Mn0.afrCW5uX_m3_yMSOn-CbKi2MMP0yBk120u_zk4LtTGk';
   //   await storage.setStringAsync('token', newToken);
   // };
   // useEffect(() => {
@@ -173,6 +206,7 @@ export const AuthProvider = ({children}) => {
 
   useEffect(() => {
     getPackageId();
+    fetchClockTime();
     fetchDocumentStatus();
   }, [userData]);
 
@@ -219,6 +253,8 @@ export const AuthProvider = ({children}) => {
     referralcode,
     loader,
     setLoader,
+    fetchTime,
+    setFetchTime,
   };
 
   const style = isDark ? DarkTheme : LighTheme;

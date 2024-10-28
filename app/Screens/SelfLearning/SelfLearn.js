@@ -34,6 +34,7 @@ const SelfLearn = () => {
       const response = await axios.get(
         'https://server.indephysio.com/languages',
       );
+      console.log(response.data);
       setLanguages(response.data);
     } catch (error) {
       console.log('Langg', error);
@@ -57,7 +58,6 @@ const SelfLearn = () => {
             <Text style={style.exampleScreen}>Subjects</Text>
           </View>
         </View>
-
         {languages && languages.length > 0 ? (
           languages.map((item, index) => {
             return (
@@ -85,39 +85,6 @@ const SelfLearn = () => {
             </Text>
           </View>
         )}
-
-        {/* {languages && languages.length > 0 ? (
-        <View>
-          <FlatList
-            data={languages}
-            renderItem={({item, index}) => {
-              return (
-                <View key={index} style={{marginVertical: 8}}>
-                  <Example
-                    route={ROUTES.LEVEL}
-                    lang_id={item.lang_id}
-                    id={index}
-                    img={`https://d2c9u2e33z36pz.cloudfront.net/${item.lang_img}`}
-                    name={item.language_name}
-                    description={item.language_description}
-                  />
-                </View>
-              );
-            }}
-          />
-        </View>
-      ) : (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text style={{fontSize: 18, fontWeight: '900'}}>
-            There is no content
-          </Text>
-        </View>
-      )} */}
       </ScrollView>
     </SafeAreaView>
   );

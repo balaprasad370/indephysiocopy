@@ -4,6 +4,7 @@ import {
   FlatList,
   Image,
   Linking,
+  SafeAreaView,
   StyleSheet,
   Switch,
   Text,
@@ -41,19 +42,6 @@ const Index = () => {
     useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
-
-  // const logoutButton = async () => {
-  //   try {
-  //     storage.setBoolAsync('isLoggedIn', false);
-  //     storage.removeItem('token');
-  //     storage.removeItem('show');
-  //     storage.removeItem('email');
-  //     setIsAuthenticate(false);
-  //     navigation.navigate(ROUTES.LOGIN);
-  //   } catch (error) {
-  //     console.log('Error during logout:', error);
-  //   }
-  // };
 
   const logoutButton = async () => {
     Alert.alert(
@@ -238,7 +226,7 @@ const Index = () => {
 
   const RenderItem = () => {
     return (
-      <View style={{}}>
+      <SafeAreaView style={{}}>
         <View
           style={{
             display: 'flex',
@@ -424,7 +412,7 @@ const Index = () => {
           info@indephysio.com or call us at +91-9894604603. Our team will assist
           you with the account deletion process.
         </Text> */}
-      </View>
+      </SafeAreaView>
     );
   };
 
