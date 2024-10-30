@@ -22,6 +22,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -31,12 +33,18 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app requires access to your calendar to [explain why your app needs it].</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera for video conferencing</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need access to your microphone for audio conferencing</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to your photo library to [explain why your app needs it].</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app requires access to speech recognition to [explain why your app needs it].</string>
 	<key>RTCScreenSharingExtension</key>
 	<string>your.broadcast.extension.bundle.identifier</string>
 	<key>UIAppFonts</key>
@@ -75,14 +83,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>NSCalendarsUsageDescription</key>
-	<string>This app requires access to your calendar to [explain why your app needs it].</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to your photo library to [explain why your app needs it].</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>This app requires access to speech recognition to [explain why your app needs it].</string>
-
 </dict>
 </plist>

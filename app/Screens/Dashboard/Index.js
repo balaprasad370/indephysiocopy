@@ -53,6 +53,7 @@ const Index = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const [informationData, setInformationData] = useState();
+
   const [optionalData, setOptionalData] = useState();
 
   const toggleModal = () => {
@@ -89,6 +90,30 @@ const Index = ({navigation}) => {
     }
   };
 
+  const getWebinar = async () => {
+    const token = await storage.getStringAsync('token');
+
+    if (token) {
+      try {
+        const response = await axios.get(`${path}/admin/v1/webinar`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('helo', response.data);
+        const webinarData = response.data.data;
+        setWebinar(webinarData);
+        if (webinarData.modal_status === 1) {
+          setAdVisible(true);
+        }
+      } catch (error) {
+        setWebinar('');
+        console.log('error occurred from getInformation:', error);
+      }
+    }
+  };
+
   const {
     isDark,
     setIsDark,
@@ -104,6 +129,28 @@ const Index = ({navigation}) => {
   // const [optionalToggle, setOptional] = useState(true);
 
   let locked = true;
+
+  const [isAdVisible, setAdVisible] = useState(false);
+
+  const toggleAd = async () => {
+    const token = await storage.getStringAsync('token');
+    try {
+      const response = await axios.post(
+        `${path}/admin/v1/update-modal-status`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      console.log('Webinar status is updated', response.data);
+      setAdVisible(!isAdVisible);
+    } catch (error) {
+      console.log('Error updating the status of the webinar', error);
+    }
+  };
 
   const courseData = [
     {
@@ -135,6 +182,7 @@ const Index = ({navigation}) => {
   ];
 
   const [data, setData] = useState();
+  const [webinar, setWebinar] = useState('');
 
   const getChapterStatus = async () => {
     const token = await storage.getStringAsync('token');
@@ -152,7 +200,6 @@ const Index = ({navigation}) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('res', res.data);
       setData(res.data);
     } catch (error) {
       console.log('error', error.response);
@@ -163,6 +210,7 @@ const Index = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       getChapterStatus();
       getInformation();
+      getWebinar();
     });
     return unsubscribe;
   }, [navigation]);
@@ -220,7 +268,9 @@ const Index = ({navigation}) => {
           </TouchableOpacity>
         </View>
         {/* <Notfications /> */}
-        <Information informationData={informationData} />
+        {webinar && (
+          <Information webinar={webinar} setAdVisible={setAdVisible} />
+        )}
         <Optional optionalData={optionalData} />
         {data && data.chapter_id !== null && (
           <CurrentStatusComponent data={data} />
@@ -352,21 +402,39 @@ const Index = ({navigation}) => {
               </Text>
             </TouchableOpacity>
           </View>
-          {/* {data ? (
-            <View>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
-                    parent_module_id: data.chapter_id,
-                    title: 'Progress Chapter',
-                  })
-                }>
-                <Text>Running Chapter</Text>
-              </TouchableOpacity>
-            </View>
-          ) : null} */}
+
           <ProfileLevel />
         </View>
+        {webinar && isAdVisible ? (
+          <Modal
+            transparent={true}
+            visible={isAdVisible}
+            animationType="fade"
+            onRequestClose={toggleAd}>
+            <View style={styled.adOverlay}>
+              <TouchableOpacity style={styled.closeButton} onPress={toggleAd}>
+                <Text style={styled.closeButtonText}>X</Text>
+              </TouchableOpacity>
+              <View style={styled.adContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('Meeting', {
+                      room: webinar.webinar_url,
+                      // room: 'ic2wYAPi7sqlUZKi',
+                    });
+                    setAdVisible(false);
+                  }}>
+                  <Image
+                    source={{uri: webinar.webinar_image_url}} // Use webinar_image_url dynamically
+                    style={styled.adImage}
+                  />
+                </TouchableOpacity>
+                {/* <Text style={styled.closeButtonText}>{webinar.title}</Text> */}
+                {/* <Text>{webinar.description}</Text> */}
+              </View>
+            </View>
+          </Modal>
+        ) : null}
       </SafeAreaView>
     );
   };
@@ -381,5 +449,42 @@ const Index = ({navigation}) => {
     />
   );
 };
+
+const styled = StyleSheet.create({
+  adOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent dark background
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  adContainer: {
+    width: '90%',
+    height: '80%',
+    borderRadius: 10,
+    overflow: 'hidden', // Ensures rounded corners
+  },
+  adImage: {
+    width: '100%',
+    // width: 200,
+    // height: 200,
+    height: '100%',
+    // resizeMode: 'cover',
+    resizeMode: 'contain',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    backgroundColor: 'white',
+    borderRadius: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default Index;

@@ -4,8 +4,9 @@ import color from '../../Constants/color';
 import Icon from 'react-native-vector-icons/Feather';
 import Action from 'react-native-vector-icons/SimpleLineIcons';
 import {AppContext} from '../../theme/AppContext';
+import {useNavigation} from '@react-navigation/native';
 
-const Index = ({informationData}) => {
+const Index = ({webinar, setAdVisible}) => {
   const {path} = useContext(AppContext);
 
   const openWebsite = url => {
@@ -14,59 +15,68 @@ const Index = ({informationData}) => {
     );
   };
 
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity
-      style={{
-        backgroundColor: '#EE4E4E',
-        marginTop: 10,
-        width: '100%',
-        borderRadius: 10,
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-      }}>
-      <View
-        style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-        <Icon name="info" size={28} color="white" />
-        <View
+    <>
+      {webinar && (
+        <TouchableOpacity
+          onPress={() => setAdVisible(true)}
           style={{
-            width: '91%',
-            marginLeft: 7,
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            backgroundColor: '#EE4E4E',
+            marginTop: 10,
+            width: '100%',
+            borderRadius: 10,
+            paddingVertical: 8,
+            paddingHorizontal: 12,
           }}>
-          <View>
-            {/* Check if informationData exists and has at least one item */}
-            {informationData && informationData.length > 0 ? (
-              <>
-                <Text style={{color: 'white', fontWeight: '600', fontSize: 18}}>
-                  {/* Title truncation */}
-                  {informationData[0]?.info_title.length > 30
-                    ? `${informationData[0]?.info_title.substring(0, 30)}...`
-                    : informationData[0]?.info_title}
-                </Text>
-                <Text style={{color: 'rgba(257,257,257,0.8)'}}>
-                  {/* Description truncation */}
-                  {informationData[0]?.info_description.length > 40
-                    ? `${informationData[0]?.info_description.substring(
-                        0,
-                        40,
-                      )}...`
-                    : informationData[0]?.info_description}
-                </Text>
-              </>
-            ) : (
-              <Text style={{color: 'white'}}>No information available</Text>
-            )}
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Icon name="info" size={28} color="white" />
+            <View
+              style={{
+                width: '91%',
+                marginLeft: 7,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <View>
+                {webinar && (
+                  <>
+                    <Text
+                      style={{color: 'white', fontWeight: '600', fontSize: 18}}>
+                      {webinar?.title.length > 28
+                        ? `${webinar?.title.substring(0, 28)}...`
+                        : webinar[0]?.title}
+                    </Text>
+                    <Text style={{color: 'rgba(257,257,257,0.8)'}}>
+                      {webinar?.description.length > 35
+                        ? `${webinar?.description.substring(0, 35)}...`
+                        : webinar?.description}
+                    </Text>
+                  </>
+                )}
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Meeting', {
+                    room: webinar.webinar_url,
+                    // room: 'ic2wYAPi7sqlUZKi',
+                  });
+                  setAdVisible(false);
+                }}>
+                <Action name="action-redo" size={25} color="white" />
+              </TouchableOpacity>
+            </View>
           </View>
-          <TouchableOpacity
-            onPress={() => openWebsite(informationData[0]?.action)}>
-            <Action name="action-redo" size={25} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
+        </TouchableOpacity>
+      )}
+    </>
   );
 };
 
