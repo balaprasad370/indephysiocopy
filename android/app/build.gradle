@@ -79,8 +79,8 @@ android {
         applicationId "com.inde.physio"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 700 // major.minor.patch
-        versionName "7.0.0" // major.minor.patch
+        versionCode 100 // major.minor.patch
+        versionName "1.0.0" // major.minor.patch
     }
     signingConfigs {
         debug {

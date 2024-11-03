@@ -38,7 +38,6 @@ export const AuthProvider = ({children}) => {
   const [error, setError] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [referralcode, setReferralCode] = useState();
-
   const [fetchTime, setFetchTime] = useState();
 
   const getDatFunc = async () => {
@@ -145,7 +144,7 @@ export const AuthProvider = ({children}) => {
         // Retrieve the token from storage
 
         // Make the GET request with token in the Authorization header
-        const response = await axios.get(`${path}/student/v1/appusagetime`, {
+        const response = await axios.get(`${path}/student/v2/appusagetime`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -155,6 +154,7 @@ export const AuthProvider = ({children}) => {
         // Handle the response data (assuming it's in response.data)
         const appUsageData = response.data;
 
+        console.log('data', appUsageData.data);
         if (appUsageData.success) {
           setFetchTime(appUsageData.data);
           // console.log('App usage time:', appUsageData.data);

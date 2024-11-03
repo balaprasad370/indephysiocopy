@@ -30,10 +30,10 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		27F8D227072EABD6970A13D4 /* libPods-indephysio-indephysioTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ACF85FC55417461A880357C6 /* libPods-indephysio-indephysioTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		E181CD36D818580E9EA904E0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 65A045163313F172EB9F3E8C /* PrivacyInfo.xcprivacy */; };
-		E88AE8B13EFD1EC3EF82B828 /* libPods-indephysio-indephysioTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6919E97C9388EFF95C59FAB /* libPods-indephysio-indephysioTests.a */; };
-		FF871A12133727E8039DEC11 /* libPods-indephysio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 677FE3D0BA78971FD63B5DF6 /* libPods-indephysio.a */; };
+		F1E7425F907628709FA2F884 /* libPods-indephysio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F471DD835A42A343509ED855 /* libPods-indephysio.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,15 +76,15 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = indephysio/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = indephysio/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = indephysio/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1BD3F68D26C888CE2C3A856B /* Pods-indephysio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-indephysio.debug.xcconfig"; path = "Target Support Files/Pods-indephysio/Pods-indephysio.debug.xcconfig"; sourceTree = "<group>"; };
+		29B9408DD39B1178B4F2A518 /* Pods-indephysio-indephysioTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-indephysio-indephysioTests.debug.xcconfig"; path = "Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests.debug.xcconfig"; sourceTree = "<group>"; };
 		65A045163313F172EB9F3E8C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = indephysio/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		677FE3D0BA78971FD63B5DF6 /* libPods-indephysio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-indephysio.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A184004B08F67BF0D5FF2C7 /* Pods-indephysio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-indephysio.release.xcconfig"; path = "Target Support Files/Pods-indephysio/Pods-indephysio.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = indephysio/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		90E01BF8A7ACA20DB67163A5 /* Pods-indephysio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-indephysio.debug.xcconfig"; path = "Target Support Files/Pods-indephysio/Pods-indephysio.debug.xcconfig"; sourceTree = "<group>"; };
-		95511F01E0C6B14C8730A474 /* Pods-indephysio-indephysioTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-indephysio-indephysioTests.debug.xcconfig"; path = "Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests.debug.xcconfig"; sourceTree = "<group>"; };
-		B623FA1170DD43E5F6BF57CF /* Pods-indephysio-indephysioTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-indephysio-indephysioTests.release.xcconfig"; path = "Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests.release.xcconfig"; sourceTree = "<group>"; };
-		DD87A990EF8CD219D2F3DF82 /* Pods-indephysio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-indephysio.release.xcconfig"; path = "Target Support Files/Pods-indephysio/Pods-indephysio.release.xcconfig"; sourceTree = "<group>"; };
+		ACF85FC55417461A880357C6 /* libPods-indephysio-indephysioTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-indephysio-indephysioTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAF3E23EE24643343532DD5E /* Pods-indephysio-indephysioTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-indephysio-indephysioTests.release.xcconfig"; path = "Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F6919E97C9388EFF95C59FAB /* libPods-indephysio-indephysioTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-indephysio-indephysioTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F471DD835A42A343509ED855 /* libPods-indephysio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-indephysio.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,7 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E88AE8B13EFD1EC3EF82B828 /* libPods-indephysio-indephysioTests.a in Frameworks */,
+				27F8D227072EABD6970A13D4 /* libPods-indephysio-indephysioTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,7 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF871A12133727E8039DEC11 /* libPods-indephysio.a in Frameworks */,
+				F1E7425F907628709FA2F884 /* libPods-indephysio.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,8 +170,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				677FE3D0BA78971FD63B5DF6 /* libPods-indephysio.a */,
-				F6919E97C9388EFF95C59FAB /* libPods-indephysio-indephysioTests.a */,
+				F471DD835A42A343509ED855 /* libPods-indephysio.a */,
+				ACF85FC55417461A880357C6 /* libPods-indephysio-indephysioTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -211,10 +211,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				90E01BF8A7ACA20DB67163A5 /* Pods-indephysio.debug.xcconfig */,
-				DD87A990EF8CD219D2F3DF82 /* Pods-indephysio.release.xcconfig */,
-				95511F01E0C6B14C8730A474 /* Pods-indephysio-indephysioTests.debug.xcconfig */,
-				B623FA1170DD43E5F6BF57CF /* Pods-indephysio-indephysioTests.release.xcconfig */,
+				1BD3F68D26C888CE2C3A856B /* Pods-indephysio.debug.xcconfig */,
+				7A184004B08F67BF0D5FF2C7 /* Pods-indephysio.release.xcconfig */,
+				29B9408DD39B1178B4F2A518 /* Pods-indephysio-indephysioTests.debug.xcconfig */,
+				CAF3E23EE24643343532DD5E /* Pods-indephysio-indephysioTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -226,12 +226,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "indephysioTests" */;
 			buildPhases = (
-				8F9DF82EF30DF3F0C69682C9 /* [CP] Check Pods Manifest.lock */,
+				47B7246C9237A5EB297324F0 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				DDF5BD86BCB83F954FC2D405 /* [CP] Embed Pods Frameworks */,
-				A71C503C3FFDC167BB8D599C /* [CP] Copy Pods Resources */,
+				B5C8004E681F271F1A604898 /* [CP] Embed Pods Frameworks */,
+				DE773A0941C594F4D83C44A2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -247,13 +247,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "indephysio" */;
 			buildPhases = (
-				0D98AFE9372E0597ECD85AB2 /* [CP] Check Pods Manifest.lock */,
+				B825AE0DCFDC92E19BE7370F /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				5945F19EFB0E4306F20BAB51 /* [CP] Embed Pods Frameworks */,
-				E81352E3EBB81B39A4FCB950 /* [CP] Copy Pods Resources */,
+				6F2AE761AED8479FE3E978C4 /* [CP] Embed Pods Frameworks */,
+				D5AF3FE61F68365B92373A6D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -356,46 +356,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		0D98AFE9372E0597ECD85AB2 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-indephysio-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5945F19EFB0E4306F20BAB51 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-indephysio/Pods-indephysio-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-indephysio/Pods-indephysio-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-indephysio/Pods-indephysio-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8F9DF82EF30DF3F0C69682C9 /* [CP] Check Pods Manifest.lock */ = {
+		47B7246C9237A5EB297324F0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -417,24 +378,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A71C503C3FFDC167BB8D599C /* [CP] Copy Pods Resources */ = {
+		6F2AE761AED8479FE3E978C4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-indephysio/Pods-indephysio-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-indephysio/Pods-indephysio-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-indephysio/Pods-indephysio-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DDF5BD86BCB83F954FC2D405 /* [CP] Embed Pods Frameworks */ = {
+		B5C8004E681F271F1A604898 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -451,7 +412,29 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E81352E3EBB81B39A4FCB950 /* [CP] Copy Pods Resources */ = {
+		B825AE0DCFDC92E19BE7370F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-indephysio-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D5AF3FE61F68365B92373A6D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -466,6 +449,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-indephysio/Pods-indephysio-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DE773A0941C594F4D83C44A2 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-indephysio-indephysioTests/Pods-indephysio-indephysioTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -501,7 +501,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 95511F01E0C6B14C8730A474 /* Pods-indephysio-indephysioTests.debug.xcconfig */;
+			baseConfigurationReference = 29B9408DD39B1178B4F2A518 /* Pods-indephysio-indephysioTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 97DA25SHRZ;
@@ -529,7 +529,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B623FA1170DD43E5F6BF57CF /* Pods-indephysio-indephysioTests.release.xcconfig */;
+			baseConfigurationReference = CAF3E23EE24643343532DD5E /* Pods-indephysio-indephysioTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -554,7 +554,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 90E01BF8A7ACA20DB67163A5 /* Pods-indephysio.debug.xcconfig */;
+			baseConfigurationReference = 1BD3F68D26C888CE2C3A856B /* Pods-indephysio.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -564,7 +564,7 @@
 				DEVELOPMENT_TEAM = 84MCAQT96W;
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = indephysio/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MedUniverse;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -594,7 +594,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DD87A990EF8CD219D2F3DF82 /* Pods-indephysio.release.xcconfig */;
+			baseConfigurationReference = 7A184004B08F67BF0D5FF2C7 /* Pods-indephysio.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -605,7 +605,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 84MCAQT96W;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = indephysio/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MedUniverse;
 				LD_RUNPATH_SEARCH_PATHS = (
