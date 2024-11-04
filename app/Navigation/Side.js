@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Button,
 } from 'react-native';
 import {
   DrawerContentScrollView,

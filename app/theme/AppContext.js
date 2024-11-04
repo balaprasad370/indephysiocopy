@@ -142,9 +142,8 @@ export const AuthProvider = ({children}) => {
     if (token) {
       try {
         // Retrieve the token from storage
-
         // Make the GET request with token in the Authorization header
-        const response = await axios.get(`${path}/student/v2/appusagetime`, {
+        const response = await axios.get(`${path}/student/v1/appusagetime`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -168,14 +167,15 @@ export const AuthProvider = ({children}) => {
     }
   };
 
-  // const newFUnction = async () => {
-  //   let newToken =
-  //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjQxOCwicmVmZXJyYWxJZCI6OTQzNzM3LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3Mjk4NzcwNTIsImV4cCI6MTczNzY1MzA1Mn0.afrCW5uX_m3_yMSOn-CbKi2MMP0yBk120u_zk4LtTGk';
-  //   await storage.setStringAsync('token', newToken);
-  // };
-  // useEffect(() => {
-  //   newFUnction();
-  // }, []);
+  const newFUnction = async () => {
+    let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM3NywicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.VkLLkpHZHmo8z6t5rupBph1wA9FIIQuhb8Layz0bwLE`;
+    // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM2OSwicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.Hl0C0kQElQ_uGYirnsTWtaI7R_amgN2-iET0pMhLUnM';
+    await storage.setStringAsync('token', newToken);
+  };
+  useEffect(() => {
+    // console.log(storage.getStringAsync('token'));
+    newFUnction();
+  }, []);
 
   const getPackageId = async () => {
     try {

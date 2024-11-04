@@ -1482,6 +1482,29 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNSentry (6.1.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Sentry/HybridSDK (= 8.38.0)
+    - Yoga
   - RNShare (11.0.4):
     - DoubleConversion
     - glog
@@ -1512,6 +1535,7 @@ PODS:
     - React-Core
   - RNWatch (1.1.0):
     - React
+  - Sentry/HybridSDK (8.38.0)
   - SocketRocket (0.7.0)
   - TextToSpeech (4.1.1):
     - React-Core
@@ -1606,6 +1630,7 @@ DEPENDENCIES:
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNShare (from `../node_modules/react-native-share`)
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -1628,6 +1653,7 @@ SPEC REPOS:
     - ObjectiveDropboxOfficial
     - PromisesObjC
     - PromisesSwift
+    - Sentry
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -1804,6 +1830,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNShare:
     :path: "../node_modules/react-native-share"
   RNSound:
@@ -1917,10 +1945,12 @@ SPEC CHECKSUMS:
   RNNotifee: bc20a5e3d581f629db988075944fdd944d363dfe
   RNReanimated: af4e059a8fd0fb7a9cdf5ad35ead4699598a9447
   RNScreens: d2a12528d1abe4922e7ee5c9a00dd40c827c2ab5
+  RNSentry: 9752b085f3cb1a806ac3cd2766149e438658686e
   RNShare: 9a265cd17f5bf78726c5e77bdee51d3735afb15c
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
   RNSVG: ed492aaf3af9ca01bc945f7a149d76d62e73ec82
   RNWatch: fd30ca40a5b5ef58dcbc195638e68219bc455236
+  Sentry: 205813e7e758b53df157cedb8c55b31a14300645
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   TextToSpeech: 2b930ec3756afde499061f4f01ea895e1f75dccb
   Yoga: 04f1db30bb810187397fa4c37dd1868a27af229c

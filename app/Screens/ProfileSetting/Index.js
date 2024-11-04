@@ -168,7 +168,7 @@ const Index = () => {
             // Redirect to the website for account deletion
             const websiteURL = 'https://indephysio.com/index/accountdelete';
             Linking.openURL(websiteURL).catch(err =>
-              console.error("Couldn't load page", err),
+              console.log("Couldn't load page", err),
             );
           },
           style: 'destructive',

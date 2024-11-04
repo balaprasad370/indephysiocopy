@@ -10,9 +10,7 @@ const Index = ({webinar, setAdVisible}) => {
   const {path} = useContext(AppContext);
 
   const openWebsite = url => {
-    Linking.openURL(url).catch(err =>
-      console.error('Failed to open URL:', err),
-    );
+    Linking.openURL(url).catch(err => console.log('Failed to open URL:', err));
   };
 
   const navigation = useNavigation();
