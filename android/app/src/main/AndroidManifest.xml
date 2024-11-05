@@ -43,16 +43,16 @@
             </intent-filter>
         </activity>
         <!-- Add the following service for push notifications -->
-        <service
+        <!-- <service
             android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
+        </service> -->
 
         <!-- Add receivers for handling push notifications and boot events -->
-        <receiver
+        <!-- <receiver
             android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationReceiver"
             android:exported="false" />
 
@@ -63,7 +63,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
+        </receiver> -->
 
     </application>
 </manifest>

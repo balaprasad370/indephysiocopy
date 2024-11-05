@@ -47,6 +47,7 @@ import Notfications from '../Notifications/Index';
 
 import Information from '../../Components/Information/Index';
 import Optional from '../../Components/Information/Optional';
+import messaging from '@react-native-firebase/messaging';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
@@ -55,6 +56,35 @@ const Index = ({navigation}) => {
   const [informationData, setInformationData] = useState();
 
   const [optionalData, setOptionalData] = useState();
+
+  const cloudMessaging = async () => {
+    const token = await storage.getStringAsync('token');
+    try {
+      const deviceToken = await messaging().getToken();
+
+      if (deviceToken && token) {
+        const response = await axios.post(
+          `${path}/admin/v1/cloudMessaging`,
+          {
+            deviceToken: deviceToken,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        console.log('Done:', response.data);
+      }
+    } catch (error) {
+      console.log(
+        'Error from cloud messaging:',
+        error.response ? error.response.data : error.message,
+      );
+    }
+  };
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -92,7 +122,6 @@ const Index = ({navigation}) => {
 
   const getWebinar = async () => {
     const token = await storage.getStringAsync('token');
-
     if (token) {
       try {
         const response = await axios.get(`${path}/admin/v1/webinar`, {
@@ -101,7 +130,6 @@ const Index = ({navigation}) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('helo', response.data);
         const webinarData = response.data.data;
         setWebinar(webinarData);
         if (webinarData.modal_status === 1) {
@@ -109,7 +137,7 @@ const Index = ({navigation}) => {
         }
       } catch (error) {
         setWebinar('');
-        console.log('error occurred from getInformation:', error);
+        // console.log('error occurred from getInformation:', error);
       }
     }
   };
@@ -200,20 +228,21 @@ const Index = ({navigation}) => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setData(res.data);
     } catch (error) {
-      console.log('error', error.response);
+      console.log('error', error);
     }
   };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getChapterStatus();
-      getInformation();
+      // getChapterStatus();
       getWebinar();
+      cloudMessaging();
     });
     return unsubscribe;
-  }, [navigation]);
+  }, []);
 
   const renderItem = ({item}) => {
     return (
@@ -271,10 +300,10 @@ const Index = ({navigation}) => {
         {webinar && (
           <Information webinar={webinar} setAdVisible={setAdVisible} />
         )}
-        <Optional optionalData={optionalData} />
-        {data && data.chapter_id !== null && (
+        {/* <Optional optionalData={optionalData} /> */}
+        {/* {data && data.chapter_id !== null && (
           <CurrentStatusComponent data={data} />
-        )}
+        )} */}
         {/* <LastComponent /> */}
         <FlatList
           data={courseData}

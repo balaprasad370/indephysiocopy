@@ -24,6 +24,8 @@
     "@react-native-community/netinfo": "11.1.0",
     "@react-native-community/slider": "^4.5.3",
     "@react-native-community/voice": "^1.1.9",
+    "@react-native-firebase/app": "^21.3.0",
+    "@react-native-firebase/messaging": "^21.3.0",
     "@react-native-google-signin/google-signin": "10.1.0",
     "@react-native/metro-config": "0.72.9",
     "@react-navigation/bottom-tabs": "^6.6.1",

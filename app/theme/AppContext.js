@@ -5,6 +5,7 @@ import SplashScreen from 'react-native-splash-screen';
 import LighTheme from './LighTheme';
 import {DarkTheme} from '@react-navigation/native';
 import {Alert} from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 
 // Create the context
 export const AppContext = createContext();
@@ -101,7 +102,7 @@ export const AuthProvider = ({children}) => {
             Authorization: 'Bearer ' + token,
           },
         });
-        console.log('helo package data', response.data);
+        // console.log('helo package data', response.data);
         // setChapter(response.data);
       } catch (error) {
         console.log('Error fetching package data:', error);
@@ -153,7 +154,7 @@ export const AuthProvider = ({children}) => {
         // Handle the response data (assuming it's in response.data)
         const appUsageData = response.data;
 
-        console.log('data', appUsageData.data);
+        // console.log('data', appUsageData.data);
         if (appUsageData.success) {
           setFetchTime(appUsageData.data);
           // console.log('App usage time:', appUsageData.data);
@@ -167,21 +168,51 @@ export const AuthProvider = ({children}) => {
     }
   };
 
-  const newFUnction = async () => {
-    let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM3NywicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.VkLLkpHZHmo8z6t5rupBph1wA9FIIQuhb8Layz0bwLE`;
-    // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM2OSwicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.Hl0C0kQElQ_uGYirnsTWtaI7R_amgN2-iET0pMhLUnM';
-    await storage.setStringAsync('token', newToken);
-  };
-  useEffect(() => {
-    // console.log(storage.getStringAsync('token'));
-    newFUnction();
-  }, []);
+  // const newFUnction = async () => {
+  //   let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM3NywicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.VkLLkpHZHmo8z6t5rupBph1wA9FIIQuhb8Layz0bwLE`;
+  //   // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM2OSwicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.Hl0C0kQElQ_uGYirnsTWtaI7R_amgN2-iET0pMhLUnM';
+  //   await storage.setStringAsync('token', newToken);
+  // };
+  // useEffect(() => {
+  //   // console.log(storage.getStringAsync('token'));
+  //   newFUnction();
+  // }, []);
+
+  // {student_id:"9", devices:["289qr9qyr9qnkhqrqhr","689649kqhkqkbkb"],status:0}
+
+  // const cloudMessaging = async () => {
+  //   const token = await storage.getStringAsync('token');
+  //   console.log(token);
+  //   try {
+  //     const deviceToken = await messaging().getToken();
+
+  //     console.log('devices', deviceToken, student_id);
+  //     if (deviceToken && student_id && token) {
+  //       console.log('devices2', deviceToken, student_id);
+  //       const response = await axios.post(`${path}/admin/v1/cloudMessaging`, {
+  //         params: {
+  //           deviceToken: deviceToken,
+  //         },
+  //         params: {
+  //           deviceToken: deviceToken,
+  //         },
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+
+  //       console.log('Done');
+  //     }
+  //   } catch (error) {
+  //     console.log('error from cloud messaging ', error.response);
+  //   }
+  // };
 
   const getPackageId = async () => {
     try {
       let level = '';
       const token = await storage.getStringAsync('token');
-
       if (token && student_id) {
         const response = await axios.get(`${path}/v4/package/alias`, {
           params: {
@@ -212,10 +243,12 @@ export const AuthProvider = ({children}) => {
 
   useEffect(() => {
     chapterData();
+    // cloudMessaging();
     fetchToken();
   }, []);
   useEffect(() => {
     getDatFunc();
+
     const intervalId = setInterval(getDatFunc, 3000);
     return () => clearInterval(intervalId);
   }, []);
