@@ -20,7 +20,7 @@ import storage from '../../Constants/storage';
 import Loading from '../../Components/Loading/Loading';
 
 const Index = ({route, navigation}) => {
-  const {parent_module_id, title, level_id} = route.params;
+  const {parent_module_id, title, level_id, packageId} = route.params;
   const {isDark, path, loader, setLoader} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
@@ -39,7 +39,10 @@ const Index = ({route, navigation}) => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${path}/student/v3/${parent_module_id}`,
+        url: `${path}/student/v4/${parent_module_id}`,
+        params: {
+          package_id: packageId,
+        },
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,

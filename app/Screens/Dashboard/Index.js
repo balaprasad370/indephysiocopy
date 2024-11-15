@@ -9,10 +9,15 @@ import {
   Switch,
   FlatList,
   SafeAreaView,
+  Platform,
+  Linking,
+  Animated,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import Action from 'react-native-vector-icons/SimpleLineIcons';
+import Download from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Cross from 'react-native-vector-icons/Entypo';
 import UserIcon from 'react-native-vector-icons/FontAwesome';
 
@@ -29,7 +34,7 @@ import DarkTheme from '../../theme/Darktheme';
 
 import styles from './dashboardCss';
 import {ROUTES} from '../../Constants/routes';
-
+import notifee from '@notifee/react-native';
 import {MMKVLoader, useMMKVStorage} from 'react-native-mmkv-storage';
 import color from '../../Constants/color';
 import registerImage from '../../assets/registeredIcon.png';
@@ -48,6 +53,12 @@ import Notfications from '../Notifications/Index';
 import Information from '../../Components/Information/Index';
 import Optional from '../../Components/Information/Optional';
 import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from 'react-native-device-info';
+import AppUpdate from './AppUpdate';
+import {checkforUpdate} from '../../Components/CheckForUpdate/CheckForUpdate';
+import {getFcmToken, registerListenerWithFCM} from '../../utils/fcm';
+import LinearGradient from 'react-native-linear-gradient';
+import SubscriptionExpiry from '..//SubscriptionExpiry/Index';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
@@ -57,11 +68,34 @@ const Index = ({navigation}) => {
 
   const [optionalData, setOptionalData] = useState();
 
+  const [isNotification, setIsNotification] = useState(false);
+  const [notificationTitle, setNotificationTitle] = useState('');
+  const [notificationBody, setNotificationBody] = useState('');
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      try {
+        if (remoteMessage?.notification) {
+          setIsNotification(true);
+          setNotificationTitle(remoteMessage?.notification?.title);
+          setNotificationBody(remoteMessage?.notification?.body);
+          const channelId = await notifee.createChannel({
+            id: 'default',
+            name: 'Default Channel',
+          });
+        }
+      } catch (error) {
+        console.log('index.js file error', error);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
   const cloudMessaging = async () => {
     const token = await storage.getStringAsync('token');
     try {
       const deviceToken = await messaging().getToken();
-
       if (deviceToken && token) {
         const response = await axios.post(
           `${path}/admin/v1/cloudMessaging`,
@@ -154,7 +188,6 @@ const Index = ({navigation}) => {
     levelId,
   } = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
-  // const [optionalToggle, setOptional] = useState(true);
 
   let locked = true;
 
@@ -235,10 +268,139 @@ const Index = ({navigation}) => {
     }
   };
 
+  const downloadButtonScale = new Animated.Value(1);
+
+  const handlePressIn = () => {
+    Animated.spring(downloadButtonScale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(downloadButtonScale, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  // const [notTitle, setNotTitle] = useState('');
+  // const [notBody, setNotBody] = useState('');
+
+  // useEffect(() => {
+  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //     try {
+  //       console.log('remoteMessage', remoteMessage);
+  //       const channelId = await notifee.createChannel({
+  //         id: 'default',
+  //         name: 'Default Channel',
+  //       });
+
+  //       await notifee.displayNotification({
+  //         title: remoteMessage?.notification?.title,
+  //         body: remoteMessage?.notification?.body,
+
+  //         android: {
+  //           channelId,
+  //           pressAction: {
+  //             id: 'default',
+  //           },
+  //         },
+  //       });
+  //     } catch (error) {
+  //       console.log('index.js file error2', error);
+  //     }
+  //   });
+
+  //   return unsubscribe;
+  // }, []);
+
+  const [isSingleNotification, setIsSingleNotification] = useState();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const notificationData = async () => {
+    const token = await storage.getStringAsync('token');
+
+    try {
+      const response = await axios.get(`${path}/admin/v1/single-notification`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setIsSingleNotification(response.data.notification);
+      if (response?.data?.notification?.isModal == 1) {
+        setIsModalVisible(true);
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const notificationUpdate = async notificationId => {
+    console.log('notificationId', notificationId);
+    const token = await storage.getStringAsync('token');
+    try {
+      const response = await axios.post(
+        `${path}/admin/v1/update-single-notification`,
+        {notificationId},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const [notificationCount, setNotificationCount] = useState(1);
+
+  const notificationCountFunction = async () => {
+    const token = await storage.getStringAsync('token');
+    try {
+      const response = await axios.get(`${path}/admin/v1/notification-count`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('response', response?.data?.unreadCount);
+      setNotificationCount(response?.data?.unreadCount);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const [subscriptionExpiry, setSubscriptionExpiry] = useState(false);
+  const getSubscriptionExpiry = async () => {
+    const token = await storage.getStringAsync('token');
+    try {
+      const response = await axios.get(
+        `${path}/admin/v1/subscription-timestamp`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      setSubscriptionExpiry(response?.data?.expired);
+      console.log('subscriptionExpiry', response?.data?.expired);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      // getChapterStatus();
+      notificationCountFunction();
+      getSubscriptionExpiry();
+      notificationData();
       getWebinar();
+      checkforUpdate();
       cloudMessaging();
     });
     return unsubscribe;
@@ -247,6 +409,8 @@ const Index = ({navigation}) => {
   const renderItem = ({item}) => {
     return (
       <SafeAreaView>
+        {subscriptionExpiry ? <SubscriptionExpiry /> : null}
+        {Platform.OS === 'android' || (Platform.OS === 'ios' && <AppUpdate />)}
         <View style={style.uppDash}>
           <View style={styles.textstyle}>
             <Text style={style.textWel}>Welcome back</Text>
@@ -275,31 +439,64 @@ const Index = ({navigation}) => {
               </Text>
             </View>
           </View>
-          <TouchableOpacity
-            hitSlop={{x: 25, y: 15}}
-            onPress={() => navigation.openDrawer()}
-            // onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
+          <View
             style={{
-              paddingRight: '3%',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}>
-            <Image
-              source={
-                userData && userData?.profile_pic
-                  ? {
-                      uri: `https://d2c9u2e33z36pz.cloudfront.net/${userData?.profile_pic}`,
-                    }
-                  : {
-                      uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
-                    }
-              }
-              style={{width: 55, height: 55, borderRadius: 27}}
-            />
-          </TouchableOpacity>
+            <View style={{position: 'relative'}}>
+              <TouchableOpacity
+                style={{marginRight: 10}}
+                onPress={() => navigation.navigate(ROUTES.NOTIFICATIONS)}>
+                <Ionicons name="notifications" size={32} color="black" />
+              </TouchableOpacity>
+              <View
+                style={{
+                  position: 'absolute',
+                  right: 8,
+                  top: -8,
+                  backgroundColor: color.darkPrimary,
+                  borderRadius: 10,
+                  paddingVertical: 2,
+                  paddingHorizontal: 6,
+                }}>
+                <Text style={{fontSize: 10, color: 'white'}}>
+                  {notificationCount}
+                </Text>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
+              onPress={() => navigation.openDrawer()}
+              // onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
+              style={{
+                paddingRight: '3%',
+              }}>
+              <Image
+                source={
+                  userData && userData?.profile_pic
+                    ? {
+                        uri: `https://d2c9u2e33z36pz.cloudfront.net/${userData?.profile_pic}`,
+                      }
+                    : {
+                        uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                      }
+                }
+                style={{width: 55, height: 55, borderRadius: 27}}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         {/* <Notfications /> */}
+
+        {/* <Information webinar={webinar} setAdVisible={setAdVisible} /> */}
+
         {webinar && (
           <Information webinar={webinar} setAdVisible={setAdVisible} />
         )}
+
         {/* <Optional optionalData={optionalData} /> */}
         {/* {data && data.chapter_id !== null && (
           <CurrentStatusComponent data={data} />
@@ -409,7 +606,11 @@ const Index = ({navigation}) => {
               alignItems: 'center',
             }}>
             <Text
-              style={{fontSize: scale(14), color: 'black', fontWeight: 'bold'}}>
+              style={{
+                fontSize: scale(14),
+                color: 'black',
+                fontWeight: 'bold',
+              }}>
               Pathway: {userData?.package}
               {/* Pathway: Professionals */}
             </Text>
@@ -441,25 +642,578 @@ const Index = ({navigation}) => {
             animationType="fade"
             onRequestClose={toggleAd}>
             <View style={styled.adOverlay}>
-              <TouchableOpacity style={styled.closeButton} onPress={toggleAd}>
-                <Text style={styled.closeButtonText}>X</Text>
-              </TouchableOpacity>
+              {/* <TouchableOpacity style={styled.closeButton} onPress={toggleAd}>
+                <Ionicons name="close" size={26} color="black" />
+              </TouchableOpacity> */}
               <View style={styled.adContainer}>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('Meeting', {
-                      room: webinar.webinar_url,
-                      // room: 'ic2wYAPi7sqlUZKi',
-                    });
-                    setAdVisible(false);
+                {webinar.web_type == 1 ? (
+                  <>
+                    {webinar?.webinar_image_url ? (
+                      <TouchableOpacity
+                        style={{
+                          display: 'flex',
+                          marginTop: '20%',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 10,
+                        }}
+                        onPress={() => {
+                          Linking.openURL(webinar?.webinar_url);
+                          setAdVisible(false);
+                        }}>
+                        {webinar?.webinar_image_url ? (
+                          <Image
+                            source={{uri: webinar?.webinar_image_url}}
+                            style={{
+                              width: '100%',
+                              height: undefined,
+                              aspectRatio: 1,
+                              resizeMode: 'contain',
+                            }}
+                          />
+                        ) : null}
+                      </TouchableOpacity>
+                    ) : (
+                      <LinearGradient
+                        colors={['#133E87', '#5B99C2', '#87A2FF']}
+                        // colors={['#4e54c8', '#8f94fb']}
+                        style={{
+                          position: 'absolute',
+                          width: '100%',
+                          borderRadius: 20,
+                          padding: 12,
+                          // justifyContent: 'center',
+                          // alignItems: 'center',
+                        }}>
+                        <View
+                          style={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                          }}>
+                          <TouchableOpacity
+                            style={styled.closeButton}
+                            onPress={toggleAd}>
+                            <Ionicons name="close" size={20} color="white" />
+                          </TouchableOpacity>
+                        </View>
+                        <View
+                          style={{
+                            position: 'absolute',
+                            width: 200,
+                            height: 200,
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: 100,
+                            top: -30,
+                            right: -30,
+                          }}
+                        />
+                        <View
+                          style={{
+                            position: 'absolute',
+                            width: 150,
+                            height: 150,
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: 75,
+                            bottom: -40,
+                            left: -40,
+                          }}
+                        />
+                        <View
+                          style={{
+                            marginBottom: 20,
+                            alignItems: 'center',
+                            zIndex: 1,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 20,
+                              fontWeight: 'bold',
+                              color: 'white',
+                              textAlign: 'center',
+                              marginBottom: 8,
+                              textShadowColor: 'rgba(0, 0, 0, 0.3)',
+                              textShadowOffset: {width: 1, height: 1},
+                              textShadowRadius: 2,
+                            }}>
+                            {webinar?.title}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: 'white',
+                              textAlign: 'center',
+                              opacity: 0.9,
+                              paddingHorizontal: 10,
+                            }}>
+                            {webinar?.description}
+                          </Text>
+                        </View>
+                        <Animated.View
+                          style={{
+                            transform: [{scale: downloadButtonScale}],
+                            zIndex: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              Linking.openURL(webinar?.webinar_url);
+                              setAdVisible(false);
+                            }}
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              backgroundColor: '#1e90ff', // Light blue for the button
+                              paddingVertical: 12,
+                              paddingHorizontal: 24,
+                              borderRadius: 10,
+                              shadowColor: '#1e90ff',
+                              shadowOffset: {width: 0, height: 5},
+                              shadowOpacity: 0.4,
+                              shadowRadius: 6,
+                              elevation: 8,
+                            }}>
+                            <Text
+                              style={{
+                                color: 'white',
+                                fontSize: 18,
+                                fontWeight: '600',
+                                marginRight: 10,
+                              }}>
+                              Click here
+                            </Text>
+                            <Action
+                              name="action-redo"
+                              size={24}
+                              color="white"
+                            />
+                          </TouchableOpacity>
+                        </Animated.View>
+                      </LinearGradient>
+                    )}
+                  </>
+                ) : webinar.web_type == 2 ? (
+                  <>
+                    <LinearGradient
+                      colors={['#133E87', '#5B99C2', '#87A2FF']}
+                      // colors={['#4e54c8', '#8f94fb']}
+                      style={{
+                        position: 'absolute',
+                        width: '100%',
+                        borderRadius: 20,
+                        padding: 12,
+                        // justifyContent: 'center',
+                        // alignItems: 'center',
+                      }}>
+                      <View
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'flex-end',
+                        }}>
+                        <TouchableOpacity
+                          style={styled.closeButton}
+                          onPress={toggleAd}>
+                          <Ionicons name="close" size={20} color="white" />
+                        </TouchableOpacity>
+                      </View>
+                      <View
+                        style={{
+                          position: 'absolute',
+                          width: 200,
+                          height: 200,
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: 100,
+                          top: -30,
+                          right: -30,
+                        }}
+                      />
+                      <View
+                        style={{
+                          position: 'absolute',
+                          width: 150,
+                          height: 150,
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: 75,
+                          bottom: -40,
+                          left: -40,
+                        }}
+                      />
+                      <View
+                        style={{
+                          marginBottom: 20,
+                          alignItems: 'center',
+                          zIndex: 1,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            fontWeight: 'bold',
+                            color: 'white',
+                            textAlign: 'center',
+                            marginBottom: 8,
+                            textShadowColor: 'rgba(0, 0, 0, 0.3)',
+                            textShadowOffset: {width: 1, height: 1},
+                            textShadowRadius: 2,
+                          }}>
+                          {webinar?.title}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: 'white',
+                            textAlign: 'center',
+                            opacity: 0.9,
+                            paddingHorizontal: 10,
+                          }}>
+                          {webinar?.description}
+                        </Text>
+                      </View>
+                      <Animated.View
+                        style={{
+                          transform: [{scale: downloadButtonScale}],
+                          zIndex: 1,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        <TouchableOpacity
+                          onPressIn={handlePressIn}
+                          onPressOut={handlePressOut}
+                          style={{
+                            width: 150,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: '#1e90ff',
+                            paddingVertical: 12,
+                            paddingHorizontal: 25,
+                            borderRadius: 25,
+                            shadowColor: '#000',
+                            shadowOffset: {width: 0, height: 6},
+                            shadowOpacity: 0.3,
+                            shadowRadius: 8,
+                            elevation: 5,
+                          }}>
+                          <Text
+                            style={{
+                              color: 'white',
+                              fontSize: 18,
+                              marginRight: 8,
+                              fontWeight: 'bold',
+                            }}>
+                            Download
+                          </Text>
+                          <Download name="download" size={24} color="white" />
+                        </TouchableOpacity>
+                      </Animated.View>
+                    </LinearGradient>
+                  </>
+                ) : webinar?.web_type == 0 ? (
+                  <>
+                    {webinar?.webinar_image_url ? (
+                      <TouchableOpacity
+                        style={{
+                          display: 'flex',
+                          marginTop: '20%',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 10,
+                        }}
+                        onPress={() => {
+                          navigation.navigate('Meeting', {
+                            room: webinar.webinar_url,
+                          });
+                          setAdVisible(false);
+                        }}>
+                        {webinar?.webinar_image_url ? (
+                          <Image
+                            source={{uri: webinar?.webinar_image_url}}
+                            style={{
+                              width: '100%',
+                              height: undefined,
+                              aspectRatio: 1,
+                              resizeMode: 'contain',
+                            }}
+                          />
+                        ) : null}
+                      </TouchableOpacity>
+                    ) : (
+                      <LinearGradient
+                        colors={['#133E87', '#5B99C2', '#87A2FF']}
+                        // colors={['#4e54c8', '#8f94fb']}
+                        style={{
+                          position: 'absolute',
+                          width: '100%',
+                          borderRadius: 20,
+                          padding: 12,
+                          // justifyContent: 'center',
+                          // alignItems: 'center',
+                        }}>
+                        <View
+                          style={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                          }}>
+                          <TouchableOpacity
+                            style={styled.closeButton}
+                            onPress={toggleAd}>
+                            <Ionicons name="close" size={20} color="white" />
+                          </TouchableOpacity>
+                        </View>
+                        <View
+                          style={{
+                            position: 'absolute',
+                            width: 200,
+                            height: 200,
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: 100,
+                            top: -30,
+                            right: -30,
+                          }}
+                        />
+                        <View
+                          style={{
+                            position: 'absolute',
+                            width: 150,
+                            height: 150,
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: 75,
+                            bottom: -40,
+                            left: -40,
+                          }}
+                        />
+                        <View
+                          style={{
+                            marginBottom: 20,
+                            alignItems: 'center',
+                            zIndex: 1,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 20,
+                              fontWeight: 'bold',
+                              color: 'white',
+                              textAlign: 'center',
+                              marginBottom: 8,
+                              textShadowColor: 'rgba(0, 0, 0, 0.3)',
+                              textShadowOffset: {width: 1, height: 1},
+                              textShadowRadius: 2,
+                            }}>
+                            {webinar?.title}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: 'white',
+                              textAlign: 'center',
+                              opacity: 0.9,
+                              paddingHorizontal: 10,
+                            }}>
+                            {webinar?.description}
+                          </Text>
+                        </View>
+                        <Animated.View
+                          style={{
+                            transform: [{scale: downloadButtonScale}],
+                            zIndex: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              navigation.navigate('Meeting', {
+                                room: webinar.webinar_url,
+                              });
+                              setAdVisible(false);
+                            }}
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              backgroundColor: '#1e90ff', // Light blue for the button
+                              paddingVertical: 12,
+                              paddingHorizontal: 24,
+                              borderRadius: 10,
+                              shadowColor: '#1e90ff',
+                              shadowOffset: {width: 0, height: 5},
+                              shadowOpacity: 0.4,
+                              shadowRadius: 6,
+                              elevation: 8, // Android shadow
+                            }}>
+                            <Text
+                              style={{
+                                color: 'white',
+                                fontSize: 18,
+                                fontWeight: '600',
+                                marginRight: 10,
+                              }}>
+                              Join Now
+                            </Text>
+                            <Action
+                              name="action-redo"
+                              size={24}
+                              color="white"
+                            />
+                          </TouchableOpacity>
+                        </Animated.View>
+                      </LinearGradient>
+                    )}
+                  </>
+                ) : null}
+              </View>
+            </View>
+          </Modal>
+        ) : null}
+
+        {isModalVisible && isSingleNotification ? (
+          <Modal
+            transparent={true}
+            visible={isModalVisible}
+            animationType="fade"
+            onRequestClose={() => {
+              setIsModalVisible(false);
+            }}>
+            <View style={styled.adOverlay}>
+              <View style={styled.adContainer}>
+                <LinearGradient
+                  colors={['#133E87', '#5B99C2', '#87A2FF']}
+                  // colors={['#4e54c8', '#8f94fb']}
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    borderRadius: 20,
+                    padding: 12,
                   }}>
-                  <Image
-                    source={{uri: webinar.webinar_image_url}} // Use webinar_image_url dynamically
-                    style={styled.adImage}
+                  <View
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                    }}>
+                    <TouchableOpacity
+                      style={styled.closeButton}
+                      onPress={() => {
+                        setIsModalVisible(false);
+                        notificationUpdate(
+                          isSingleNotification.notification_id,
+                        );
+                      }}>
+                      <Ionicons name="close" size={20} color="white" />
+                    </TouchableOpacity>
+                  </View>
+                  <View
+                    style={{
+                      position: 'absolute',
+                      width: 200,
+                      height: 200,
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: 100,
+                      top: -30,
+                      right: -30,
+                    }}
                   />
-                </TouchableOpacity>
-                {/* <Text style={styled.closeButtonText}>{webinar.title}</Text> */}
-                {/* <Text>{webinar.description}</Text> */}
+                  <View
+                    style={{
+                      position: 'absolute',
+                      width: 150,
+                      height: 150,
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: 75,
+                      bottom: -40,
+                      left: -40,
+                    }}
+                  />
+                  <View
+                    style={{
+                      marginBottom: 20,
+                      alignItems: 'center',
+                      zIndex: 1,
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        color: 'white',
+                        textAlign: 'center',
+                        marginBottom: 8,
+                        textShadowColor: 'rgba(0, 0, 0, 0.3)',
+                        textShadowOffset: {width: 1, height: 1},
+                        textShadowRadius: 2,
+                      }}>
+                      {isSingleNotification?.title}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: 'white',
+                        textAlign: 'center',
+                        opacity: 0.9,
+                        paddingHorizontal: 10,
+                      }}>
+                      {isSingleNotification?.description}
+                    </Text>
+                  </View>
+                  <Animated.View
+                    style={{
+                      transform: [{scale: downloadButtonScale}],
+                      zIndex: 1,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <TouchableOpacity
+                      onPress={
+                        isSingleNotification.notification_type == 0
+                          ? () => {
+                              navigation.navigate('Meeting', {
+                                room: isSingleNotification.notification_url,
+                              });
+                              notificationUpdate(
+                                isSingleNotification.notification_id,
+                              );
+                              setIsModalVisible(false);
+                            }
+                          : () => {
+                              Linking.openURL(
+                                isSingleNotification.notification_url,
+                              );
+                              notificationUpdate(
+                                isSingleNotification.notification_id,
+                              );
+                              setIsModalVisible(false);
+                            }
+                      }
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        backgroundColor: '#1e90ff', // Light blue for the button
+                        paddingVertical: 12,
+                        paddingHorizontal: 24,
+                        borderRadius: 10,
+                        shadowColor: '#1e90ff',
+                        shadowOffset: {width: 0, height: 5},
+                        shadowOpacity: 0.4,
+                        shadowRadius: 6,
+                        elevation: 8, // Android shadow
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: 18,
+                          fontWeight: '600',
+                          marginRight: 10,
+                        }}>
+                        Click here
+                      </Text>
+                      <Action name="action-redo" size={24} color="white" />
+                    </TouchableOpacity>
+                  </Animated.View>
+                </LinearGradient>
               </View>
             </View>
           </Modal>
@@ -482,11 +1236,14 @@ const Index = ({navigation}) => {
 const styled = StyleSheet.create({
   adOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent dark background
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Semi-transparent dark background
     justifyContent: 'center',
     alignItems: 'center',
   },
   adContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: '90%',
     height: '80%',
     borderRadius: 10,
@@ -501,13 +1258,11 @@ const styled = StyleSheet.create({
     resizeMode: 'contain',
   },
   closeButton: {
-    position: 'absolute',
-    top: 40,
-    right: 20,
-    backgroundColor: 'white',
-    borderRadius: 15,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    width: 30,
+    // backgroundColor: 'white',
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
     zIndex: 1,
   },
   closeButtonText: {

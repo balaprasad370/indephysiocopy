@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/launch_screen">
+    android:background="@drawable/launch_screen"
+    android:id="@+id/activity_main_layout">
 
     <!-- Add your logo or any other views you want here -->
 </LinearLayout>

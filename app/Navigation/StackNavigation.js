@@ -25,6 +25,7 @@ import {
   FilterRecording,
   Assessment,
   Offline,
+  Notifications,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -147,6 +148,18 @@ const StackNavigation = () => {
           headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={Offline}
+      />
+      <Stack.Screen
+        name={ROUTES.NOTIFICATIONS}
+        options={{
+          headerTitle: 'Notifications',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
+        component={Notifications}
       />
       <Stack.Screen
         name={ROUTES.ASSESSMENTS}

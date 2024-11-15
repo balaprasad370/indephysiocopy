@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   Platform,
+  Linking,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -106,19 +107,30 @@ const Index = ({
         style={{
           position: 'absolute',
           top: '50%',
-          left: '50%',
+          left: '42%',
           zIndex: 9999,
         }}>
         {locked && (
-          <IconTimer
-            name="lock-closed-sharp"
-            size={30}
-            color="#000"
-            style={styles.lockIcon}
-          />
+          <TouchableOpacity
+            onPress={() => Linking.openURL('https://portal.indephysio.com')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}>
+            <IconTimer
+              name="lock-closed-sharp"
+              size={30}
+              color="#000"
+              style={styles.lockIcon}
+            />
+
+            <Text style={{fontSize: 14, color: color.black}}>
+              Subscription Required
+            </Text>
+          </TouchableOpacity>
         )}
       </View>
-
       <TouchableOpacity
         hitSlop={{x: 25, y: 15}}
         style={[

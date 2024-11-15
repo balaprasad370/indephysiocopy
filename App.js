@@ -5,16 +5,20 @@ import AppNavigator from './app/Navigation/AppNavigator';
 import {useContext, useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import storage from './app/Constants/storage';
-import messaging from '@react-native-firebase/messaging';
+import messaging, {requestPermission} from '@react-native-firebase/messaging';
 import notifee from '@notifee/react-native';
+import {getFcmToken, registerListenerWithFCM} from './app/utils/fcm';
 
 enableScreens();
 
 const App = () => {
   useEffect(() => {
+    notifee.requestPermission();
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       try {
-        console.log('remoteMessage', remoteMessage);
         const channelId = await notifee.createChannel({
           id: 'default',
           name: 'Default Channel',
@@ -22,23 +26,17 @@ const App = () => {
         await notifee.displayNotification({
           title: remoteMessage?.notification?.title,
           body: remoteMessage?.notification?.body,
-          // android: {
-          //   channelId,
-          //   pressAction: {
-          //     id: 'default',
-          //   },
-          // },
+
           android: {
             channelId,
             pressAction: {
               id: 'default',
             },
-            smallIcon:
-              'https://d2c9u2e33z36pz.cloudfront.net/uploads/1730736392Meduniverse%20logo%20favicon.png', // Set your default icon here
+            smallIcon: 'ic_launcher',
           },
         });
       } catch (error) {
-        console.log('index.js file error2', error);
+        console.log('index.js file error', error);
       }
     });
 
@@ -58,7 +56,6 @@ const App = () => {
 };
 
 export default App;
-// export default Sentry.wrap(App);
 
 const styles = StyleSheet.create({
   container: {

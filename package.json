@@ -74,6 +74,7 @@
     "react-native-watch-connectivity": "1.1.0",
     "react-native-webrtc": "118.0.2",
     "react-native-webview": "13.10.5",
+    "sp-react-native-in-app-updates": "^1.4.0",
     "text-encoding": "0.7.0"
   },
   "devDependencies": {

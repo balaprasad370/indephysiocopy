@@ -27,3 +27,4 @@ export {default as Leaderboard} from './LeaderBoard/Index';
 export {default as FilterRecording} from './FilterRecording/Index';
 export {default as Assessment} from './Assessments/Index';
 export {default as Offline} from './Offline/Index';
+export {default as Notifications} from './Notifications/Index';

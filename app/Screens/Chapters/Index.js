@@ -49,7 +49,6 @@ const Index = ({navigation}) => {
             Authorization: 'Bearer ' + token,
           },
         });
-        console.log('response', response.data);
         setChapter(response.data);
         response.data.forEach(chapter => chapterProgress(chapter.id));
       } catch (error) {

@@ -61,7 +61,6 @@ const Index = () => {
         const response = await axios.get(`${path}/app/schedule`, {
           params: {
             package_id: packageId,
-            // client_id: clientId,
           },
           headers: {
             'Content-Type': 'application/json',
