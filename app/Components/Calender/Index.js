@@ -433,6 +433,28 @@ const Index = () => {
                 <Text style={style.toggleText}>Next Week</Text>
               </TouchableOpacity>
             </LinearGradient>
+            <LinearGradient
+              colors={
+                isNextWeek
+                  ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
+                  : isDark
+                  ? ['#3B3B3B', '#3B3B3B']
+                  : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
+              }
+              start={{x: 0, y: 0}} // Start from the left
+              end={{x: 1, y: 0}} // End at the right
+              style={[
+                style.toggleButton,
+                !isNextWeek && styles.activeToggleButton,
+              ]}>
+              <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
+                onPress={() => {
+                  navigation.navigate(ROUTES.FILTER_SCREEN);
+                }}>
+                <Text style={style.toggleText}>Filter</Text>
+              </TouchableOpacity>
+            </LinearGradient>
           </View>
 
           <FlatList

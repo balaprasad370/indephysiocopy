@@ -8,6 +8,7 @@ import {
   View,
   Image,
   TouchableHighlight,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import {useNavigation} from '@react-navigation/native';
@@ -22,11 +23,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import Loading from '../../Components/Loading/Loading';
 import IconTimer from 'react-native-vector-icons/Ionicons';
 import {Animated} from 'react-native';
-
-const av = new Animated.Value(0);
-av.addListener(() => {
-  return;
-});
 
 const Index = ({route}) => {
   const {path, langId, clientId, isDark, loader, setLoader} =
@@ -81,6 +77,7 @@ const Index = ({route}) => {
   const renderItem = ({item}) => (
     <TouchableOpacity
       hitSlop={{x: 0, y: 0}}
+      style={styles.parent_level_container}
       onPress={
         item.completed
           ? null
@@ -191,6 +188,27 @@ const Index = ({route}) => {
 export default Index;
 
 const styles = StyleSheet.create({
+  // parent_level_container: {
+  //   shadowColor: color.lowPrimary,
+  //   shadowOffset: {width: 0, height: 5},
+  //   shadowOpacity: 0.1,
+  //   shadowRadius: 10,
+  //   elevation: 1,
+  // },
+  parent_level_container: {
+    ...Platform.select({
+      ios: {
+        backgroundColor: '#fff', // Required for iOS
+        shadowColor: color.lowPrimary,
+        shadowOffset: {width: 0, height: 5},
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 1, // Use elevation for Android
+      },
+    }),
+  },
   level: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -198,11 +216,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginVertical: 5,
     borderRadius: 10,
-    shadowColor: color.lowPrimary,
-    shadowOffset: {width: 0, height: 5},
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 1,
   },
 
   levelCard: {

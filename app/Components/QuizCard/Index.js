@@ -145,7 +145,11 @@ const Index = ({
             },
           },
         ]}
-        onPress={locked ? null : () => toggleModal(optionClick)}>
+        onPress={
+          locked
+            ? () => Linking.openURL('https://portal.indephysio.com')
+            : () => toggleModal(optionClick)
+        }>
         <View
           style={[
             styles.statusContainer,
@@ -292,10 +296,12 @@ const Index = ({
                   <TouchableOpacity
                     hitSlop={{x: 25, y: 15}}
                     onPress={
+                      // () => {
+                      //   navigation.navigate(ROUTES.LEADERBOARD, {
+                      //     module_id: unique_id,
+                      //   });
+                      // }
                       () => console.log('no')
-                      // navigation.navigate(ROUTES.LEADERBOARD, {
-                      //   module_id: unique_id,
-                      // })
                     }
                     style={{
                       display: 'flex',

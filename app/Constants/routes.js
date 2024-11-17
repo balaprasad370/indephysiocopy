@@ -36,4 +36,5 @@ export const ROUTES = {
   ASSESSMENTS: 'Assessments',
   OFFLINE: 'Offline',
   NOTIFICATIONS: 'Notifications',
+  FILTER_SCREEN: 'Filter Screen',
 };

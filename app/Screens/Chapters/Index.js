@@ -130,7 +130,7 @@ const Index = ({navigation}) => {
             });
           }
         }}
-        style={
+        style={[
           Platform.OS === 'ios'
             ? {
                 marginVertical: 6,
@@ -145,10 +145,32 @@ const Index = ({navigation}) => {
               }
             : {
                 marginVertical: 6,
-              }
-        }>
+              },
+        ]}>
         <LinearGradient
-          style={[styles.chapterBox]}
+          style={
+            Platform.OS === 'ios'
+              ? {
+                  width: '100%',
+                  backgroundColor: color.lowPrimary,
+                  borderRadius: 15,
+                  padding: 5,
+                  shadowRadius: 6,
+                  flexDirection: 'row',
+                }
+              : {
+                  width: '100%',
+                  backgroundColor: color.lowPrimary,
+                  borderRadius: 15,
+                  padding: 5,
+                  shadowColor: color.lowPrimary,
+                  shadowOffset: {width: 0, height: 4},
+                  shadowOpacity: 0.1,
+                  elevation: 3,
+                  shadowRadius: 6,
+                  flexDirection: 'row',
+                }
+          }
           colors={
             isDark
               ? ['#2A89C6', '#3397CB', '#0C5CB4']
@@ -174,7 +196,6 @@ const Index = ({navigation}) => {
           </View>
           <View
             style={[styles.chapterCard, !isChapterUnlocked && {opacity: 0.2}]}>
-            {/* Image Section */}
             {item.image ? (
               <Image
                 source={{
@@ -262,18 +283,16 @@ const Index = ({navigation}) => {
 export default Index;
 
 const styles = StyleSheet.create({
-  chapterBox: {
-    width: '100%',
-    backgroundColor: color.lowPrimary,
-    borderRadius: 15,
-    padding: 5,
-    shadowColor: color.lowPrimary,
+  shadowWrapper: {
+    shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
-    flexDirection: 'row',
+    backgroundColor: 'white', // Solid background color for shadow
+    borderRadius: 15,
   },
+  chapterBox: {},
   chapterCard: {
     flexDirection: 'row',
     alignItems: 'center',

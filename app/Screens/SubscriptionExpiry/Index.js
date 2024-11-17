@@ -11,35 +11,27 @@ import {
 const Index = () => {
   const [isModalVisible, setModalVisible] = useState(true);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-
   const handleSubscribe = () => {
     // Replace this with the actual subscription link or website URL
-    const subscriptionUrl = 'https://www.example.com/subscribe';
+    const subscriptionUrl = 'https://portal.indephysio.com/dashboard';
     Linking.openURL(subscriptionUrl);
   };
 
   return (
     <View style={styles.background}>
-      <Modal
-        transparent={true}
-        animationType="fade"
-        visible={isModalVisible}
-        onRequestClose={toggleModal}>
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Subscription is expired!</Text>
-            <Text style={styles.modalSubText}>
-              To continue using the service, please subscribe again.
-            </Text>
-            <TouchableOpacity onPress={handleSubscribe} style={styles.button}>
-              <Text style={styles.buttonText}>Subscribe Now</Text>
-            </TouchableOpacity>
-          </View>
+      {/* <Modal transparent={true} animationType="fade" visible={isModalVisible}> */}
+      <View style={styles.modalBackdrop}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalText}>Subscription is expired!</Text>
+          <Text style={styles.modalSubText}>
+            To continue using the service, please subscribe again.
+          </Text>
+          <TouchableOpacity onPress={handleSubscribe} style={styles.button}>
+            <Text style={styles.buttonText}>Subscribe Now</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+      </View>
+      {/* </Modal> */}
     </View>
   );
 };
@@ -53,7 +45,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
   modalBackdrop: {
     flex: 1,

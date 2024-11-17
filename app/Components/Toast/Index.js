@@ -19,6 +19,16 @@ const Toast = ({visible, onClose}) => {
 
   const navigation = useNavigation();
 
+  // useEffect(() => {
+  //   setTitle(`Processing...`);
+  //   setChanged(false);
+  //   storage.setBool('show', false);
+  //   setIsAuthenticate(true);
+
+  //   storage.setBoolAsync('isLoggedIn', true);
+  //   setShow(false);
+  // }, []);
+
   const [title, setTitle] = useState(
     'Verification email sent. Please check your inbox.',
   );

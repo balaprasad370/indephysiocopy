@@ -28,3 +28,4 @@ export {default as FilterRecording} from './FilterRecording/Index';
 export {default as Assessment} from './Assessments/Index';
 export {default as Offline} from './Offline/Index';
 export {default as Notifications} from './Notifications/Index';
+export {default as FilterScreen} from './FilterScreen/Index';

@@ -1,8 +1,8 @@
-import {StyleSheet, Platform, StatusBar, Alert} from 'react-native';
+import {StyleSheet, Platform, StatusBar, Alert, Modal} from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {AppContext, AuthProvider} from './app/theme/AppContext';
 import AppNavigator from './app/Navigation/AppNavigator';
-import {useContext, useEffect} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import storage from './app/Constants/storage';
 import messaging, {requestPermission} from '@react-native-firebase/messaging';

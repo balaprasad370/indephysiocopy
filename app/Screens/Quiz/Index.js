@@ -274,8 +274,10 @@ const Index = ({route}) => {
               //       : studentAnswers;
               // }
 
-              console.log(questionType, 'questionType');
-              if (questionType === 'JumbledSentences') {
+              if (
+                questionType === 'JumbledSentences' ||
+                questionType === 'Match'
+              ) {
                 finalStudentAnswers = JSON.stringify(studentAnswer);
               } else {
                 if (studentAnswers !== '{}' && newInputValue !== '""') {
@@ -294,8 +296,6 @@ const Index = ({route}) => {
                 }
               }
 
-              console.log(finalStudentAnswers);
-
               // return;
 
               // let finalStudentAnswers =
@@ -306,7 +306,7 @@ const Index = ({route}) => {
               //     : studentAnswers;
 
               let teacherAnswers =
-                questionType === 'JumbledSentences'
+                questionType === 'JumbledSentences' || questionType === 'Match'
                   ? JSON.stringify(answerData)
                   : JSON.stringify(correctAnswers);
 
@@ -929,8 +929,6 @@ const Index = ({route}) => {
                 item={item}
                 setScore={setScore}
                 score={score}
-                // combinedData={combinedData}
-                // setCombinedData={setCombinedData}
                 combinedData={allCombinedData[item.id] || []} // Pass stored combined data or empty array
                 setCombinedData={data =>
                   handleSetCombinedData(item.id, data, item)

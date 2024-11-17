@@ -121,7 +121,6 @@ const Certificate = ({route}) => {
                     {marks !== null ? `${marks} / ${total}` : 'Loading...'}
                   </Text>
                 </View>
-
                 <Text style={styles.date}>
                   Date: {new Date(date).toLocaleDateString()}
                 </Text>

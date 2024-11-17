@@ -36,13 +36,10 @@ const RenderMatch = ({
     .split(',')
     .map(id => id.trim());
 
-  // const [combinedData, setCombinedData] = useState([]);
-
   const [answerData, setAnswerData] = useState([]);
 
   useEffect(() => {
-    // const initialCombinedData = getCombinedData();
-    // setCombinedData(initialCombinedData);
+    // console.log(item, 'item');
     matchFunction();
   }, [matchData, item]);
 
@@ -67,20 +64,6 @@ const RenderMatch = ({
       console.log(error);
     }
   };
-  // const getCombinedData = () => {
-  //   return matchQuestionLeftIds.map((leftId, idx) => {
-  //     const leftMatch = matchData.find(match => match.match_id == leftId);
-  //     const rightId = matchQuestionRightIds[idx];
-  //     const rightMatch = matchData.find(match => match.match_id == rightId);
-
-  //     return {
-  //       leftMatch: leftMatch ? leftMatch.match_data : '',
-  //       rightMatch: rightMatch ? rightMatch.match_data : '',
-  //       leftId: leftId,
-  //       rightId: rightId,
-  //     };
-  //   });
-  // };
 
   const checkForCorrectAnswers = updatedData => {
     let allMatched = true;
@@ -111,7 +94,7 @@ const RenderMatch = ({
       ...item,
       rightMatch: combinedData[index].rightMatch, // Retain the right side as it is
     }));
-    setCombinedData(updatedData); // Update state with new left order
+    setCombinedData(updatedData);
     checkForCorrectAnswers(updatedData);
   };
 
@@ -143,7 +126,6 @@ const RenderMatch = ({
         </View>
 
         <View style={styles.inlineContainer}>
-          {/* Draggable for Right Match */}
           <DraggableFlatList
             data={combinedData}
             renderItem={({item, drag}) => (

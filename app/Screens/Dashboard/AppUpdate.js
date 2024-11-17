@@ -16,6 +16,10 @@ import storage from '../../Constants/storage';
 const AppUpdate = () => {
   const [appVersion, setAppVersion] = useState();
   const [deviceVersion, setDeviceVersion] = useState(DeviceInfo.getVersion());
+  const [iosDeviceVersion, setIosDeviceVersion] = useState(
+    DeviceInfo.getVersion(),
+  );
+  const [iosAppVersion, setIosAppVersion] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
 
   // Function to check app version
@@ -32,11 +36,18 @@ const AppUpdate = () => {
         },
       );
 
-      console.log('appVersion', response.data.result.app_version);
       setAppVersion(response.data.result.app_version);
-
+      setIosAppVersion(response.data.result.ios_version);
       console.log('deviceVersion', deviceVersion);
-      if (response.data.result.app_version !== deviceVersion) {
+      if (
+        response.data.result.app_version !== deviceVersion &&
+        Platform.OS === 'android'
+      ) {
+        setIsModalVisible(true); // Show modal if versions don't match
+      } else if (
+        response.data.result.ios_version !== iosDeviceVersion &&
+        Platform.OS === 'ios'
+      ) {
         setIsModalVisible(true); // Show modal if versions don't match
       }
     } catch (error) {

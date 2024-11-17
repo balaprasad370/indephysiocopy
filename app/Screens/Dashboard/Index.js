@@ -20,7 +20,6 @@ import Download from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Cross from 'react-native-vector-icons/Entypo';
 import UserIcon from 'react-native-vector-icons/FontAwesome';
-
 // import user from '../../Constants';
 import CourseCard from '../../Components/CourseCard/Index';
 import Menu from '../../Components/Menu/Index';
@@ -109,8 +108,6 @@ const Index = ({navigation}) => {
             },
           },
         );
-
-        console.log('Done:', response.data);
       }
     } catch (error) {
       console.log(
@@ -206,7 +203,6 @@ const Index = ({navigation}) => {
           },
         },
       );
-      console.log('Webinar status is updated', response.data);
       setAdVisible(!isAdVisible);
     } catch (error) {
       console.log('Error updating the status of the webinar', error);
@@ -319,7 +315,6 @@ const Index = ({navigation}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const notificationData = async () => {
     const token = await storage.getStringAsync('token');
-
     try {
       const response = await axios.get(`${path}/admin/v1/single-notification`, {
         headers: {
@@ -338,7 +333,6 @@ const Index = ({navigation}) => {
   };
 
   const notificationUpdate = async notificationId => {
-    console.log('notificationId', notificationId);
     const token = await storage.getStringAsync('token');
     try {
       const response = await axios.post(
@@ -367,7 +361,6 @@ const Index = ({navigation}) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('response', response?.data?.unreadCount);
       setNotificationCount(response?.data?.unreadCount);
     } catch (error) {
       console.log('error', error);
@@ -388,7 +381,6 @@ const Index = ({navigation}) => {
         },
       );
       setSubscriptionExpiry(response?.data?.expired);
-      console.log('subscriptionExpiry', response?.data?.expired);
     } catch (error) {
       console.log('error', error);
     }
@@ -409,7 +401,11 @@ const Index = ({navigation}) => {
   const renderItem = ({item}) => {
     return (
       <SafeAreaView>
-        {subscriptionExpiry ? <SubscriptionExpiry /> : null}
+        {subscriptionExpiry ? (
+          <Modal transparent={true} animationType="fade" visible={true}>
+            <SubscriptionExpiry />
+          </Modal>
+        ) : null}
         {Platform.OS === 'android' || (Platform.OS === 'ios' && <AppUpdate />)}
         <View style={style.uppDash}>
           <View style={styles.textstyle}>
@@ -451,20 +447,22 @@ const Index = ({navigation}) => {
                 onPress={() => navigation.navigate(ROUTES.NOTIFICATIONS)}>
                 <Ionicons name="notifications" size={32} color="black" />
               </TouchableOpacity>
-              <View
-                style={{
-                  position: 'absolute',
-                  right: 8,
-                  top: -8,
-                  backgroundColor: color.darkPrimary,
-                  borderRadius: 10,
-                  paddingVertical: 2,
-                  paddingHorizontal: 6,
-                }}>
-                <Text style={{fontSize: 10, color: 'white'}}>
-                  {notificationCount}
-                </Text>
-              </View>
+              {notificationCount > 0 ? (
+                <View
+                  style={{
+                    position: 'absolute',
+                    right: 8,
+                    top: -8,
+                    backgroundColor: color.darkPrimary,
+                    borderRadius: 10,
+                    paddingVertical: 2,
+                    paddingHorizontal: 6,
+                  }}>
+                  <Text style={{fontSize: 10, color: 'white'}}>
+                    {notificationCount}
+                  </Text>
+                </View>
+              ) : null}
             </View>
 
             <TouchableOpacity
@@ -496,9 +494,15 @@ const Index = ({navigation}) => {
         {webinar && (
           <Information webinar={webinar} setAdVisible={setAdVisible} />
         )}
+        {isSingleNotification && (
+          <Information
+            webinar={isSingleNotification}
+            setAdVisible={setAdVisible}
+          />
+        )}
 
-        {/* <Optional optionalData={optionalData} /> */}
-        {/* {data && data.chapter_id !== null && (
+        {/* <Optional optionalData={optionalData} />
+        {data && data.chapter_id !== null && (
           <CurrentStatusComponent data={data} />
         )} */}
         {/* <LastComponent /> */}
@@ -685,18 +689,18 @@ const Index = ({navigation}) => {
                           // justifyContent: 'center',
                           // alignItems: 'center',
                         }}>
-                        <View
+                        {/* <View
                           style={{
                             width: '100%',
                             display: 'flex',
                             alignItems: 'flex-end',
-                          }}>
-                          <TouchableOpacity
-                            style={styled.closeButton}
-                            onPress={toggleAd}>
-                            <Ionicons name="close" size={20} color="white" />
-                          </TouchableOpacity>
-                        </View>
+                          }}> */}
+                        <TouchableOpacity
+                          style={styled.closeButton}
+                          onPress={toggleAd}>
+                          <Ionicons name="close" size={20} color="white" />
+                        </TouchableOpacity>
+                        {/* </View> */}
                         <View
                           style={{
                             position: 'absolute',
@@ -807,18 +811,18 @@ const Index = ({navigation}) => {
                         // justifyContent: 'center',
                         // alignItems: 'center',
                       }}>
-                      <View
+                      {/* <View
                         style={{
                           width: '100%',
                           display: 'flex',
                           alignItems: 'flex-end',
-                        }}>
-                        <TouchableOpacity
-                          style={styled.closeButton}
-                          onPress={toggleAd}>
-                          <Ionicons name="close" size={20} color="white" />
-                        </TouchableOpacity>
-                      </View>
+                        }}> */}
+                      <TouchableOpacity
+                        style={styled.closeButton}
+                        onPress={toggleAd}>
+                        <Ionicons name="close" size={20} color="white" />
+                      </TouchableOpacity>
+                      {/* </View> */}
                       <View
                         style={{
                           position: 'absolute',
@@ -953,18 +957,18 @@ const Index = ({navigation}) => {
                           // justifyContent: 'center',
                           // alignItems: 'center',
                         }}>
-                        <View
+                        {/* <View
                           style={{
                             width: '100%',
                             display: 'flex',
                             alignItems: 'flex-end',
-                          }}>
-                          <TouchableOpacity
-                            style={styled.closeButton}
-                            onPress={toggleAd}>
-                            <Ionicons name="close" size={20} color="white" />
-                          </TouchableOpacity>
-                        </View>
+                          }}> */}
+                        <TouchableOpacity
+                          style={styled.closeButton}
+                          onPress={toggleAd}>
+                          <Ionicons name="close" size={20} color="white" />
+                        </TouchableOpacity>
+                        {/* </View> */}
                         <View
                           style={{
                             position: 'absolute',
@@ -1089,23 +1093,25 @@ const Index = ({navigation}) => {
                     borderRadius: 20,
                     padding: 12,
                   }}>
-                  <View
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'flex-end',
+                  <TouchableOpacity
+                    style={[
+                      {
+                        width: '100%',
+                        display: 'flex',
+                        alignSelf: 'flex-end',
+                        alignItems: 'flex-end',
+                        width: 40,
+                        zIndex: 1,
+                      },
+                      // styled.closeButton,
+                    ]}
+                    onPress={() => {
+                      notificationUpdate(isSingleNotification.notification_id);
+                      setIsModalVisible(false);
                     }}>
-                    <TouchableOpacity
-                      style={styled.closeButton}
-                      onPress={() => {
-                        setIsModalVisible(false);
-                        notificationUpdate(
-                          isSingleNotification.notification_id,
-                        );
-                      }}>
-                      <Ionicons name="close" size={20} color="white" />
-                    </TouchableOpacity>
-                  </View>
+                    <Ionicons name="close" size={26} color="white" />
+                  </TouchableOpacity>
+
                   <View
                     style={{
                       position: 'absolute',
@@ -1251,15 +1257,14 @@ const styled = StyleSheet.create({
   },
   adImage: {
     width: '100%',
-    // width: 200,
-    // height: 200,
+
     height: '100%',
-    // resizeMode: 'cover',
     resizeMode: 'contain',
   },
   closeButton: {
+    display: 'flex',
+    alignSelf: 'flex-end',
     width: 30,
-    // backgroundColor: 'white',
     borderRadius: 5,
     paddingVertical: 5,
     paddingHorizontal: 5,
