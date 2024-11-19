@@ -20,8 +20,8 @@ import storage from '../../Constants/storage';
 import Loading from '../../Components/Loading/Loading';
 
 const Index = ({route, navigation}) => {
-  const {parent_module_id, title, level_id, packageId} = route.params;
-  const {isDark, path, loader, setLoader} = useContext(AppContext);
+  const {parent_module_id, title, level_id} = route.params;
+  const {isDark, path, loader, setLoader, packageId} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
