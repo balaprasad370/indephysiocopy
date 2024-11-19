@@ -31,8 +31,6 @@ const Index = ({route, navigation}) => {
     navigation.setOptions({title});
   }, [title]);
 
-  // console.log(parent_module_id);
-
   const getAllChapterContent = async () => {
     setLoader(true);
     const token = await storage.getStringAsync('token');

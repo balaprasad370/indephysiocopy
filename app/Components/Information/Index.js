@@ -152,11 +152,11 @@ const AnnouncementBanner = ({webinar, setAdVisible}) => {
                 onPress={() => {
                   if (webinar?.web_type == 0) {
                     navigation.navigate('Meeting', {
-                      room: webinar?.webinar_url,
+                      room: webinar?.notification_url,
                     });
                     setAdVisible(false);
                   } else if (webinar?.web_type == 1) {
-                    Linking.openURL(webinar?.webinar_url);
+                    Linking.openURL(webinar?.notification_url);
                     setAdVisible(false);
                   } else if (webinar?.web_type == 2) {
                     setAdVisible(false);

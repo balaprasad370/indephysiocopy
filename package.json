@@ -42,6 +42,7 @@
     "react-native-background-timer": "2.4.1",
     "react-native-big-calendar": "^4.14.0",
     "react-native-calendar-events": "2.2.0",
+    "react-native-calendars": "^1.1307.0",
     "react-native-clipboard": "^0.0.5",
     "react-native-date-picker": "^5.0.7",
     "react-native-default-preference": "1.4.4",

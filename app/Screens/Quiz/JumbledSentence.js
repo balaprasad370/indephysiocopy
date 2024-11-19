@@ -37,6 +37,7 @@ const JumbledSentence = ({
 
   const jumbledSentenceFunction = async () => {
     const token = await storage.getStringAsync('token');
+
     try {
       const response = await axios.post(
         `${path}/admin/v4/jumbledSentence`,

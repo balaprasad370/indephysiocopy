@@ -7,7 +7,7 @@ import SplashScreen from 'react-native-splash-screen';
 import storage from './app/Constants/storage';
 import messaging, {requestPermission} from '@react-native-firebase/messaging';
 import notifee from '@notifee/react-native';
-import {getFcmToken, registerListenerWithFCM} from './app/utils/fcm';
+// import {getFcmToken, registerListenerWithFCM} from './app/utils/fcm';
 
 enableScreens();
 

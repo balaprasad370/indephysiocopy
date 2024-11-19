@@ -84,6 +84,9 @@ const Index = ({route}) => {
   const [allCombinedData, setAllCombinedData] = useState(
     previousAnswers ? objectAnswers : {},
   );
+  const [allMatchData, setAllMatchData] = useState(
+    previousAnswers ? objectAnswers : {},
+  );
 
   const handleSetCombinedData = (index, data, item) => {
     const questionIds = data.map(item => item.questionId);
@@ -275,8 +278,8 @@ const Index = ({route}) => {
               // }
 
               if (
-                questionType === 'JumbledSentences' ||
-                questionType === 'Match'
+                questionType === 'JumbledSentences'
+                // ||questionType === 'Match'
               ) {
                 finalStudentAnswers = JSON.stringify(studentAnswer);
               } else {

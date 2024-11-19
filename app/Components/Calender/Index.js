@@ -147,54 +147,7 @@ const Index = () => {
 
                 currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
               }
-            }
-            // else if (item.schdeule_recur_type === 'weekly') {
-            //   let weekdays = item.schedule_recur_week_index
-            //     .split(',')
-            //     .map(Number);
-            //   let excludeDates = item.schedule_recur_exclude_dates
-            //     ? item.schedule_recur_exclude_dates
-            //         .split(',')
-            //         .map(date => new Date(date.trim()))
-            //     : [];
-            //   let currentDate = new Date(recurringStartDate);
-
-            //   while (currentDate <= recurringEndDate) {
-            //     let dayOfWeek = currentDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-
-            //     if (weekdays.includes(dayOfWeek)) {
-            //       let eventStartDate = new Date(currentDate);
-            //       let eventEndDate = new Date(currentDate);
-
-            //       eventStartDate.setHours(startHours, startMinutes);
-            //       eventEndDate.setHours(endHours, endMinutes);
-
-            //       // Check if the currentDate is not in the excluded dates
-            //       let isExcluded = excludeDates.some(
-            //         excludeDate =>
-            //           excludeDate.getFullYear() === currentDate.getFullYear() &&
-            //           excludeDate.getMonth() === currentDate.getMonth() &&
-            //           excludeDate.getDate() === currentDate.getDate(),
-            //       );
-
-            //       if (!isExcluded) {
-            //         fetchedEvents.push({
-            //           title: item.title,
-            //           description: item.description,
-            //           start: eventStartDate,
-            //           end: eventEndDate,
-            //           day: eventStartDate.toLocaleDateString('en-US', {
-            //             weekday: 'long',
-            //           }),
-            //           room_name: item.room_name,
-            //         });
-            //       }
-            //     }
-
-            //     currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
-            //   }
-            // }
-            else if (item.schdeule_recur_type === 'weekly') {
+            } else if (item.schdeule_recur_type === 'weekly') {
               let weekdays = item.schedule_recur_week_index
                 .split(',')
                 .map(Number);
@@ -203,8 +156,6 @@ const Index = () => {
               const isInvalidDate =
                 item.schedule_recurring_date_start === invalidDate ||
                 item.schedule_recurring_date_end === invalidDate;
-
-              // If the start and end dates are invalid, just loop through the current week
 
               if (isInvalidDate) {
                 // Get the current date
@@ -215,8 +166,6 @@ const Index = () => {
                     currentDate.getDate() - currentDate.getDay() + 1,
                   ),
                 );
-
-                // Loop through the days of the week (Monday to Sunday)
                 for (let i = 0; i < 7; i++) {
                   let dayOfWeek = startOfWeek.getDay() % 7; // Get the day of the week (0 = Sunday, 1 = Monday, etc.)
                   if (weekdays.includes(dayOfWeek)) {
@@ -240,7 +189,6 @@ const Index = () => {
                   startOfWeek.setDate(startOfWeek.getDate() + 1); // Move to the next day
                 }
               } else {
-                // Fallback to original logic if start and end dates are valid
                 let weekdays = item.schedule_recur_week_index
                   .split(',')
                   .map(Number);
@@ -327,26 +275,10 @@ const Index = () => {
         style={styles.cardHeader}>
         <View>
           <Text style={styles.cardTime}>{item.title}</Text>
-          {/* <Text style={styles.mainHeaderLevel}>A1 German</Text> */}
-          <View style={styles.cardTimeDiv}>
-            {/* <Text style={styles.cardTime}>
-              {`${item.start.getHours()}:${item.start
-                .getMinutes()
-                .toString()
-                .padStart(2, '0')} - ${item.end.getHours()}:${item.end
-                .getMinutes()
-                .toString()
-                .padStart(2, '0')} ${
-                item.start.getHours() >= 12 ? 'PM' : 'AM'
-              }`}
-            </Text> */}
-            {/* <Text style={styles.pathway}>{packageName} Pathway</Text> */}
-          </View>
+          <View style={styles.cardTimeDiv}></View>
         </View>
       </LinearGradient>
       <View style={styles.cardContent}>
-        {/* <Text style={style.liveClass
-          cardTitle}>{item.title}</Text> */}
         <View style={{marginTop: scale(5)}}>
           <Text style={{marginVertical: 7}}>GERMAN - {item.description}</Text>
         </View>
@@ -359,11 +291,6 @@ const Index = () => {
             .toString()
             .padStart(2, '0')} ${item.start.getHours() >= 12 ? 'PM' : 'AM'}`}
         </Text>
-
-        {/* <View style={styles.cardTimeDiv}>
-          <Text style={style.medium}>Dependent Task : Quiz 14</Text>
-          <Text style={style.medium}>Teach Name : Swathi</Text>
-        </View> */}
       </View>
     </TouchableOpacity>
   );
@@ -433,16 +360,10 @@ const Index = () => {
                 <Text style={style.toggleText}>Next Week</Text>
               </TouchableOpacity>
             </LinearGradient>
-            <LinearGradient
-              colors={
-                isNextWeek
-                  ? ['#2A89C6', '#3397CB', '#0C5CB4'] // Colors for 'Next Week'
-                  : isDark
-                  ? ['#3B3B3B', '#3B3B3B']
-                  : ['#f5f5f5', '#f5f5f5'] // Colors for 'This Week'
-              }
-              start={{x: 0, y: 0}} // Start from the left
-              end={{x: 1, y: 0}} // End at the right
+            {/* <LinearGradient
+              colors={isDark ? ['#3B3B3B', '#3B3B3B'] : ['#f5f5f5', '#f5f5f5']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
               style={[
                 style.toggleButton,
                 !isNextWeek && styles.activeToggleButton,
@@ -454,7 +375,7 @@ const Index = () => {
                 }}>
                 <Text style={style.toggleText}>Filter</Text>
               </TouchableOpacity>
-            </LinearGradient>
+            </LinearGradient> */}
           </View>
 
           <FlatList
@@ -558,7 +479,6 @@ const Index = () => {
                   onPress={() => {
                     navigation.navigate('Meeting', {
                       room: selectedEvent.room_name,
-                      // room: 'ic2wYAPi7sqlUZKi',
                     });
                     setModalVisible(false);
                   }}>

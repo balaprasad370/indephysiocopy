@@ -93,6 +93,7 @@ const Index = ({navigation}) => {
 
   const cloudMessaging = async () => {
     const token = await storage.getStringAsync('token');
+    console.log('helo', token);
     try {
       const deviceToken = await messaging().getToken();
       if (deviceToken && token) {
@@ -322,6 +323,7 @@ const Index = ({navigation}) => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response.data.notification, 'response.data.notification');
 
       setIsSingleNotification(response.data.notification);
       if (response?.data?.notification?.isModal == 1) {
@@ -497,7 +499,7 @@ const Index = ({navigation}) => {
         {isSingleNotification && (
           <Information
             webinar={isSingleNotification}
-            setAdVisible={setAdVisible}
+            setAdVisible={setIsModalVisible}
           />
         )}
 

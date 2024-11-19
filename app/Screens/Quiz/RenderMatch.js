@@ -39,12 +39,12 @@ const RenderMatch = ({
   const [answerData, setAnswerData] = useState([]);
 
   useEffect(() => {
-    // console.log(item, 'item');
     matchFunction();
   }, [matchData, item]);
 
   const matchFunction = async () => {
     const token = await storage.getStringAsync('token');
+
     try {
       const response = await axios.post(
         `${path}/admin/v4/matchFunction`,

@@ -168,15 +168,16 @@ export const AuthProvider = ({children}) => {
     }
   };
 
-  // const newFUnction = async () => {
-  //   let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjQwNSwicmVmZXJyYWxJZCI6OTQzNzI0LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzEyNDkzNjAsImV4cCI6MTczOTAyNTM2MH0.4WD-mrWABxLtIvBCF1du4dCDIH9iOZrSaNiD-UrfRlw`;
-  //   // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM2OSwicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.Hl0C0kQElQ_uGYirnsTWtaI7R_amgN2-iET0pMhLUnM';
-  //   await storage.setStringAsync('token', newToken);
-  // };
-  // useEffect(() => {
-  //   // console.log(storage.getStringAsync('token'));
-  //   newFUnction();
-  // }, []);
+  const newFUnction = async () => {
+    let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjQxOSwicmVmZXJyYWxJZCI6OTQzNzM4LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzE2NjkzNzcsImV4cCI6MTczOTQ0NTM3N30.izyVmp8BLi_3_TiOzym4g-wfWzjb6NWdAKsD2CCqGX0`;
+    // let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjQzMSwicmVmZXJyYWxJZCI6OTQzNzQ4LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzE2NjkzNzcsImV4cCI6MTczOTQ0NTM3N30.JpE6FGUSGGkZ1Hf86QGnTT2gp7Jv5sh3z38NWUKzTec`;
+    // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM2OSwicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.Hl0C0kQElQ_uGYirnsTWtaI7R_amgN2-iET0pMhLUnM';
+    await storage.setStringAsync('token', newToken);
+  };
+  useEffect(() => {
+    // console.log(storage.getStringAsync('token'));
+    newFUnction();
+  }, []);
 
   // {student_id:"9", devices:["289qr9qyr9qnkhqrqhr","689649kqhkqkbkb"],status:0}
 
