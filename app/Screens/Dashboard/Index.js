@@ -58,6 +58,7 @@ import {checkforUpdate} from '../../Components/CheckForUpdate/CheckForUpdate';
 import {getFcmToken, registerListenerWithFCM} from '../../utils/fcm';
 import LinearGradient from 'react-native-linear-gradient';
 import SubscriptionExpiry from '..//SubscriptionExpiry/Index';
+import StudentAccess from '../StudentAccess/StudentAccess';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
@@ -91,30 +92,86 @@ const Index = ({navigation}) => {
     return unsubscribe;
   }, []);
 
-  const cloudMessaging = async () => {
+  const storeDeviceInfo = async () => {
     const token = await storage.getStringAsync('token');
-    console.log('helo', token);
     try {
+      const androidId = await DeviceInfo.getAndroidId();
+      const brand = await DeviceInfo.getBrand();
+      const deviceId = await DeviceInfo.getDeviceId();
+      const deviceName = await DeviceInfo.getDeviceName();
+      const firstInstallTime = await DeviceInfo.getFirstInstallTime();
+      const ipAddress = await DeviceInfo.getIpAddress();
+      const lastUpdateTime = await DeviceInfo.getLastUpdateTime();
+      const macAddress = await DeviceInfo.getMacAddress();
+      const maxMemory = await DeviceInfo.getMaxMemory();
+      // const isLowRamDevice = await DeviceInfo.isLowRamDevice();
+      const isTablet = await DeviceInfo.isTablet();
       const deviceToken = await messaging().getToken();
-      if (deviceToken && token) {
-        const response = await axios.post(
-          `${path}/admin/v1/cloudMessaging`,
-          {
-            deviceToken: deviceToken,
+
+      // const systemInfo = (await DeviceInfo.getSystemInfo()) || 0;
+
+      // const isLowRamDevice = systemInfo.lowRam;
+      let isLowRamDevice = 0;
+
+      // Sending the device info to the backend
+      await axios.post(
+        `${path}/store-device-info`,
+        {
+          androidId,
+          brand,
+          deviceId,
+          deviceName,
+          firstInstallTime,
+          ipAddress,
+          lastUpdateTime,
+          macAddress,
+          maxMemory,
+          isLowRamDevice,
+          isTablet,
+          deviceToken,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-      }
+        },
+      );
+      console.log('Device info stored successfully');
     } catch (error) {
       console.log(
-        'Error from cloud messaging:',
-        error.response ? error.response.data : error.message,
+        'Error storing device info:',
+        error?.response?.data || error.message,
       );
+    }
+  };
+
+  const cloudMessaging = async () => {
+    const token = await storage.getStringAsync('token');
+    if (token) {
+      try {
+        const deviceToken = await messaging().getToken();
+        if (deviceToken && token) {
+          const response = await axios.post(
+            `${path}/admin/v1/cloudMessaging`,
+            {
+              deviceToken: deviceToken,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+        }
+        console.log('Done');
+      } catch (error) {
+        console.log(
+          'Error from cloud messaging:',
+          error.response ? error.response.data : error.message,
+        );
+      }
     }
   };
 
@@ -281,41 +338,52 @@ const Index = ({navigation}) => {
     }).start();
   };
 
-  // const [notTitle, setNotTitle] = useState('');
-  // const [notBody, setNotBody] = useState('');
+  const deviceInformation = async () => {
+    const token = await storage.getStringAsync('token');
+    if (!token) {
+      console.error('Token is missing. Redirecting to login.');
+      return;
+    }
 
-  // useEffect(() => {
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     try {
-  //       console.log('remoteMessage', remoteMessage);
-  //       const channelId = await notifee.createChannel({
-  //         id: 'default',
-  //         name: 'Default Channel',
-  //       });
+    const deviceInfo =
+      Platform.OS === 'android'
+        ? 'Android'
+        : Platform.OS === 'ios'
+        ? 'iOS'
+        : 'unknown';
+    const appVersion =
+      Platform.OS === 'android' || Platform.OS === 'ios'
+        ? DeviceInfo.getVersion()
+        : null;
 
-  //       await notifee.displayNotification({
-  //         title: remoteMessage?.notification?.title,
-  //         body: remoteMessage?.notification?.body,
-
-  //         android: {
-  //           channelId,
-  //           pressAction: {
-  //             id: 'default',
-  //           },
-  //         },
-  //       });
-  //     } catch (error) {
-  //       console.log('index.js file error2', error);
-  //     }
-  //   });
-
-  //   return unsubscribe;
-  // }, []);
+    try {
+      const response = await axios.post(
+        `${path}/admin/v1/deviceInfo`,
+        {deviceInfo, appVersion},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      console.log('Device information stored successfully:', response.data);
+    } catch (error) {
+      console.log(
+        'Error storing device information:',
+        error.response?.data || error.message,
+      );
+    }
+  };
 
   const [isSingleNotification, setIsSingleNotification] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const notificationData = async () => {
     const token = await storage.getStringAsync('token');
+    if (!token) {
+      console.log('Authorization token is missing. notificationData');
+      return;
+    }
     try {
       const response = await axios.get(`${path}/admin/v1/single-notification`, {
         headers: {
@@ -323,7 +391,6 @@ const Index = ({navigation}) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data.notification, 'response.data.notification');
 
       setIsSingleNotification(response.data.notification);
       if (response?.data?.notification?.isModal == 1) {
@@ -368,13 +435,17 @@ const Index = ({navigation}) => {
       console.log('error', error);
     }
   };
-
+  //noted
   const [subscriptionExpiry, setSubscriptionExpiry] = useState(false);
   const getSubscriptionExpiry = async () => {
     const token = await storage.getStringAsync('token');
+    if (!token) {
+      console.log('Authorization token is missing. getSubscriptionExpiry');
+      return;
+    }
     try {
       const response = await axios.get(
-        `${path}/admin/v1/subscription-timestamp`,
+        `${path}/admin/v2/subscription-timestamp`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -382,18 +453,21 @@ const Index = ({navigation}) => {
           },
         },
       );
+      console.log(response?.data);
       setSubscriptionExpiry(response?.data?.expired);
     } catch (error) {
-      console.log('error', error);
+      console.log('errors', error?.response?.data || error?.message);
     }
   };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      storeDeviceInfo();
       notificationCountFunction();
       getSubscriptionExpiry();
       notificationData();
       getWebinar();
+      deviceInformation();
       checkforUpdate();
       cloudMessaging();
     });
@@ -489,6 +563,24 @@ const Index = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {userData && userData?.is_admin == 1 && (
+          <TouchableOpacity
+            style={{
+              backgroundColor: color.darkPrimary,
+              padding: scale(8),
+              borderRadius: scale(8),
+              width: 130,
+              marginTop: 10,
+              alignSelf: 'flex-end',
+            }}
+            onPress={() => navigation.navigate(ROUTES.STUDENT_ACCESS)}>
+            <Text
+              style={{color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+              Student Access
+            </Text>
+          </TouchableOpacity>
+        )}
         {/* <Notfications /> */}
 
         {/* <Information webinar={webinar} setAdVisible={setAdVisible} /> */}

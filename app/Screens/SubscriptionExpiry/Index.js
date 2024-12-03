@@ -27,7 +27,7 @@ const Index = () => {
             To continue using the service, please subscribe again.
           </Text>
           <TouchableOpacity onPress={handleSubscribe} style={styles.button}>
-            <Text style={styles.buttonText}>Subscribe Now</Text>
+            <Text style={styles.buttonText}>Renew Subscription</Text>
           </TouchableOpacity>
         </View>
       </View>

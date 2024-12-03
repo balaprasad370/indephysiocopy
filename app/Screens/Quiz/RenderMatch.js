@@ -39,12 +39,12 @@ const RenderMatch = ({
   const [answerData, setAnswerData] = useState([]);
 
   useEffect(() => {
+    // console.log('itemss', combinedData);
     matchFunction();
   }, [matchData, item]);
 
   const matchFunction = async () => {
     const token = await storage.getStringAsync('token');
-
     try {
       const response = await axios.post(
         `${path}/admin/v4/matchFunction`,
@@ -67,7 +67,6 @@ const RenderMatch = ({
 
   const checkForCorrectAnswers = updatedData => {
     let allMatched = true;
-
     updatedData.forEach((item, index) => {
       const correctLeftMatch = matchData.find(
         match => match.match_id == matchAnswerLeftIds[index],
@@ -76,7 +75,6 @@ const RenderMatch = ({
         match => match.match_id == matchAnswerRightIds[index],
       )?.match_data;
 
-      // If any match doesn't align, set allMatched to false
       if (
         item.leftMatch !== correctLeftMatch ||
         item.rightMatch !== correctRightMatch
@@ -87,12 +85,10 @@ const RenderMatch = ({
     setScore(allMatched ? score + 1 : score);
   };
 
-  // console.log(combinedData);
-
   const handleLeftDragEnd = ({data}) => {
     const updatedData = data.map((item, index) => ({
       ...item,
-      rightMatch: combinedData[index].rightMatch, // Retain the right side as it is
+      rightMatch: combinedData[index].rightMatch,
     }));
     setCombinedData(updatedData);
     checkForCorrectAnswers(updatedData);
@@ -101,9 +97,9 @@ const RenderMatch = ({
   const handleRightDragEnd = ({data}) => {
     const updatedData = data.map((item, index) => ({
       ...item,
-      leftMatch: combinedData[index].leftMatch, // Retain the left side as it is
+      leftMatch: combinedData[index].leftMatch,
     }));
-    setCombinedData(updatedData); // Update state with new right order
+    setCombinedData(updatedData);
     checkForCorrectAnswers(updatedData);
   };
 
@@ -114,14 +110,12 @@ const RenderMatch = ({
           <DraggableFlatList
             data={combinedData}
             renderItem={({item, drag}) => (
-              <TouchableOpacity
-                onLongPress={drag} // Allow dragging only the left match
-                style={styles.leftContainer}>
+              <TouchableOpacity onLongPress={drag} style={styles.leftContainer}>
                 <Text style={styles.matchText}>{item.leftMatch}</Text>
               </TouchableOpacity>
             )}
-            keyExtractor={item => item.leftId} // Use leftId as unique identifier
-            onDragEnd={({data}) => handleLeftDragEnd({data})} // Handle drag end for left
+            keyExtractor={item => item.leftId}
+            onDragEnd={({data}) => handleLeftDragEnd({data})}
           />
         </View>
 
@@ -130,13 +124,13 @@ const RenderMatch = ({
             data={combinedData}
             renderItem={({item, drag}) => (
               <TouchableOpacity
-                onLongPress={drag} // Allow dragging only the right match
+                onLongPress={drag}
                 style={styles.rightContainer}>
                 <Text style={styles.matchText}>{item.rightMatch}</Text>
               </TouchableOpacity>
             )}
-            keyExtractor={item => item.rightId} // Use rightId as unique identifier
-            onDragEnd={({data}) => handleRightDragEnd({data})} // Handle drag end for right
+            keyExtractor={item => item.rightId}
+            onDragEnd={({data}) => handleRightDragEnd({data})}
           />
         </View>
       </View>
@@ -161,7 +155,7 @@ const styles = StyleSheet.create({
   },
   leftContainer: {
     marginRight: 5,
-    height: 60,
+    height: 'fit-content',
     marginBottom: 5,
     borderWidth: 1,
     padding: 5,
@@ -171,7 +165,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     borderWidth: 1,
     padding: 5,
-    height: 60,
+    height: 'fit-content',
   },
   matchText: {
     fontSize: 18,

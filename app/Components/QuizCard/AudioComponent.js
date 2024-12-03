@@ -29,7 +29,43 @@ const AudioComponent = ({
     return () => clearInterval(interval);
   }, [sound, isPlaying]);
 
+  // const playAudio = audioURL => {
+  //   setIsLoading(true);
+
+  //   if (sound) {
+  //     sound.stop(() => {
+  //       setSound(null);
+  //       setIsPlaying(false);
+  //     });
+  //   }
+
+  //   const newSound = new Sound(audioURL, '', error => {
+  //     if (error) {
+  //       console.log('Failed to load the sound', error);
+  //       setIsLoading(false);
+  //       return;
+  //     }
+  //     setSound(newSound);
+  //     setDuration(newSound.getDuration());
+  //     newSound.play(success => {
+  //       if (success) {
+  //         console.log('Successfully finished playing');
+  //       } else {
+  //         console.log('Playback failed due to audio decoding errors');
+  //       }
+  //       setIsPlaying(false);
+  //       setSound(null);
+  //       setIsLoading(false);
+  //     });
+  //     setIsPlaying(true);
+  //     setIsLoading(false);
+  //   });
+  // };
   const playAudio = audioURL => {
+    if (isLoading || isPlaying) {
+      return; // Prevent multiple play actions when already playing or loading
+    }
+
     setIsLoading(true);
 
     if (sound) {
@@ -45,18 +81,22 @@ const AudioComponent = ({
         setIsLoading(false);
         return;
       }
+
       setSound(newSound);
       setDuration(newSound.getDuration());
+
       newSound.play(success => {
         if (success) {
           console.log('Successfully finished playing');
         } else {
           console.log('Playback failed due to audio decoding errors');
         }
+
         setIsPlaying(false);
         setSound(null);
         setIsLoading(false);
       });
+
       setIsPlaying(true);
       setIsLoading(false);
     });

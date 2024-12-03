@@ -53,13 +53,14 @@ export const AuthProvider = ({children}) => {
             Authorization: `Bearer ${token}`,
           },
         });
+
         setStudentId(res.data?.student_id);
+        setPackageId(res.data?.package_id);
         setPackageName(res.data?.package);
         setReferralCode(res.data?.referral_student_id);
         setUserData(res.data);
       }
     } catch (error) {
-      console.log('Error fetching user data:', error.message);
       if (error.response?.status === 403) {
         console.warn('Token expired or invalid');
         await storage.setBoolAsync('isLoggedIn', false);
@@ -71,44 +72,44 @@ export const AuthProvider = ({children}) => {
     }
   };
 
-  const chapterData = async () => {
-    try {
-      const token = await storage.getStringAsync('token');
+  // const chapterData = async () => {
+  //   try {
+  //     const token = await storage.getStringAsync('token');
 
-      if (token) {
-        const response = await axios.get(`${path}/chapters`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log('Chapters fetched successfully:', response.data);
-      }
-    } catch (error) {
-      console.log('Error fetching chapters:', error);
-    }
-  };
+  //     if (token) {
+  //       const response = await axios.get(`${path}/chapters`, {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       console.log('Chapters fetched successfully:', response.data);
+  //     }
+  //   } catch (error) {
+  //     console.log('Error fetching chapters:', error);
+  //   }
+  // };
 
-  const fetchPackageData = async () => {
-    const token = await storage.getStringAsync('token');
-    if (token && clientId) {
-      try {
-        const response = await axios.get(`${path}/packages`, {
-          params: {
-            client_id: clientId,
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-        });
-        // console.log('helo package data', response.data);
-        // setChapter(response.data);
-      } catch (error) {
-        console.log('Error fetching package data:', error);
-      }
-    }
-  };
+  // const fetchPackageData = async () => {
+  //   const token = await storage.getStringAsync('token');
+  //   if (token && clientId) {
+  //     try {
+  //       const response = await axios.get(`${path}/packages`, {
+  //         params: {
+  //           client_id: clientId,
+  //         },
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: 'Bearer ' + token,
+  //         },
+  //       });
+  //       // console.log('helo package data', response.data);
+  //       // setChapter(response.data);
+  //     } catch (error) {
+  //       console.log('Error fetching package data:', error);
+  //     }
+  //   }
+  // };
 
   const fetchToken = async () => {
     try {
@@ -124,7 +125,7 @@ export const AuthProvider = ({children}) => {
 
   const fetchDocumentStatus = async () => {
     const token = await storage.getStringAsync('token');
-    if (student_id) {
+    if (student_id || token) {
       try {
         const response = await axios.get(`${path}/student/documentStatus`, {
           headers: {
@@ -142,23 +143,14 @@ export const AuthProvider = ({children}) => {
     const token = await storage.getStringAsync('token');
     if (token) {
       try {
-        // Retrieve the token from storage
-        // Make the GET request with token in the Authorization header
         const response = await axios.get(`${path}/student/v1/appusagetime`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        // console.log('res', response.data);
-        // Handle the response data (assuming it's in response.data)
         const appUsageData = response.data;
-
-        // console.log('data', appUsageData.data);
         if (appUsageData.success) {
           setFetchTime(appUsageData.data);
-          // console.log('App usage time:', appUsageData.data);
-          // You can update your UI or handle the data here
         } else {
           console.log('Error', 'Failed to retrieve app usage time');
         }
@@ -168,88 +160,91 @@ export const AuthProvider = ({children}) => {
     }
   };
 
-  const newFUnction = async () => {
-    let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjQxOSwicmVmZXJyYWxJZCI6OTQzNzM4LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzE2NjkzNzcsImV4cCI6MTczOTQ0NTM3N30.izyVmp8BLi_3_TiOzym4g-wfWzjb6NWdAKsD2CCqGX0`;
-    // let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjQzMSwicmVmZXJyYWxJZCI6OTQzNzQ4LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzE2NjkzNzcsImV4cCI6MTczOTQ0NTM3N30.JpE6FGUSGGkZ1Hf86QGnTT2gp7Jv5sh3z38NWUKzTec`;
-    // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM2OSwicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.Hl0C0kQElQ_uGYirnsTWtaI7R_amgN2-iET0pMhLUnM';
-    await storage.setStringAsync('token', newToken);
-  };
-  useEffect(() => {
-    // console.log(storage.getStringAsync('token'));
-    newFUnction();
-  }, []);
+  // const newFUnction = async () => {
+  //   let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM3MywicmVmZXJyYWxJZCI6OTQzNzA1LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzI5NTg4NDUsImV4cCI6MTc0MDczNDg0NX0.LtssvZh6U5tZUqbEKMNGqbwg-aCun0HvG-Q6TpmeKKU`;
+  //   // let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjQ3MywicmVmZXJyYWxJZCI6MCwidXNlclR5cGUiOiJzdHVkZW50IiwiaWF0IjoxNzMyMzUxODk5LCJleHAiOjE3NDAxMjc4OTl9.eMgakAP-kBQFGI7LEMPlYcVhuJtdBKm2BytUz0h3aNo`;
+  //   // let newToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjQzMSwicmVmZXJyYWxJZCI6OTQzNzQ4LCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzE2NjkzNzcsImV4cCI6MTczOTQ0NTM3N30.JpE6FGUSGGkZ1Hf86QGnTT2gp7Jv5sh3z38NWUKzTec`;
+  //   // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjM2OSwicmVmZXJyYWxJZCI6OTQzNzAxLCJ1c2VyVHlwZSI6InN0dWRlbnQiLCJpYXQiOjE3MzA2NDk0OTMsImV4cCI6MTczODQyNTQ5M30.Hl0C0kQElQ_uGYirnsTWtaI7R_amgN2-iET0pMhLUnM';
+  //   await storage.setStringAsync('token', newToken);
+  // };
+  // useEffect(() => {
+  //   // console.log(storage.getStringAsync('token'));
+  //   newFUnction();
+  // }, []);
 
   // {student_id:"9", devices:["289qr9qyr9qnkhqrqhr","689649kqhkqkbkb"],status:0}
 
-  const cloudMessaging = async () => {
-    const token = await storage.getStringAsync('token');
-    console.log(token);
-    try {
-      const deviceToken = await messaging().getToken();
+  // const cloudMessaging = async () => {
+  //   const token = await storage.getStringAsync('token');
 
-      console.log('devices', deviceToken, student_id);
-      if (deviceToken && student_id && token) {
-        console.log('devices2', deviceToken, student_id);
-        const response = await axios.post(`${path}/admin/v1/cloudMessaging`, {
-          params: {
-            deviceToken: deviceToken,
-          },
-          params: {
-            deviceToken: deviceToken,
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  //   if (!token) {
+  //     console.log('Authorization token is missing. cloudMessaging');
+  //     return;
+  //   }
 
-        console.log('Done');
-      }
-    } catch (error) {
-      console.log('error from cloud messaging ', error.response);
-    }
-  };
+  //   try {
+  //     const deviceToken = await messaging().getToken();
 
-  const getPackageId = async () => {
-    try {
-      let level = '';
-      const token = await storage.getStringAsync('token');
-      if (token && student_id) {
-        const response = await axios.get(`${path}/v4/package/alias`, {
-          params: {
-            package_name: userData?.package, // Using the correct property here
-            client_id: clientId,
-            level: level,
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.status === 200) {
-          let newPacakgeId = response.data[0]?.package_id;
-          setPackageId(response.data[0]?.package_id);
-        }
-      }
-    } catch (error) {
-      console.log('Error:', error);
-    }
-  };
+  //     if (deviceToken && student_id && token) {
+  //       const response = await axios.post(`${path}/admin/v1/cloudMessaging`, {
+  //         params: {
+  //           deviceToken: deviceToken,
+  //         },
+  //         params: {
+  //           deviceToken: deviceToken,
+  //         },
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+
+  //       console.log('Done');
+  //     }
+  //   } catch (error) {
+  //     console.log('error from cloud messagingssss hkakfha k ', error.response);
+  //   }
+  // };
+
+  // const getPackageId = async () => {
+  //   try {
+  //     let level = '';
+  //     const token = await storage.getStringAsync('token');
+  //     if (token && student_id) {
+  //       const response = await axios.get(`${path}/v4/package/alias`, {
+  //         params: {
+  //           package_name: userData?.package, // Using the correct property here
+  //           client_id: clientId,
+  //           level: level,
+  //         },
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       if (response.status === 200) {
+  //         let newPacakgeId = response.data[0]?.package_id;
+  //         setPackageId(response.data[0]?.package_id);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log('Error:', error);
+  //   }
+  // };
 
   useEffect(() => {
-    getPackageId();
+    // getPackageId();
     fetchClockTime();
     fetchDocumentStatus();
   }, [userData]);
 
   useEffect(() => {
     // chapterData();
-    cloudMessaging();
+    // cloudMessaging();
     fetchToken();
   }, []);
   useEffect(() => {
     getDatFunc();
-
     const intervalId = setInterval(getDatFunc, 3000);
     return () => clearInterval(intervalId);
   }, []);

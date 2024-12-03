@@ -31,7 +31,6 @@ const Index = ({route}) => {
   const {lang_id} = route.params;
   const [levels, setLevels] = useState([]);
   const navigation = useNavigation();
-  const levelLangId = 1;
   const style = isDark ? DarkTheme : LighTheme;
 
   useEffect(() => {
@@ -42,7 +41,8 @@ const Index = ({route}) => {
 
         if (token) {
           const response = await axios.get(
-            `${path}/admin/v3/levels/${lang_id}`,
+            // `${path}/admin/v3/levels/${lang_id}`,
+            `${path}/student/v1/level/${lang_id}`,
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -50,12 +50,8 @@ const Index = ({route}) => {
               },
             },
           );
-          if (response.data.status) {
-            setLevels(response.data?.data);
-          } else {
-            setLevels([]);
-            console.log('No levels found for this language ID');
-          }
+          console.log(response.data.data);
+          setLevels(response.data.data);
         } else {
           console.log('No token found');
         }
@@ -79,17 +75,12 @@ const Index = ({route}) => {
       hitSlop={{x: 0, y: 0}}
       style={styles.parent_level_container}
       onPress={
-        item.completed
+        item.status === 'locked'
           ? null
-          : (item.status.a1 === 'locked' && item.level_name.includes('A1')) ||
-            (item.status.a2 === 'locked' && item.level_name.includes('A2')) ||
-            (item.status.b1 === 'locked' && item.level_name.includes('B1')) ||
-            (item.status.b2 === 'locked' && item.level_name.includes('B2')) ||
-            (item.status.exam_module === 'locked' &&
-              item.level_name.includes('Exam Module'))
-          ? null // Disable press if the respective level is locked
           : () =>
-              navigation.navigate(ROUTES.CHAPTERS, {level_id: item.level_id})
+              navigation.navigate(ROUTES.CHAPTERS, {
+                level_id: item.level_id,
+              })
       }>
       <LinearGradient
         colors={[color.lowPrimary, color.lowPrimary]}
@@ -98,20 +89,7 @@ const Index = ({route}) => {
         style={styles.level}>
         <View style={{position: 'absolute', left: '50%', zIndex: 9999}}>
           <IconTimer
-            name={
-              item.status.a1 === 'locked' && item.level_name.includes('A1')
-                ? 'lock-closed-sharp'
-                : item.status.a2 === 'locked' && item.level_name.includes('A2')
-                ? 'lock-closed-sharp'
-                : item.status.b1 === 'locked' && item.level_name.includes('B1')
-                ? 'lock-closed-sharp'
-                : item.status.exam_module === 'locked' &&
-                  item.level_name.includes('Exam Module')
-                ? 'lock-closed-sharp'
-                : item.status.b2 === 'locked' && item.level_name.includes('B2')
-                ? 'lock-closed-sharp'
-                : null
-            }
+            name={item.status === 'locked' ? 'lock-closed-sharp' : null}
             style={{fontSize: 26}}
             color="black"
           />
@@ -121,17 +99,18 @@ const Index = ({route}) => {
             styles.levelCard,
             {
               opacity:
-                (item.status.a1 === 'locked' &&
-                  item.level_name.includes('A1')) ||
-                (item.status.a2 === 'locked' &&
-                  item.level_name.includes('A2')) ||
-                (item.status.b1 === 'locked' &&
-                  item.level_name.includes('B1')) ||
-                (item.status.b2 === 'locked' &&
-                  item.level_name.includes('B2')) ||
-                (item.status.exam_module === 'locked' &&
-                  item.level_name.includes('Exam Module'))
-                  ? 0.1
+                item.status === 'locked'
+                  ? // (item.status.a1 === 'locked' &&
+                    //   item.level_name.includes('A1')) ||
+                    // (item.status.a2 === 'locked' &&
+                    //   item.level_name.includes('A2')) ||
+                    // (item.status.b1 === 'locked' &&
+                    //   item.level_name.includes('B1')) ||
+                    // (item.status.b2 === 'locked' &&
+                    //   item.level_name.includes('B2')) ||
+                    // (item.status.exam_module === 'locked' &&
+                    //   item.level_name.includes('Exam Module'))
+                    0.1
                   : 1,
             },
           ]}>
@@ -177,7 +156,7 @@ const Index = ({route}) => {
             alignItems: 'center',
           }}>
           <Text style={{fontSize: 18, fontWeight: '900'}}>
-            There is no content
+            You don't have access of this premium content
           </Text>
         </View>
       )}
@@ -188,13 +167,6 @@ const Index = ({route}) => {
 export default Index;
 
 const styles = StyleSheet.create({
-  // parent_level_container: {
-  //   shadowColor: color.lowPrimary,
-  //   shadowOffset: {width: 0, height: 5},
-  //   shadowOpacity: 0.1,
-  //   shadowRadius: 10,
-  //   elevation: 1,
-  // },
   parent_level_container: {
     ...Platform.select({
       ios: {

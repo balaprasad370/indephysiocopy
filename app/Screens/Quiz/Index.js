@@ -40,6 +40,8 @@ import RenderMatch from './RenderMatch';
 import JumbledSentence from './JumbledSentence';
 import JumbledWords from './JumbledWords';
 import {ReactNativeZoomableView} from '@openspacelabs/react-native-zoomable-view';
+import Evaluate from './Evaluate';
+import Speaking from './Speaking';
 
 const Index = ({route}) => {
   const {
@@ -144,6 +146,7 @@ const Index = ({route}) => {
 
   const [correctAnswers, setCorrectAnswers] = useState({});
   const [questionType, setQuestionType] = useState('');
+  const [evaluate, setEvaluate] = useState('');
 
   const getDetails = async () => {
     try {
@@ -153,6 +156,7 @@ const Index = ({route}) => {
         `${path}/student/v3/questions/details`,
         {
           // module_id: 114,
+          // module_id: 386,
           module_id: module_id,
         },
         {
@@ -413,24 +417,7 @@ const Index = ({route}) => {
     if (!attemptedQuestions.includes(id)) {
       setAttemptedQuestions(prev => [...prev, questionIndex]);
     }
-    // setAttemptedQuestions(prev => [...prev, questionIndex]);
   };
-
-  // const handleOptionSelect = (
-  //   selectedIndex,
-  //   optionKey,
-  //   correctAnswerIndex,
-  //   number,
-  //   id,
-  // ) => {
-  //   setSelectedOptions(prevState => ({
-  //     ...prevState,
-  //     [id]: selectedIndex,
-  //   }));
-  //   if (!attemptedQuestions.includes(id)) {
-  //     setAttemptedQuestions(prev => [...prev, id]);
-  //   }
-  // };
 
   const handleOptionTrueSelect = (selectedIndex, questionNumber) => {
     setSelectedOptions(prev => ({
@@ -463,6 +450,7 @@ const Index = ({route}) => {
 
     return (
       <View style={styled.options}>
+        <Text>{}</Text>
         {optionKeys.map((key, index) => {
           if (options[key] !== null && options[key] !== '.') {
             const isSelected = selectedOptions[id] === index + 1;
@@ -549,7 +537,7 @@ const Index = ({route}) => {
           },
         },
       );
-
+      // console.log('responsesss', response.data);
       setMatchData(response.data);
     } catch (error) {
       console.log('Error fetching match data:', error);
@@ -856,7 +844,7 @@ const Index = ({route}) => {
             style={{
               height: scale(200),
               width: '100%',
-              // height: 250,
+
               marginBottom: 10,
             }}
             resizeMode="contain"
@@ -917,6 +905,7 @@ const Index = ({route}) => {
                 setScore={setScore}
                 score={score}
                 combinedData={combinedData}
+                // combinedData={allCombinedData[item.id] || []}
                 setCombinedData={setCombinedData}
               />
             </>
@@ -965,7 +954,6 @@ const Index = ({route}) => {
               <Text selectable={true} style={styled.quiztitle}>
                 Q{questionIndex + 1}) {item.question}
               </Text>
-              {/* <Text>{item.type}</Text> */}
               {item.imageURL && renderImage(item.imageURL)}
               {renderTrueFalse(item, item.id)}
             </>
@@ -980,7 +968,70 @@ const Index = ({route}) => {
                 item={item.question}
                 score={score}
                 setScore={setScore}
+                questionIndex={questionIndex}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
               />
+            </>
+          );
+        case 'Speaking':
+          return (
+            <Speaking
+              item={item}
+              score={score}
+              setScore={setScore}
+              questionIndex={questionIndex}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+            />
+          );
+        case 'Evaluate':
+          return (
+            <>
+              <Evaluate
+                item={item}
+                questionIndex={questionIndex}
+                inputValue={inputValue}
+                setScore={setScore}
+                setInputValue={setInputValue}
+              />
+              {/* <Text selectable={true} style={styled.quiztitle}>
+                Q{questionIndex + 1}) {item.question}
+              </Text>
+              <TextInput
+                style={{
+                  borderWidth: 1,
+                  borderColor: 'black',
+                  borderRadius: 8,
+                  marginTop: 10,
+                  padding: 8,
+                  height: 100,
+                  textAlignVertical: 'top',
+                  multiline: true,
+                }}
+                value={evaluate}
+                onChangeText={setEvaluate}
+                placeholder="Write your answer"
+                multiline={true}
+                numberOfLines={4}
+              />
+              <TouchableOpacity
+                onPress={() =>
+                  handleSubmitForEvaluation(item.id, evaluate, item.question)
+                }
+                style={{
+                  backgroundColor: color.darkPrimary,
+                  padding: 10,
+                  borderRadius: 8,
+                  marginTop: 10,
+                  display: 'flex',
+                  alignItems: 'center',
+                  alignSelf: 'flex-end',
+                }}>
+                <Text style={{color: 'white', fontSize: 18}}>
+                  Submit for evaluation
+                </Text>
+              </TouchableOpacity> */}
             </>
           );
         default:
@@ -1031,6 +1082,23 @@ const Index = ({route}) => {
               setSound={setSound}
               pauseAudio={pauseAudio}
               audioURL={subQuestion.audioURL}
+            />
+          </>
+        )}
+
+        {subQuestion.type == 'Match' && (
+          <>
+            <Text selectable={true} style={styled.quiztitle}>
+              Q: {questionIndex + 1} {item.question}
+            </Text>
+            <Text>{subQuestion.type}</Text>
+            <RenderMatch
+              matchData={matchData}
+              item={item}
+              setScore={setScore}
+              score={score}
+              combinedData={combinedData}
+              setCombinedData={setCombinedData}
             />
           </>
         )}

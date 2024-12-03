@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -34,6 +34,7 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
   };
 
   const handleNavigateScreen = index => {
+    console.log('index', index);
     setIndex(index);
     if (index === 0) {
       navigation.navigate('Home');

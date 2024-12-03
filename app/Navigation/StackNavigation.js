@@ -37,6 +37,7 @@ import LighTheme from '../theme/LighTheme';
 import Recording from '../Screens/Recording/Index';
 import VoiceComponent from '../Screens/Quiz/VoiceComponent';
 import AppUsageTracker from '../Screens/AppUsage/Index';
+import StudentAccess from '../Screens/StudentAccess/StudentAccess';
 
 const Stack = createStackNavigator();
 
@@ -301,6 +302,18 @@ const StackNavigation = () => {
           headerTintColor: isDark ? '#fff' : '#000',
         }}
         component={FilterScreen}
+      />
+      <Stack.Screen
+        name={ROUTES.STUDENT_ACCESS}
+        options={{
+          headerTitle: 'Student Access',
+          headerLeftLabelVisible: false,
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
+        component={StudentAccess}
       />
 
       <Stack.Screen

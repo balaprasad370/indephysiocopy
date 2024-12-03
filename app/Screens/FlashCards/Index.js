@@ -36,11 +36,11 @@ const Flashcard = ({question, answer, showAnswer, onCardPress, onSpeak}) => {
           style={showAnswer ? styles.answerText : styles.questionText}>
           {showAnswer ? answer : question}
         </Text>
-        {!showAnswer ? (
+        {/* {!showAnswer ? (
           <TouchableOpacity style={styles.speakerIcon} onPress={onSpeak}>
             <Icon name="volume-up" size={36} color={color.black} />
           </TouchableOpacity>
-        ) : null}
+        ) : null} */}
       </View>
     </TouchableOpacity>
   );
@@ -172,7 +172,7 @@ const Index = ({route}) => {
         language: 'de-DE',
         KEY_PARAM_PAN: -1,
         KEY_PARAM_VOLUME: 0.5,
-        KEY_PARAM_STREAM: 'STREAM_MUSIC',
+        // KEY_PARAM_STREAM: 'STREAM_MUSIC',
       },
       rate: 0.5,
     });

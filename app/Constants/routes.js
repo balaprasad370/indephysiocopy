@@ -37,4 +37,5 @@ export const ROUTES = {
   OFFLINE: 'Offline',
   NOTIFICATIONS: 'Notifications',
   FILTER_SCREEN: 'Filter Screen',
+  STUDENT_ACCESS: 'Student Access',
 };

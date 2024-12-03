@@ -20,31 +20,39 @@ import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import color from '../../Constants/color';
 import Loading from '../../Components/Loading/Loading';
+import storage from '../../Constants/storage';
+import {useNavigation} from '@react-navigation/native';
 
 const SelfLearn = () => {
-  const {langCode, isDark, loader, setLoader} = useContext(AppContext);
+  const {langCode, isDark, loader, setLoader, path} = useContext(AppContext);
 
   const style = isDark ? DarkTheme : LighTheme;
 
   const [languages, setLanguages] = useState([]);
 
   const getLanguages = async () => {
+    const token = await storage.getStringAsync('token');
     try {
       setLoader(true);
-      const response = await axios.get(
-        'https://server.indephysio.com/languages',
-      );
-      console.log(response.data);
-      setLanguages(response.data);
+      const response = await axios.get(`${path}/student/languages`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('laguages', response.data);
+      setLanguages(response.data.data);
     } catch (error) {
       console.log('Langg', error);
     } finally {
       setLoader(false);
     }
   };
+  const navigation = useNavigation();
 
   useEffect(() => {
-    getLanguages();
+    const unsubscribe = navigation.addListener('focus', getLanguages);
+    return unsubscribe;
   }, []);
   if (loader) {
     return <Loading />;
@@ -69,6 +77,7 @@ const SelfLearn = () => {
                   img={`https://d2c9u2e33z36pz.cloudfront.net/${item.lang_img}`}
                   name={item.language_name}
                   description={item.language_description}
+                  status={item.status}
                 />
               </View>
             );
@@ -81,7 +90,7 @@ const SelfLearn = () => {
               alignItems: 'center',
             }}>
             <Text style={{fontSize: 18, fontWeight: '900'}}>
-              There is no content
+              You don't have access of this premium content
             </Text>
           </View>
         )}

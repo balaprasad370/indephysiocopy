@@ -39,17 +39,23 @@ const AppNavigator = () => {
   };
 
   const saveExitTime = async () => {
-    const appExitTime = Date.now(); // Save the exit time in UTC
+    const appExitTime = Date.now();
     console.log(`App exited at (UTC): ${appExitTime}`);
 
-    const token = await storage.getString('token'); // Replace with your method of getting the token
-
-    // Send the open and exit times to the backend
+    const token = await storage.getString('token');
+    if (!token) {
+      console.log('Authorization token is missing.');
+      return;
+    }
+    if (!path) {
+      console.log('API base path is missing.');
+      return;
+    }
     try {
       await axios.post(
-        `${path}/store-app-time`,
+        `${path}/student/v1/store-app-time`,
         {
-          app_open_time: appOpenTime,
+          app_open_time: appOpenTime, // Ensure this variable is defined
           app_close_time: appExitTime,
         },
         {
@@ -61,7 +67,12 @@ const AppNavigator = () => {
       );
       console.log('Open and exit times sent successfully');
     } catch (error) {
-      console.log('Error sending open and exit times:', error);
+      if (error.response?.status === 403) {
+        console.log('Forbidden: Token might be expired or invalid.');
+        // Handle token refresh or redirect to login
+      } else {
+        console.log('Unexpected error:', error);
+      }
     }
   };
 
@@ -92,6 +103,16 @@ const AppNavigator = () => {
     unique_id,
   }) => {
     const token = await storage.getString('token');
+
+    if (!token) {
+      console.log('Authorization token is missing. storeTimeInDatabase');
+      return;
+    }
+
+    if (!path) {
+      console.log('API base path is missing. storeTimeInDatabase');
+      return;
+    }
     try {
       const response = await axios.post(
         `${path}/store-activity-time`,
@@ -193,6 +214,16 @@ const AppNavigator = () => {
       const timespent2 = timeSpentInApp / 1000;
 
       const token = await storage.getString('token');
+
+      if (!token) {
+        console.log('Authorization token is missing. handleAppStateChange');
+        return;
+      }
+
+      if (!path) {
+        console.log('API base path is missing. handleAppStateChange');
+        return;
+      }
       let flashTime2 = flashTimeRef.current / 1000;
       let readingTime2 = readingTimeRef.current / 1000;
       let quizTime2 = quizTimeRef.current / 1000;
@@ -218,8 +249,6 @@ const AppNavigator = () => {
         );
 
         console.log('Total app time sent successfully');
-
-        // Clear the times after successful submission
         flashTimeRef.current = 0;
         readingTimeRef.current = 0;
         quizTimeRef.current = 0;
