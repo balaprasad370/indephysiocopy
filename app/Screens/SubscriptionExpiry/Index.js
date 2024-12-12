@@ -13,7 +13,7 @@ const Index = () => {
 
   const handleSubscribe = () => {
     // Replace this with the actual subscription link or website URL
-    const subscriptionUrl = 'https://portal.indephysio.com/dashboard';
+    const subscriptionUrl = 'https://portal.indephysio.com/subscriptions';
     Linking.openURL(subscriptionUrl);
   };
 
@@ -24,7 +24,7 @@ const Index = () => {
         <View style={styles.modalContent}>
           <Text style={styles.modalText}>Subscription is expired!</Text>
           <Text style={styles.modalSubText}>
-            To continue using the service, please subscribe again.
+              Your subscription has ended. Please renew to continue using the service.
           </Text>
           <TouchableOpacity onPress={handleSubscribe} style={styles.button}>
             <Text style={styles.buttonText}>Renew Subscription</Text>
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
   modalBackdrop: {
     flex: 1,
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.8,
     shadowRadius: 5,
+    elevation: 2,
   },
   modalText: {
     fontSize: 20,

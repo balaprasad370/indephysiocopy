@@ -21,6 +21,8 @@ const StudentAccess = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const {path} = useContext(AppContext);
+  const [disableButton, setDisableButton] = useState(false);
+  const [studentId, setStudentId] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
@@ -42,14 +44,13 @@ const StudentAccess = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('response', response.data.students);
       if (response.data.success) {
         setAllStudents(response.data.students);
         setFilteredStudents(response.data.students); // Initially show all students
       }
     } catch (error) {
       setError('Failed to fetch students');
-      console.log('Error fetching students:', error);
+      // console.log('Error fetching students:', error);
     } finally {
       setLoading(false);
     }
@@ -120,16 +121,49 @@ const StudentAccess = () => {
     setFilteredStudents(result);
   };
 
+
+  const getNewToken = async (student_id) => {
+    const token = await storage.getStringAsync('token');
+
+      const response = await axios.post(`${path}/v1/grantaccess`,{
+        student_id: student_id,
+      },  { headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  // console.log("response",response.data);
+  if(response.data.status){
+    return response.data.token
+
+  }else{
+    return null;
+  }
+ }
+
   const navigation = useNavigation();
-  const toggleAccess = async newToken => {
+
+  const toggleAccess = async student_id => {
     try {
+      setDisableButton(true);
+      setStudentId(student_id);
+      const newToken = await getNewToken(student_id);
+
       // Save the new token in storage
       await storage.setStringAsync('token', newToken);
-      navigation.navigate(ROUTES.DASHBOARD);
+      await storage.setStringAsync('isAdmin', 'true');
+
+      // console.log("newToken",newToken);
+      
+      setTimeout(() => {
+        navigation.navigate(ROUTES.DASHBOARD);
+        setDisableButton(false);
+      }, 1000);
       // Optionally, log the success
-      console.log('New token has been set:', newToken);
+      // console.log('New token has been set:', newToken);
     } catch (error) {
-      console.log('Error while setting the token:', error);
+      // console.log('Error while setting the token:', error);
     }
   };
 
@@ -150,6 +184,7 @@ const StudentAccess = () => {
   };
 
   const renderItem = ({item}) => (
+   
     <View style={styles.studentItem}>
       <View style={styles.leftContainer}>
         <Image
@@ -164,15 +199,15 @@ const StudentAccess = () => {
         />
         <View style={styles.nameContainer}>
           <Text style={styles.name}>
-            {item.first_name}
-            {item.last_name}
+            {item.first_name + " " + item.last_name}
           </Text>
         </View>
       </View>
       <TouchableOpacity
-        style={[styles.accessButton, {backgroundColor: '#4CAF50'}]}
-        onPress={() => toggleAccess(item.token)}>
-        <Text style={styles.accessButtonText}>Grant Access</Text>
+      disabled={disableButton}
+        style={[styles.accessButton, {backgroundColor: disableButton && studentId === item.student_id ? '#ccc' : '#4CAF50'}]}
+        onPress={() => toggleAccess(item.student_id)}>
+        <Text style={styles.accessButtonText}>{disableButton && studentId === item.student_id ? 'Loading...' : 'Grant Access'}</Text>
       </TouchableOpacity>
     </View>
   );

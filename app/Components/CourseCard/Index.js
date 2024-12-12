@@ -9,6 +9,8 @@ import referral from '../../assets/referral.png';
 import scale from '../../utils/utils';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
+import {Linking} from 'react-native';
+import COLORS from '../../Constants/color';
 
 const index = ({
   locked,
@@ -27,7 +29,10 @@ const index = ({
 
   const handleScreen = () => {
     if (courseTitle === 'Referral Portal') {
-      navigation.navigate(ROUTES.PORTAL);
+      Linking.openURL('https://portal.indephysio.com/app');
+    }
+    if(courseTitle === 'Not Registered'){
+      Linking.openURL('https://portal.indephysio.com/dashboard');
     }
   };
 
@@ -62,9 +67,17 @@ const index = ({
             style={{width: scale(30), height: scale(30)}}
           />
         )}
-        <TouchableOpacity hitSlop={{x: 25, y: 15}}>
-          <Text style={style.courseBottomBtn}>{bottomCourseCard}</Text>
+      
+
+        {
+          courseTitle === 'Not Registered' ? (
+            <TouchableOpacity onPress={handleScreen} hitSlop={{x: 25, y: 15}} style={{backgroundColor: COLORS.darkPrimary, padding: 5, borderRadius: 4}}>
+              <Text style={{color: COLORS.white}}>Subscribe Now</Text>
+            </TouchableOpacity>
+          ) :   (<TouchableOpacity hitSlop={{x: 25, y: 15}}>
+          <Text>{ bottomCourseCard}</Text>
         </TouchableOpacity>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -72,4 +85,6 @@ const index = ({
 
 export default index;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+
+});

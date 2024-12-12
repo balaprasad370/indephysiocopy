@@ -92,12 +92,10 @@ const JumbledSentence = ({
     <ScrollView style={styles.scrollContainer} nestedScrollEnabled={true}>
       <View style={styles.matchContainer}>
         <View style={styles.inlineContainer}>
-          <DraggableFlatList
+            <DraggableFlatList
             data={combinedData}
             renderItem={({item, drag}) => (
-              <TouchableOpacity
-                onLongPress={drag}
-                style={styles.rightContainer}>
+              <TouchableOpacity onPress={drag} style={styles.rightContainer}>
                 <Text style={styles.matchText}>{item.questionMatch}</Text>
               </TouchableOpacity>
             )}

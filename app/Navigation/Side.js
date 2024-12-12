@@ -66,6 +66,7 @@ const DrawerContent = props => {
               storage.removeItem('token');
               storage.removeItem('show');
               storage.removeItem('email');
+              storage.removeItem('isAdmin');
               setIsAuthenticate(false);
               navigation.navigate(ROUTES.LOGIN);
             } catch (error) {

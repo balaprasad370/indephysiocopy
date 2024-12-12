@@ -50,7 +50,7 @@ const Index = ({route}) => {
               },
             },
           );
-          console.log(response.data.data);
+          // console.log(response.data.data);
           setLevels(response.data.data);
         } else {
           console.log('No token found');

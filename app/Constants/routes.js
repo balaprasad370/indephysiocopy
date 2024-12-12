@@ -13,6 +13,7 @@ export const ROUTES = {
   HOME_DRAWER: 'Home Drawer',
   CHAPTERS: 'Chapters',
   SELF_LEARN_SCREEN: 'Self Learn Screen',
+  BRANCH_CHAPTERS: 'Branch Chapters',
   PACKAGE: 'Package',
 
   LIVE_CLASS: 'Live Classes',

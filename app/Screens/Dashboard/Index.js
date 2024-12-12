@@ -12,6 +12,7 @@ import {
   Platform,
   Linking,
   Animated,
+  StatusBar
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -71,6 +72,10 @@ const Index = ({navigation}) => {
   const [isNotification, setIsNotification] = useState(false);
   const [notificationTitle, setNotificationTitle] = useState('');
   const [notificationBody, setNotificationBody] = useState('');
+  
+  const [isAdmin, setisAdmin] = useState(null);
+
+
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -85,12 +90,18 @@ const Index = ({navigation}) => {
           });
         }
       } catch (error) {
-        console.log('index.js file error', error);
+        // console.log('index.js file error', error);
       }
     });
 
     return unsubscribe;
   }, []);
+
+  const getIsAdmin = async () => {
+    const _isAdmin =  await storage.getStringAsync('isAdmin');
+   setisAdmin(_isAdmin)
+  }
+
 
   const storeDeviceInfo = async () => {
     const token = await storage.getStringAsync('token');
@@ -140,7 +151,7 @@ const Index = ({navigation}) => {
       console.log('Device info stored successfully');
     } catch (error) {
       console.log(
-        'Error storing device info:',
+        'Error storing device info: main index.js file',
         error?.response?.data || error.message,
       );
     }
@@ -341,7 +352,7 @@ const Index = ({navigation}) => {
   const deviceInformation = async () => {
     const token = await storage.getStringAsync('token');
     if (!token) {
-      console.error('Token is missing. Redirecting to login.');
+      console.log('Token is missing. Redirecting to login.');
       return;
     }
 
@@ -470,6 +481,7 @@ const Index = ({navigation}) => {
       deviceInformation();
       checkforUpdate();
       cloudMessaging();
+      getIsAdmin();
     });
     return unsubscribe;
   }, []);
@@ -477,11 +489,13 @@ const Index = ({navigation}) => {
   const renderItem = ({item}) => {
     return (
       <SafeAreaView>
+        <StatusBar backgroundColor={isDark ? color.darkPrimary : color.lightPrimary} />
         {subscriptionExpiry ? (
           <Modal transparent={true} animationType="fade" visible={true}>
             <SubscriptionExpiry />
           </Modal>
         ) : null}
+        
         {Platform.OS === 'android' || (Platform.OS === 'ios' && <AppUpdate />)}
         <View style={style.uppDash}>
           <View style={styles.textstyle}>
@@ -564,7 +578,7 @@ const Index = ({navigation}) => {
           </View>
         </View>
 
-        {userData && userData?.is_admin == 1 && (
+        {userData && (userData?.is_admin == 1 || isAdmin === "true") && (
           <TouchableOpacity
             style={{
               backgroundColor: color.darkPrimary,

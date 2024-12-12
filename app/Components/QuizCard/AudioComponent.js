@@ -29,6 +29,9 @@ const AudioComponent = ({
     return () => clearInterval(interval);
   }, [sound, isPlaying]);
 
+
+
+
   // const playAudio = audioURL => {
   //   setIsLoading(true);
 

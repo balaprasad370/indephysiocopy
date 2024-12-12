@@ -7,6 +7,10 @@ import {
   StyleSheet,
   Modal,
   Button,
+  ActivityIndicator,  
+  SafeAreaView,
+  StatusBar,
+  Linking
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -19,6 +23,7 @@ import LighTheme from '../../theme/LighTheme';
 import DarkTheme from '../../theme/Darktheme';
 import LinearGradient from 'react-native-linear-gradient';
 import {ROUTES} from '../../Constants/routes';
+import { Tooltip } from 'react-native-paper';
 
 const daysOfWeek = [
   'Monday',
@@ -37,9 +42,11 @@ const Index = () => {
   const [isNextWeek, setIsNextWeek] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const {isDark, path, packageId, clientId, packageName} =
+  const {isDark, path, packageId, clientId, packageName, documentStatus} =
     useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const getStartOfWeek = () => {
     const now = new Date();
@@ -58,17 +65,17 @@ const Index = () => {
     const token = await storage.getStringAsync('token');
     if (token) {
       console.log('fetching schedule', packageId);
+      setIsLoading(true);
       try {
         const response = await axios.get(`${path}/app/schedule`, {
-          params: {
-            package_id: packageId,
-          },
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + token,
           },
         });
 
+        console.log("response", response.data);
+        
         let fetchedEvents = [];
 
         response.data.forEach(item => {
@@ -228,6 +235,9 @@ const Index = () => {
           );
         });
 
+        console.log("weekFilteredEvents", weekFilteredEvents);
+        
+
         setEvents(weekFilteredEvents);
       } catch (err) {
         setEvents([]);
@@ -249,6 +259,8 @@ const Index = () => {
         } else {
           console.log('Error in setting up the request:', err.message);
         }
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -281,7 +293,7 @@ const Index = () => {
       </LinearGradient>
       <View style={styles.cardContent}>
         <View style={{marginTop: scale(5)}}>
-          <Text style={{marginVertical: 7}}>GERMAN - {item.description}</Text>
+          <Text style={{marginVertical: 7}}>{item.description}</Text>
         </View>
         <Text style={styles.cardTime}>
           {`${item.start.getHours()}:${item.start
@@ -296,8 +308,12 @@ const Index = () => {
     </TouchableOpacity>
   );
 
+ 
+
   return (
     <>
+    <SafeAreaView style={{flex: 1}}>
+      <StatusBar backgroundColor={isDark ? color.darkPrimary : color.lightPrimary} />
       <View style={style.liveClasscontainer}>
         <View style={{height: '18%'}}>
           <View style={styles.toggleContainer}>
@@ -361,22 +377,16 @@ const Index = () => {
                 <Text style={style.toggleText}>Next Week</Text>
               </TouchableOpacity>
             </LinearGradient>
-            {/* <LinearGradient
-              colors={isDark ? ['#3B3B3B', '#3B3B3B'] : ['#f5f5f5', '#f5f5f5']}
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 0}}
-              style={[
-                style.toggleButton,
-                !isNextWeek && styles.activeToggleButton,
-              ]}>
-              <TouchableOpacity
-                hitSlop={{x: 25, y: 15}}
-                onPress={() => {
-                  navigation.navigate(ROUTES.FILTER_SCREEN);
-                }}>
-                <Text style={style.toggleText}>Filter</Text>
-              </TouchableOpacity>
-            </LinearGradient> */}
+
+            <TouchableOpacity
+              hitSlop={{x: 25, y: 15}}
+              style={{padding: scale(10), borderWidth: 1, borderColor: '#0C5CB4', borderRadius: scale(10)}}
+              onPress={() => {
+                fetchSchedule();
+              }}>
+              <Icon name="refresh" size={18} color={'#0C5CB4'} />
+            </TouchableOpacity>
+
           </View>
 
           <FlatList
@@ -417,13 +427,44 @@ const Index = () => {
           />
         </View>
 
-        <View style={{height: '83%'}}>
+       {isLoading ? (<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size="large" color={color.darkPrimary} />
+    </View>) :
+        (<View style={{height: '83%',paddingVertical: scale(10)}}>
           {filteredEvents.length === 0 ? (
-            <View style={styles.noEventsContainer}>
-              <Text style={styles.noEventsText}>
-                No classes on {selectedDay}
-              </Text>
-            </View>
+            <>
+            <FlatList
+              data={[1]}
+              renderItem={() => (
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: scale(10)}}>
+                  <Text style={{fontSize: scale(17), color: color.black}}>No classes on {selectedDay}</Text>
+                </View>
+              )}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={(item, index) => index.toString()}
+              contentContainerStyle={styles.eventList}
+              onRefresh={fetchSchedule}
+              refreshing={isLoading}
+            
+            />
+           
+           {documentStatus !== 2 ? <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: scale(10)}}>
+           
+           <Tooltip title="Subscribe to access live classes" style={{padding: scale(10), borderRadius: scale(5)}}>
+                  <LinearGradient
+                  colors={['#2A89C6', '#3397CB', '#0C5CB4']}
+                  start={{x: 0, y: 0}} // Start from the left
+                  end={{x: 1, y: 0}}
+                  style={{padding: scale(10), borderRadius: scale(10)}}>
+                  <TouchableOpacity onPress={() => Linking.openURL('https://portal.indephysio.com/dashboard')}
+                   style={{ borderRadius: scale(10)}}>
+                    <Text style={{fontSize: scale(17), color: color.white}}>Subscribe Now</Text>
+                  </TouchableOpacity>
+                  </LinearGradient>
+                  </Tooltip>
+                  </View> : null}
+            </>
+
           ) : (
             <FlatList
               data={filteredEvents}
@@ -431,9 +472,11 @@ const Index = () => {
               showsVerticalScrollIndicator={false}
               keyExtractor={(item, index) => index.toString()}
               contentContainerStyle={styles.eventList}
+              onRefresh={fetchSchedule}
+              refreshing={isLoading}
             />
           )}
-        </View>
+        </View>)}
 
         {selectedEvent && (
           <Modal
@@ -490,6 +533,7 @@ const Index = () => {
           </Modal>
         )}
       </View>
+      </SafeAreaView>
     </>
   );
 };
@@ -502,7 +546,11 @@ const styles = StyleSheet.create({
   toggleContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     marginVertical: scale(10),
+    gap: scale(10),
+    paddingHorizontal: scale(10),
+    paddingTop: scale(10),
   },
 
   activeToggleButton: {
@@ -555,9 +603,9 @@ const styles = StyleSheet.create({
 
   cardHeader: {
     backgroundColor: color.lightPrimary,
-    padding: scale(8),
-    borderTopLeftRadius: scale(15),
-    borderTopRightRadius: scale(15),
+    padding: scale(10),
+    borderTopLeftRadius: scale(3),
+    borderTopRightRadius: scale(3),
   },
   cardTime: {
     color: color.black,
@@ -593,7 +641,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
   modalContent: {
     width: '80%',

@@ -33,6 +33,7 @@ const Index = () => {
   const [message, setMessage] = useState('');
 
   const [chapters, setChapters] = useState([]);
+  const [isBranch, setIsBranch] = useState(false);
   const style = isDark ? DarkTheme : LighTheme;
 
   // Memoized function to fetch chapters data
@@ -41,14 +42,14 @@ const Index = () => {
     if (!token) return;
     setLoader(true);
     try {
+      // console.log(token);
+
       const response = await axios.get(
         // `${path}/admin/v3/chapters-with-progress`,
         `${path}/admin/v1/chapters`,
         {
           params: {
             level_id,
-            client_id: clientId,
-            package_id: packageId,
           },
           headers: {
             'Content-Type': 'application/json',
@@ -57,14 +58,19 @@ const Index = () => {
         },
       );
 
+      console.log(response.data);
+      
       if (response.data.success == false) {
         setMessage(response.data.message);
+        setChapters([]);
       } else {
+        setIsBranch(response.data?.is_branch ? true : false);
         setChapters(response.data.chapters);
       }
     } catch (error) {
       console.log('Error fetching chapters:', error.response.data);
-      setMessage(error.response?.message);
+      setMessage(error.response?.data?.message);
+      setChapters([]);
     } finally {
       setLoader(false);
     }
@@ -188,22 +194,78 @@ const Index = () => {
     [isDark, navigation, level_id],
   );
 
+  const renderChapterBranchCard = useCallback(
+    ({item}) => {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(ROUTES.BRANCH_CHAPTERS, {
+              category_id: item.category_id,
+              title: item.category_title,
+            });
+          }}
+          style={styles.cardContainer}>
+          <LinearGradient
+            style={[styles.gradientContainer]}
+            colors={
+              isDark
+                ? ['#2A89C6', '#3397CB', '#0C5CB4']
+                : [color.lightPrimary, color.lightPrimary, color.lightPrimary]
+            }
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}>
+
+            <View style={styles.contentContainer}>
+              {/* Chapter Image */}
+              {item.category_img ? (
+                <Image
+                  source={{
+                    uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.category_img}`,
+                  }}
+                  style={styles.chapterImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.placeholderImage} />
+              )}
+              <View style={styles.infoContainer}>
+                <Text style={styles.chapterName} numberOfLines={1}>
+                  {item.category_title}
+                </Text>
+                <Text style={styles.chapterDescription} numberOfLines={2}>
+                  {item.category_description}
+                </Text>
+                {/* <RenderProgressBar
+                  percentage={progress.completion_percentage}
+                /> */}
+              </View>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
+      );
+    },
+    [isDark, navigation, level_id],
+  );
+
   if (loader) return <Loading />;
 
   return (
     <SafeAreaView style={style.chapterContainer}>
+      {/* <Text>Chapters</Text> */}
       {chapters && chapters.length > 0 ? (
-        <FlatList
-          data={chapters}
-          renderItem={renderChapterCard}
-          keyExtractor={item => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContainer}
-          removeClippedSubviews={Platform.OS === 'android'}
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
-          windowSize={5}
-        />
+        <>
+          <FlatList
+            data={chapters}
+            renderItem={isBranch ? renderChapterBranchCard : renderChapterCard}
+            // keyExtractor={item => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContainer}
+            removeClippedSubviews={Platform.OS === 'android'}
+            initialNumToRender={5}
+            maxToRenderPerBatch={5}
+            windowSize={5}
+          />
+        </>
       ) : (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>{message}</Text>
@@ -314,7 +376,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#666',
+    color: color.darkPrimary,
   },
 });
 

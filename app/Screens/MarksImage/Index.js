@@ -9,7 +9,7 @@ import {
   Alert,
   SafeAreaView,
 } from 'react-native';
-import ViewShot from 'react-native-view-shot';
+import ViewShot,{captureRef } from 'react-native-view-shot';
 import Share from 'react-native-share';
 import axios from 'axios';
 import {AppContext} from '../../theme/AppContext';
@@ -87,8 +87,26 @@ const Certificate = ({route}) => {
   }, [module_id]);
 
   const captureAndShareScreenshot = () => {
-    Alert.alert('Captured');
-    viewShotRef.current.capture().then(uri => {});
+ 
+    try {
+    captureRef(viewShotRef, {
+      format: 'png',
+      quality: 0.9,
+    }).then(uri => {
+
+      Share.open({
+        url: uri,
+        type: 'image/png',
+          message: `Hey, I just completed the German Language Quiz and earned my certificate! 🎓 I’d love for you to join me—install MedUniverse now and start your learning journey today!
+                  \n\n Download here: \n
+                  📱 Android : https://play.google.com/store/apps/details?id=com.inde.physio \n
+                  🍎 iOS : https://apps.apple.com/us/app/meduniverse/id6736482857`,
+        subject: 'Results',
+      });
+    });
+  } catch (error) {
+    console.log('Error capturing and sharing screenshot:', error);
+  }
   };
 
   return (
@@ -104,14 +122,19 @@ const Certificate = ({route}) => {
               <View style={styles.border}>
                 <Image source={logo} style={styles.logo} />
                 <Text style={styles.certificateTitle}>
-                  Certificate of Achievement
+                🎉 Results Are In!
                 </Text>
                 <View style={styles.decorativeLine} />
+                <View style={{flexDirection: 'row', alignItems: 'center',flexWrap: 'wrap',justifyContent: 'center',width: '100%'}}>
+                <Text style={{fontSize: 20}}>
+                Congratulations
+                </Text>
                 <Text style={styles.studentName}>
                   {userData?.first_name} {userData?.last_name}
-                </Text>
+                  </Text>
+                </View>
                 <Text style={styles.descriptionText}>
-                  has successfully completed
+                  on successfully completing the
                 </Text>
                 <Text style={styles.examTitle}>German Language Quiz Exam </Text>
 
@@ -124,14 +147,11 @@ const Certificate = ({route}) => {
                 <Text style={styles.date}>
                   Date: {new Date(date).toLocaleDateString()}
                 </Text>
-                <Text style={styles.issuer}>
-                  Issued by: ABC Certification Board
-                </Text>
 
-                <View style={styles.signatureSection}>
+                {/* <View style={styles.signatureSection}>
                   <View style={styles.signatureLine} />
                   <Text style={styles.signatureText}>Authorized Signature</Text>
-                </View>
+                </View> */}
               </View>
             </LinearGradient>
           </ViewShot>
@@ -250,7 +270,7 @@ export default Certificate;
 const styles = StyleSheet.create({
   certificateCard: {
     backgroundColor: '#fff',
-    padding: 30,
+    padding: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 10},
@@ -258,12 +278,13 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 10,
     width: '100%',
+    marginTop: 10,
     // maxWidth: 400,
   },
   border: {
     borderColor: '#d4af37',
     borderWidth: 4,
-    padding: 20,
+    padding: 10,
     borderRadius: 10,
     position: 'relative',
   },
@@ -306,6 +327,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     fontFamily: 'serif',
+    textTransform: 'capitalize',
   },
 
   answersContainer: {

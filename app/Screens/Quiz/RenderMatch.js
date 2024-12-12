@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import DraggableFlatList from 'react-native-draggable-flatlist';
+import DraggableFlatList, {ScaleDecorator} from 'react-native-draggable-flatlist';
 import color from '../../Constants/color';
 import storage from '../../Constants/storage';
 import axios from 'axios';
@@ -36,21 +36,35 @@ const RenderMatch = ({
     .split(',')
     .map(id => id.trim());
 
+
+
+    const answers = new Map();
+
+    for(let i = 0; i < matchAnswerLeftIds.length; i++){
+        answers.set(matchAnswerLeftIds[i], matchAnswerRightIds[i]);
+    }
+
+    // console.log("answers",answers);
+
+   
+
   const [answerData, setAnswerData] = useState([]);
 
   useEffect(() => {
-    // console.log('itemss', combinedData);
+    // console.log('itemss', item);
     matchFunction();
   }, [matchData, item]);
 
   const matchFunction = async () => {
+    console.log("matchData",matchData.length);
+    console.log("item",item);
     const token = await storage.getStringAsync('token');
     try {
       const response = await axios.post(
         `${path}/admin/v4/matchFunction`,
         {
           matchData: matchData,
-          item: item,
+          item: item, 
         },
         {
           headers: {
@@ -59,6 +73,7 @@ const RenderMatch = ({
           },
         },
       );
+      console.log("response",response.data);
       setCombinedData(response.data);
     } catch (error) {
       console.log(error);
@@ -82,6 +97,8 @@ const RenderMatch = ({
         allMatched = false;
       }
     });
+    console.log("updatedData",updatedData);
+    
     setScore(allMatched ? score + 1 : score);
   };
 
@@ -110,9 +127,12 @@ const RenderMatch = ({
           <DraggableFlatList
             data={combinedData}
             renderItem={({item, drag}) => (
-              <TouchableOpacity onLongPress={drag} style={styles.leftContainer}>
-                <Text style={styles.matchText}>{item.leftMatch}</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onLongPress={drag}
+      
+                  style={styles.leftContainer}>
+                  <Text style={styles.matchText}>{item.leftMatch}</Text>
+                </TouchableOpacity>
             )}
             keyExtractor={item => item.leftId}
             onDragEnd={({data}) => handleLeftDragEnd({data})}
@@ -125,6 +145,7 @@ const RenderMatch = ({
             renderItem={({item, drag}) => (
               <TouchableOpacity
                 onLongPress={drag}
+      
                 style={styles.rightContainer}>
                 <Text style={styles.matchText}>{item.rightMatch}</Text>
               </TouchableOpacity>

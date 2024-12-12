@@ -1,4 +1,4 @@
-import {StyleSheet, Platform, StatusBar, Alert, Modal} from 'react-native';
+import { StyleSheet, Platform, StatusBar, Alert, Modal, View, Text } from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {AppContext, AuthProvider} from './app/theme/AppContext';
 import AppNavigator from './app/Navigation/AppNavigator';
@@ -7,14 +7,22 @@ import SplashScreen from 'react-native-splash-screen';
 import storage from './app/Constants/storage';
 import messaging, {requestPermission} from '@react-native-firebase/messaging';
 import notifee from '@notifee/react-native';
-// import {getFcmToken, registerListenerWithFCM} from './app/utils/fcm';
+import { Provider as PaperProvider } from 'react-native-paper';
+
 
 enableScreens();
 
 const App = () => {
+
   useEffect(() => {
-    notifee.requestPermission();
+    requestNotificationPermission();
   }, []);
+
+  const requestNotificationPermission = async () => {
+    // console.log('requestNotificationPermission', messaging);
+    await messaging().requestPermission();
+    // await notifee.requestPermission();
+  };
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -26,7 +34,6 @@ const App = () => {
         await notifee.displayNotification({
           title: remoteMessage?.notification?.title,
           body: remoteMessage?.notification?.body,
-
           android: {
             channelId,
             pressAction: {
@@ -50,7 +57,9 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <AppNavigator />
+      <PaperProvider>
+        <AppNavigator />
+      </PaperProvider>
     </AuthProvider>
   );
 };
@@ -74,7 +83,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   activityIndicator: {

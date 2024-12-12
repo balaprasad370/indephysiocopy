@@ -38,6 +38,7 @@ import Recording from '../Screens/Recording/Index';
 import VoiceComponent from '../Screens/Quiz/VoiceComponent';
 import AppUsageTracker from '../Screens/AppUsage/Index';
 import StudentAccess from '../Screens/StudentAccess/StudentAccess';
+import BranchChapters from '../Screens/Branch/index';
 
 const Stack = createStackNavigator();
 
@@ -242,6 +243,21 @@ const StackNavigation = () => {
         }}
         component={SelfLearnScreen}
       />
+
+
+      <Stack.Screen
+        name={ROUTES.BRANCH_CHAPTERS}
+        options={{
+          headerLeftLabelVisible: false,
+          title: 'Categories',
+          headerStyle: {
+            backgroundColor: isDark ? '#000' : '#fff',
+          },
+          headerTintColor: isDark ? '#fff' : '#000',
+        }}
+        component={BranchChapters}
+      />
+      
       <Stack.Screen
         name={ROUTES.READING}
         options={{
