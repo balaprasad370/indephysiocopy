@@ -5,12 +5,14 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Vibration,
 } from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import color from '../../Constants/color';
 import storage from '../../Constants/storage';
 import axios from 'axios';
 import {AppContext} from '../../theme/AppContext';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const JumbledSentence = ({
   matchData,
@@ -95,8 +97,13 @@ const JumbledSentence = ({
             <DraggableFlatList
             data={combinedData}
             renderItem={({item, drag}) => (
-              <TouchableOpacity onPress={drag} style={styles.rightContainer}>
+              <TouchableOpacity
+              onLongPress={() => {
+                drag()
+                Vibration.vibrate(30)
+              }} style={styles.rightContainer}>
                 <Text style={styles.matchText}>{item.questionMatch}</Text>
+                <MaterialCommunityIcons name="drag" size={24} color={color.black} />
               </TouchableOpacity>
             )}
             keyExtractor={item => item.questionId}
@@ -133,9 +140,14 @@ const styles = StyleSheet.create({
   rightContainer: {
     marginLeft: 5,
     marginBottom: 5,
+    paddingHorizontal: 10,
     borderWidth: 1,
+    borderRadius: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 5,
-    height: 60,
   },
   matchText: {
     fontSize: 18,

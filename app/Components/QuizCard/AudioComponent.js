@@ -4,6 +4,7 @@ import Sound from 'react-native-sound';
 import Icon from 'react-native-vector-icons/AntDesign';
 import color from '../../Constants/color';
 import {AppContext} from '../../theme/AppContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 const AudioComponent = ({
   isPlaying,
@@ -30,40 +31,23 @@ const AudioComponent = ({
   }, [sound, isPlaying]);
 
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // Component gains focus: do nothing here
+
+      return () => {
+        // Component loses focus: stop audio and reset state
+        if (sound) {
+          sound.stop(() => {
+            setSound(null);
+            setIsPlaying(false);
+          });
+        }
+      };
+    }, [sound, setSound, setIsPlaying])
+  );
 
 
-  // const playAudio = audioURL => {
-  //   setIsLoading(true);
-
-  //   if (sound) {
-  //     sound.stop(() => {
-  //       setSound(null);
-  //       setIsPlaying(false);
-  //     });
-  //   }
-
-  //   const newSound = new Sound(audioURL, '', error => {
-  //     if (error) {
-  //       console.log('Failed to load the sound', error);
-  //       setIsLoading(false);
-  //       return;
-  //     }
-  //     setSound(newSound);
-  //     setDuration(newSound.getDuration());
-  //     newSound.play(success => {
-  //       if (success) {
-  //         console.log('Successfully finished playing');
-  //       } else {
-  //         console.log('Playback failed due to audio decoding errors');
-  //       }
-  //       setIsPlaying(false);
-  //       setSound(null);
-  //       setIsLoading(false);
-  //     });
-  //     setIsPlaying(true);
-  //     setIsLoading(false);
-  //   });
-  // };
   const playAudio = audioURL => {
     if (isLoading || isPlaying) {
       return; // Prevent multiple play actions when already playing or loading

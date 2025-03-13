@@ -229,6 +229,7 @@ const Index = ({route}) => {
               sound.pause();
             }
 
+
             const newScore = score === 0 ? 0 : score;
             try {
               // Save the marks using POST request
@@ -577,7 +578,7 @@ const Index = ({route}) => {
             width: '100%',
           }}>
           <Text style={[styled.quiztitle, {flexShrink: 1}]}>
-            Q{quesIndex}) {parts[0]}
+            Q{quesIndex + 1}) {parts[0]}
           </Text>
 
           {parts.length > 1 && (
@@ -1050,7 +1051,7 @@ const Index = ({route}) => {
   );
 
   const renderSubQuestions = useCallback(
-    subQuestion => (
+    (subQuestion, qNo) => (
       <View key={subQuestion.id} style={styled.subQuestionContainer}>
         {(subQuestion.type === 'TextImage' ||
           subQuestion.type === 'TextNormal' ||
@@ -1072,7 +1073,7 @@ const Index = ({route}) => {
         {subQuestion.type === 'Audio' && (
           <>
             <Text selectable={true} style={styled.quiztitle}>
-              {subQuestion.question}
+              {qNo}. {subQuestion.question}
             </Text>
             {subQuestion.imageURL && renderImage(subQuestion.imageURL)}
             <AudioComponent
@@ -1108,7 +1109,7 @@ const Index = ({route}) => {
           subQuestion.type === 'TrueFalse') && (
           <>
             <Text selectable={true} style={styled.quiztitle}>
-              {subQuestion.question}
+              {qNo}. {subQuestion.question}
             </Text>
             {subQuestion.imageURL && renderImage(subQuestion.imageURL)}
           </>
@@ -1147,6 +1148,8 @@ const Index = ({route}) => {
         ? allCombinedData
         : selectedOptions;
     try {
+      console.log(score);
+
       // Prepare the quiz data you want to send to the backend
       let quizData = {
         module_id: module_id,
@@ -1215,6 +1218,15 @@ const Index = ({route}) => {
               </TouchableOpacity>
               <Text style={style.modalQuizText}>{truncateTitle(title, 3)}</Text>
             </View>
+
+            <View>
+              <TouchableOpacity
+                hitSlop={{x: 25, y: 15}}
+                style={styled.submittBtn}
+                onPress={submitNow}>
+                <Text style={styled.nextBtnText}>Submit Now</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <LinearGradient
             colors={[color.black, color.black, color.lowPrimary]}
@@ -1246,11 +1258,13 @@ const Index = ({route}) => {
                   </View>
 
                   {item.subQuestions &&
-                    item.subQuestions.map(renderSubQuestions)}
+                    item.subQuestions.map((ele, index) => {
+                      return renderSubQuestions(ele, index + 1);
+                    })}
                 </View>
               )}
             />
-            {question.length >= 2 ? (
+            {question.length > 1 ? (
               <View style={styled.bottomButton}>
                 <TouchableOpacity
                   hitSlop={{x: 25, y: 15}}
@@ -1272,14 +1286,6 @@ const Index = ({route}) => {
                 </TouchableOpacity>
               </View>
             ) : null}
-            <View>
-              <TouchableOpacity
-                hitSlop={{x: 25, y: 15}}
-                style={styled.submittBtn}
-                onPress={submitNow}>
-                <Text style={styled.nextBtnText}>Submit Now</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </View>
@@ -1357,8 +1363,7 @@ const styled = StyleSheet.create({
     padding: scale(6),
   },
   submittBtn: {
-    marginTop: scale(8),
-    backgroundColor: color.darkPrimary,
+    backgroundColor: color.primary,
     borderRadius: scale(10),
     padding: scale(6),
   },

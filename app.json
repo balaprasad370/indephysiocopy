@@ -1,4 +1,16 @@
 {
   "name": "indephysio",
-  "displayName": "MedUniverse"
+  "displayName": "MedUniverse",
+  "extra": {
+    "eas": {
+      "projectId": "1198ec81-8d43-409d-a013-a865a99f70b4"
+    }
+  },
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "1198ec81-8d43-409d-a013-a865a99f70b4"
+      }
+    }
+  }
 }

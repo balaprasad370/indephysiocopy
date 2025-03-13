@@ -64,7 +64,6 @@ const Index = () => {
   const fetchSchedule = async () => {
     const token = await storage.getStringAsync('token');
     if (token) {
-      console.log('fetching schedule', packageId);
       setIsLoading(true);
       try {
         const response = await axios.get(`${path}/app/schedule`, {

@@ -113,7 +113,9 @@ const Certificate = ({route}) => {
     <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
       <ScrollView style={{flex: 1, backgroundColor: '#FFF'}}>
         <View style={style.marksContainer}>
-          <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.9}}>
+          <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.9}} style={{
+            width: '95%',
+          }}>
             <LinearGradient
               colors={['#2A89C6', '#3397CB', '#0C5CB4']}
               start={{x: 0, y: 0}}
@@ -125,14 +127,13 @@ const Certificate = ({route}) => {
                 🎉 Results Are In!
                 </Text>
                 <View style={styles.decorativeLine} />
-                <View style={{flexDirection: 'row', alignItems: 'center',flexWrap: 'wrap',justifyContent: 'center',width: '100%'}}>
-                <Text style={{fontSize: 20}}>
+                <Text style={{fontSize: 20 , textAlign: 'center', color: '#0056b3', fontWeight: 'bold', fontFamily: 'serif'}}>
                 Congratulations
                 </Text>
                 <Text style={styles.studentName}>
                   {userData?.first_name} {userData?.last_name}
                   </Text>
-                </View>
+         
                 <Text style={styles.descriptionText}>
                   on successfully completing the
                 </Text>
