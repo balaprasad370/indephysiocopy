@@ -1,43 +1,20 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import color from '../../Constants/color';
 import {useNavigation} from '@react-navigation/native';
-import {ROUTES} from '../../Constants/routes';
 
-const LineAfterBtn = ({lineBefore, secondBtn, route}) => {
+const LineAfterBtn = ({lineBefore, secondBtn, route, className}) => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.member}>
-      <Text style={styles.notMember}>{lineBefore}</Text>
+    <View className="flex flex-row justify-center items-center mb-4 mt-2">
+      <Text className="text-lg mr-2 text-n50">{lineBefore}</Text>
       <TouchableOpacity
         hitSlop={{x: 25, y: 15}}
         onPress={() => navigation.navigate(route)}>
-        <Text style={styles.joinNow}>{secondBtn}</Text>
+        <Text className={`text-lg font-semibold text-p1 ${className}`}>{secondBtn}</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 export default LineAfterBtn;
-
-const styles = StyleSheet.create({
-  notMember: {
-    fontSize: 18,
-
-    marginRight: 10,
-  },
-  joinNow: {
-    color: color.darkPrimary,
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  member: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
-    marginTop: 10,
-  },
-});

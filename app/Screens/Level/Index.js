@@ -2,250 +2,242 @@ import React, {useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   Image,
-  TouchableHighlight,
-  Platform,
+  ActivityIndicator,
+  Pressable,
+  RefreshControl,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome6';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
-import color from '../../Constants/color';
 import axios from 'axios';
 import {AppContext} from '../../theme/AppContext';
 import storage from '../../Constants/storage';
-import DarkTheme from '../../theme/Darktheme';
-import LighTheme from '../../theme/LighTheme';
-import LinearGradient from 'react-native-linear-gradient';
-import Loading from '../../Components/Loading/Loading';
-import IconTimer from 'react-native-vector-icons/Ionicons';
-import {Animated} from 'react-native';
+import IonIcon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import PageTitle from '../../ui/PageTitle';
+import topBgBackground from '../../assets/top-bg-shape2.png';
+import trackEvent from '../../Components/MixPanel';
+import axiosInstance from '../../Components/axiosInstance';
 
 const Index = ({route}) => {
-  const {path, langId, clientId, isDark, loader, setLoader} =
-    useContext(AppContext);
-
+  const {path, isDark} = useContext(AppContext);
   const {lang_id} = route.params;
   const [levels, setLevels] = useState([]);
+  const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
-  const style = isDark ? DarkTheme : LighTheme;
+
+  const [loader, setLoader] = useState(true);
+
+  const fetchLevels = async () => {
+    const token = await storage.getStringAsync('token');
+    if (!token) {
+      setError('Authentication token not found');
+      return;
+    }
+
+    try {
+      setLoader(true);
+      setError(null);
+
+      const response = await axiosInstance.get(`/student/v1/level/${lang_id}`);
+
+      if (!response?.data?.data) {
+        throw new Error('Invalid response format');
+      }
+
+      setLevels(response.data.data);
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        setError('Request timed out. Please try again.');
+      } else if (error.response?.status === 401) {
+        setError('Session expired. Please login again.');
+      } else {
+        setError('Error fetching levels. Please try again later.');
+      }
+      console.error('Error fetching levels:', error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await fetchLevels();
+    } catch (error) {
+      console.error('Error during refresh:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchLevels = async () => {
-      try {
-        setLoader(true);
-        const token = await storage.getStringAsync('token');
+    let isSubscribed = true;
 
-        if (token) {
-          const response = await axios.get(
-            // `${path}/admin/v3/levels/${lang_id}`,
-            `${path}/student/v1/level/${lang_id}`,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
-          // console.log(response.data.data);
-          setLevels(response.data.data);
-        } else {
-          console.log('No token found');
-        }
-      } catch (error) {
-        console.log('Error fetching levels: ', error.response);
-      } finally {
-        setLoader(false);
+    const unsubscribe = navigation.addListener('focus', e => {
+      if (isSubscribed && e.data?.action?.type === 'NAVIGATE') {
+        fetchLevels();
       }
+    });
+
+    if (isSubscribed) {
+      fetchLevels();
+    }
+
+    return () => {
+      isSubscribed = false;
+      unsubscribe();
     };
-
-    fetchLevels();
-  }, [lang_id, path]); // Add dependencies if necessary
-
-  const progressArray = [true, true, false, false, false];
-  const completedCount = progressArray.filter(Boolean).length;
-  const total = progressArray.length;
-  const progressPercentage = Math.round((completedCount / total) * 100);
+  }, [navigation]);
 
   const renderItem = ({item}) => (
-    <TouchableOpacity
-      hitSlop={{x: 0, y: 0}}
-      style={styles.parent_level_container}
-      onPress={
-        item.status === 'locked'
-          ? null
-          : () =>
-              navigation.navigate(ROUTES.CHAPTERS, {
-                level_id: item.level_id,
-              })
-      }>
-      <LinearGradient
-        colors={[color.lowPrimary, color.lowPrimary]}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}
-        style={styles.level}>
-        <View style={{position: 'absolute', left: '50%', zIndex: 9999}}>
-          <IconTimer
-            name={item.status === 'locked' ? 'lock-closed-sharp' : null}
-            style={{fontSize: 26}}
-            color="black"
-          />
-        </View>
+    <View className="w-[92%] self-center rounded-[24px] shadow-xl mb-4 overflow-hidden border border-p1/20 bg-white dark:bg-n75">
+      <Pressable
+        android_ripple={{color: '#613BFF10'}}
+        style={({pressed}) => [
+          {
+            opacity: pressed ? 0.95 : 1,
+          },
+        ]}
+        onPress={() => {
+          if (item.status !== 'locked') {
+            trackEvent('Levels', {
+              level_id: item.level_id,
+              level_name: item.level_name,
+              level_description: item.level_description,
+            });
+            navigation.navigate(ROUTES.CHAPTERS, {level_id: item.level_id});
+          }
+        }}>
         <View
-          style={[
-            styles.levelCard,
-            {
-              opacity:
-                item.status === 'locked'
-                  ? // (item.status.a1 === 'locked' &&
-                    //   item.level_name.includes('A1')) ||
-                    // (item.status.a2 === 'locked' &&
-                    //   item.level_name.includes('A2')) ||
-                    // (item.status.b1 === 'locked' &&
-                    //   item.level_name.includes('B1')) ||
-                    // (item.status.b2 === 'locked' &&
-                    //   item.level_name.includes('B2')) ||
-                    // (item.status.exam_module === 'locked' &&
-                    //   item.level_name.includes('Exam Module'))
-                    0.1
-                  : 1,
-            },
-          ]}>
-          {/* Left Side: Image */}
-          <Image
-            source={{
-              uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.level_img}`,
-            }}
-            style={styles.levelImage}
-            resizeMode="cover"
-          />
+          className={`relative ${
+            item.status === 'locked' ? 'opacity-75' : ''
+          }`}>
+          <View className="h-[120px]">
+            {item.level_img ? (
+              <Image
+                resizeMode="cover"
+                className="w-full h-full"
+                source={{
+                  uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.level_img}`,
+                }}
+              />
+            ) : (
+              <View className="w-full h-full bg-n40 justify-center items-center">
+                <ActivityIndicator size="large" color="#613BFF" />
+              </View>
+            )}
+            {item.status !== 'locked' ? (
+              <View className="absolute top-2 right-2 z-50 bg-white border border-green-600/20 px-3 py-1 rounded-full">
+                <Text className="text-green-600 font-semibold text-xs">
+                  Enrolled
+                </Text>
+              </View>
+            ) : (
+              <View className="absolute top-2 right-2 z-50 bg-white border border-red-600/20 px-3 py-1 rounded-full">
+                <Text className="text-red-600 font-semibold text-xs">
+                  Not Enrolled
+                </Text>
+              </View>
+            )}
+          </View>
 
-          {/* Right Side: Level Info */}
-          <View style={styles.levelInfo}>
-            <Text style={styles.levelText}>{item.level_name}</Text>
-            <Text style={styles.levelDescription}>
+          {item.status === 'locked' && (
+            <View className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center w-full h-full">
+              <View className="bg-white/90 rounded-2xl p-4 shadow-lg transform transition-all duration-200 hover:scale-105">
+                <View className="relative">
+                  <IonIcon name="lock-closed" size={40} color="#613BFF" />
+                  <View className="absolute -top-1 -right-1">
+                    <View className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+
+          <View className="p-4">
+            <View className="mb-2">
+              <Text className="text-lg font-bold text-p1 flex-wrap">
+                {item.level_name}
+              </Text>
+            </View>
+            <Text className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed flex-wrap">
               {item.level_description}
             </Text>
+
+            {item.status !== 'locked' && (
+              <Pressable
+                className="mt-4 bg-p1 rounded-xl py-3 flex-row items-center justify-center shadow-lg shadow-p1/30"
+                onPress={() => {
+                  trackEvent('Levels', {
+                    level_id: item.level_id,
+                    level_name: item.level_name,
+                    level_description: item.level_description,
+                  });
+                  navigation.navigate(ROUTES.CHAPTERS, {
+                    level_id: item.level_id,
+                  });
+                }}>
+                <MaterialIcons name="school" size={20} color="white" />
+                <Text className="ml-2 text-white font-bold text-sm">
+                  Start Learning
+                </Text>
+              </Pressable>
+            )}
           </View>
         </View>
-      </LinearGradient>
-    </TouchableOpacity>
+      </Pressable>
+    </View>
   );
 
-  if (loader) {
-    return <Loading />;
-  }
+  const EmptyListComponent = () => (
+    <View className="flex-1 justify-center items-center p-4">
+      <Text className="text-lg font-black text-center">
+        {error || "You don't have access to this premium content"}
+      </Text>
+    </View>
+  );
+
+  const LoadingComponent = () => (
+    <View className="flex-1 justify-center items-center py-8">
+      <ActivityIndicator size="large" color="#613BFF" />
+    </View>
+  );
 
   return (
-    <SafeAreaView style={style.levelcontainer}>
-      {levels.length > 0 ? (
+    <SafeAreaView className={`flex-1 bg-b50 ${isDark ? 'bg-n75' : ''}`}>
+      <View className="relative pb-8">
+        <View className="absolute w-full top-0 left-0 right-0">
+          <Image
+            source={topBgBackground}
+            className="w-full h-[200px] -mt-24"
+            onError={() => console.warn('Failed to load background image')}
+          />
+        </View>
+        <PageTitle pageName="Levels" />
+      </View>
+      {loader ? (
+        <LoadingComponent />
+      ) : (
         <FlatList
           data={levels}
           renderItem={renderItem}
           keyExtractor={item => item.level_id.toString()}
-          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={EmptyListComponent}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          onError={error => {
+            console.error('FlatList error:', error);
+            setError('Error displaying content');
+          }}
         />
-      ) : (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text style={{fontSize: 18, fontWeight: '900'}}>
-            You don't have access of this premium content
-          </Text>
-        </View>
       )}
     </SafeAreaView>
   );
 };
 
 export default Index;
-
-const styles = StyleSheet.create({
-  parent_level_container: {
-    ...Platform.select({
-      ios: {
-        backgroundColor: '#fff', // Required for iOS
-        shadowColor: color.lowPrimary,
-        shadowOffset: {width: 0, height: 5},
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-      },
-      android: {
-        elevation: 1, // Use elevation for Android
-      },
-    }),
-  },
-  level: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 5,
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 10,
-  },
-
-  levelCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-  },
-  levelImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-    marginRight: 15,
-  },
-  levelInfo: {
-    flex: 1,
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  levelText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: color.black,
-    marginBottom: 8,
-  },
-  levelDescription: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#000',
-  },
-  progressWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  progressText: {
-    fontSize: 12,
-    color: color.black,
-    marginRight: 5,
-  },
-  progressDot: {
-    width: 10,
-    height: 10,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-  },
-  progressDotFilled: {
-    backgroundColor: 'green',
-  },
-  progressLine: {
-    width: 15,
-    height: 2,
-    backgroundColor: '#FFF',
-    marginHorizontal: 5,
-  },
-  progressLineFilled: {
-    width: 15,
-    height: 2,
-    backgroundColor: 'green',
-    marginHorizontal: 5,
-  },
-});

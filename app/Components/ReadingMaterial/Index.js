@@ -185,7 +185,7 @@ const Index = ({route}) => {
     // setCompleted(!completed);
 
     Alert.alert(
-      'Submit Completion',
+      'Mark as read',
       'Are you sure you want to submit your Reading material completion?',
       [
         {
@@ -244,29 +244,32 @@ const Index = ({route}) => {
   }
 
   return (
-    <SafeAreaView style={[style.reading]}>
-      <WebView
-        originWhitelist={['*']}
-        source={{html: htmlData}}
-        showsVerticalScrollIndicator={false}
-      />
-      <TouchableOpacity
-        onPress={submitReadStatus}
-        style={{
-          backgroundColor: color.lightPrimary,
-          paddingVertical: scale(14),
-          paddingHorizontal: scale(16),
-          borderRadius: 9,
-          width: '97%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignSelf: 'center',
-        }}>
-        <Text
-          style={{fontSize: scale(16), color: 'black', textAlign: 'center'}}>
-          Marks as read
-        </Text>
-      </TouchableOpacity>
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1">
+        <WebView
+          originWhitelist={['*']} 
+          source={{html: htmlData}}
+          showsVerticalScrollIndicator={false}
+          className="flex-1"
+        />
+      </View>
+      
+      <View className="px-4 py-3 bg-white shadow-lg">
+        <TouchableOpacity
+          onPress={submitReadStatus}
+          className="bg-p1 py-4 px-6 rounded-xl shadow-sm active:opacity-90"
+          style={{
+            shadowColor: '#613BFF',
+            shadowOffset: {width: 0, height: 4},
+            shadowOpacity: 0.2,
+            shadowRadius: 8,
+            elevation: 4
+          }}>
+          <Text className="text-white text-center font-medium text-lg">
+            Mark as read
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

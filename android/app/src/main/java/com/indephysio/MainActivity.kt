@@ -20,12 +20,22 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnable
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import com.google.android.play.core.install.model.AppUpdateType
 
+import com.oney.WebRTCModule.WebRTCModuleOptions;
+
+import com.rnfs.RNFSPackage;
+
 class MainActivity : ReactActivity() {
         private lateinit var appUpdateManager:AppUpdateManager
         override fun onCreate(savedInstanceState: Bundle?) {
             setContentView(R.layout.launch_screen) 
             SplashScreen.show(this, R.style.SplashTheme, true)
             super.onCreate(savedInstanceState)
+
+            // Initialize the WebRTC module options.
+            val options = WebRTCModuleOptions.getInstance()
+            options.enableMediaProjectionService = true
+
+
             appUpdateManager = AppUpdateManagerFactory.create(this)
             checkUpdates()
         }

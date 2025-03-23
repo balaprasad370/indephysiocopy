@@ -12,7 +12,7 @@ import {
   Platform,
   Linking,
   Animated,
-  StatusBar
+  StatusBar,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,6 +31,7 @@ import {AppContext} from '../../theme/AppContext';
 import scale from '../../utils/utils';
 import LighTheme from '../../theme/LighTheme';
 import DarkTheme from '../../theme/Darktheme';
+import ProgressNotification from '../../Components/ProgressNotification/Index';
 
 import styles from './dashboardCss';
 import {ROUTES} from '../../Constants/routes';
@@ -59,7 +60,8 @@ import {checkforUpdate} from '../../Components/CheckForUpdate/CheckForUpdate';
 import {getFcmToken, registerListenerWithFCM} from '../../utils/fcm';
 import LinearGradient from 'react-native-linear-gradient';
 import SubscriptionExpiry from '..//SubscriptionExpiry/Index';
-import StudentAccess from '../StudentAccess/StudentAccess';
+import LottieView from 'lottie-react-native';
+import Tabs from '../../Components/Dashboard/Tabs';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
@@ -72,10 +74,10 @@ const Index = ({navigation}) => {
   const [isNotification, setIsNotification] = useState(false);
   const [notificationTitle, setNotificationTitle] = useState('');
   const [notificationBody, setNotificationBody] = useState('');
-  
+
   const [isAdmin, setisAdmin] = useState(null);
 
-
+  const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -98,10 +100,9 @@ const Index = ({navigation}) => {
   }, []);
 
   const getIsAdmin = async () => {
-    const _isAdmin =  await storage.getStringAsync('isAdmin');
-   setisAdmin(_isAdmin)
-  }
-
+    const _isAdmin = await storage.getStringAsync('isAdmin');
+    setisAdmin(_isAdmin);
+  };
 
   const storeDeviceInfo = async () => {
     const token = await storage.getStringAsync('token');
@@ -278,35 +279,6 @@ const Index = ({navigation}) => {
     }
   };
 
-  const courseData = [
-    {
-      locked: false,
-      courseTitle: documentStatus === 2 ? 'Registered' : 'Not Registered',
-      middleCourseCard: 'Approx D.O.R',
-      plane: true,
-      bottomCourseCard: '000€',
-    },
-    {
-      locked: false,
-      courseTitle: 'Referral Portal',
-      middleCourseCard: 'My Euro Bank',
-      refer: true,
-      bottomCourseCard: '116🏚️',
-    },
-    {
-      locked: true,
-      courseTitle: 'Next Live Class',
-      middleCourseCard: 'Anywhere in Germany',
-      bottomCourseCard: 'Book Now',
-    },
-    {
-      locked: true,
-      courseTitle: 'Chapters',
-      middleCourseCard: 'Dynamic date',
-      bottomCourseCard: '33 days',
-    },
-  ];
-
   const [data, setData] = useState();
   const [webinar, setWebinar] = useState('');
 
@@ -387,7 +359,7 @@ const Index = ({navigation}) => {
     }
   };
 
-  const [isSingleNotification, setIsSingleNotification] = useState();
+  const [isSingleNotification, setIsSingleNotification] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const notificationData = async () => {
     const token = await storage.getStringAsync('token');
@@ -447,7 +419,8 @@ const Index = ({navigation}) => {
     }
   };
   //noted
-  const [subscriptionExpiry, setSubscriptionExpiry] = useState(false);
+  const [subscriptionExpiryStatus, setSubscriptionExpiryStatus] =
+    useState(false);
   const getSubscriptionExpiry = async () => {
     const token = await storage.getStringAsync('token');
     if (!token) {
@@ -464,8 +437,8 @@ const Index = ({navigation}) => {
           },
         },
       );
-      console.log(response?.data);
-      setSubscriptionExpiry(response?.data?.expired);
+      console.log('dfbfg', response?.data);
+      setSubscriptionExpiryStatus(response?.data?.expired);
     } catch (error) {
       console.log('errors', error?.response?.data || error?.message);
     }
@@ -473,34 +446,53 @@ const Index = ({navigation}) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      console.log('jbg');
+      // getSubscriptionExpiry();
+
       storeDeviceInfo();
       notificationCountFunction();
-      getSubscriptionExpiry();
       notificationData();
       getWebinar();
       deviceInformation();
       checkforUpdate();
       cloudMessaging();
       getIsAdmin();
+      setRendered(!rendered);
     });
     return unsubscribe;
   }, []);
 
   const renderItem = ({item}) => {
     return (
-      <SafeAreaView>
-        <StatusBar backgroundColor={isDark ? color.darkPrimary : color.lightPrimary} />
-        {subscriptionExpiry ? (
-          <Modal transparent={true} animationType="fade" visible={true}>
-            <SubscriptionExpiry />
-          </Modal>
-        ) : null}
-        
+      <SafeAreaView
+        className="min-h-screen"
+        style={{position: 'relative', flex: 1, width: '100%', height: '100%'}}>
+        <View
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            zIndex: -1,
+          }}>
+          <LottieView
+            source={{
+              uri: 'https://lottie.host/8c5b5a42-228d-40a1-be1f-88e586dd4c98/sB2gF4vRJk.json',
+            }}
+            autoPlay
+            loop
+            style={{width: '100%', height: '100%'}}
+            resizeMode="cover"
+            // imageStyle={{opacity: 0.8}}
+          />
+        </View>
+
+        <StatusBar backgroundColor={'#613BFF'} />
+
         {Platform.OS === 'android' || (Platform.OS === 'ios' && <AppUpdate />)}
-        <View style={style.uppDash}>
-          <View style={styles.textstyle}>
-            <Text style={style.textWel}>Welcome back</Text>
-            <Text style={[style.candName, {textTransform: 'capitalize'}]}>
+        <View className="flex flex-row justify-between items-center p-4">
+          <View>
+            <Text className="text-md font-bold text-white ">Welcome back</Text>
+            <Text className="text-lg font-semibold text-white capitalize">
               {userData
                 ? `${userData.first_name} ${userData.last_name}`.length > 20
                   ? `${userData.first_name} ${userData.last_name}`.slice(
@@ -510,45 +502,29 @@ const Index = ({navigation}) => {
                   : `${userData.first_name} ${userData.last_name}`
                 : null}
             </Text>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Image source={registerImage} />
-              {/* <Icon name="crown-outline" style={style.crown} size={22} /> */}
-              <Text style={style.registered}>
+            <View className="flex flex-row items-center">
+              {documentStatus && documentStatus === 2 && (
+                <View className="bg-green-100 p-1 rounded-full mr-2">
+                  <Ionicons name="checkmark-circle" size={20} color="#22c55e" />
+                </View>
+              )}
+              <Text className="text-sm text-white">
                 {documentStatus && documentStatus === 2
                   ? 'Registered'
                   : 'Not Registered'}
               </Text>
             </View>
           </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <View style={{position: 'relative'}}>
+          <View className="flex flex-row items-center">
+            <View className="relative">
               <TouchableOpacity
-                style={{marginRight: 10}}
+                className="mr-2"
                 onPress={() => navigation.navigate(ROUTES.NOTIFICATIONS)}>
-                <Ionicons name="notifications" size={32} color="black" />
+                <Ionicons name="notifications" size={32} color="white" />
               </TouchableOpacity>
               {notificationCount > 0 ? (
-                <View
-                  style={{
-                    position: 'absolute',
-                    right: 8,
-                    top: -8,
-                    backgroundColor: color.darkPrimary,
-                    borderRadius: 10,
-                    paddingVertical: 2,
-                    paddingHorizontal: 6,
-                  }}>
-                  <Text style={{fontSize: 10, color: 'white'}}>
+                <View className="absolute right-2 top-0 bg-darkPrimary rounded-full px-2 py-1">
+                  <Text className="text-xs text-white">
                     {notificationCount}
                   </Text>
                 </View>
@@ -558,10 +534,7 @@ const Index = ({navigation}) => {
             <TouchableOpacity
               hitSlop={{x: 25, y: 15}}
               onPress={() => navigation.openDrawer()}
-              // onPress={() => navigation.navigate(ROUTES.PROFILE_SETTING)}
-              style={{
-                paddingRight: '3%',
-              }}>
+              className="pr-3">
               <Image
                 source={
                   userData && userData?.profile_pic
@@ -572,32 +545,21 @@ const Index = ({navigation}) => {
                         uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
                       }
                 }
-                style={{width: 55, height: 55, borderRadius: 27}}
+                className="w-14 h-14 rounded-full"
               />
             </TouchableOpacity>
           </View>
         </View>
 
-        {userData && (userData?.is_admin == 1 || isAdmin === "true") && (
+        {userData && (userData?.is_admin == 1 || isAdmin === 'true') && (
           <TouchableOpacity
-            style={{
-              backgroundColor: color.darkPrimary,
-              padding: scale(8),
-              borderRadius: scale(8),
-              width: 130,
-              marginTop: 10,
-              alignSelf: 'flex-end',
-            }}
+            className="bg-p1 p-2 mr-2 rounded-lg w-32 mt-2 self-end"
             onPress={() => navigation.navigate(ROUTES.STUDENT_ACCESS)}>
-            <Text
-              style={{color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+            <Text className="text-white font-bold text-center">
               Student Access
             </Text>
           </TouchableOpacity>
         )}
-        {/* <Notfications /> */}
-
-        {/* <Information webinar={webinar} setAdVisible={setAdVisible} /> */}
 
         {webinar && (
           <Information webinar={webinar} setAdVisible={setAdVisible} />
@@ -609,166 +571,38 @@ const Index = ({navigation}) => {
           />
         )}
 
-        {/* <Optional optionalData={optionalData} />
-        {data && data.chapter_id !== null && (
-          <CurrentStatusComponent data={data} />
-        )} */}
-        {/* <LastComponent /> */}
-        <FlatList
-          data={courseData}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
-            <CourseCard
-              locked={item.locked}
-              courseTitle={item.courseTitle}
-              toggleModal={toggleModal}
-              middleCourseCard={item.middleCourseCard}
-              plane={item.plane}
-              refer={item.refer}
-              bottomCourseCard={item.bottomCourseCard}
-            />
-          )}
-          contentContainerStyle={{marginTop: 20}}
-        />
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-          <Menu
-            name="Self Learn"
-            iconImage={book}
-            lock={lockImage}
-            isLocked={false}
-            ROUTE="Self learn"
-            data={data}
-          />
-          <Menu
-            name="Mock test"
-            iconImage={mock}
-            lock={lockImage}
-            isLocked={true}
-          />
-          <Menu
-            name="Live class"
-            iconImage={liveclass}
-            lock={lockImage}
-            isLocked={false}
-            ROUTE="Live"
-          />
-          <Menu
-            name="Docs"
-            iconImage={docs}
-            lock={lockImage}
-            isLocked={true}
-            ROUTE="Documents"
-          />
-          <Menu
-            name="Scorecard"
-            iconImage={iconImage}
-            lock={lockImage}
-            isLocked={true}
-          />
-        </View>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={toggleModal}>
-          <ScrollView style={style.modalDocument}>
-            <View style={style.modalContent}>
-              <TouchableOpacity
-                hitSlop={{x: 25, y: 15}}
-                onPress={toggleModal}
-                style={{display: 'flex', alignItems: 'flex-end'}}>
-                <Cross name="cross" style={style.cross} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.documentContainer}>
-              <View>
-                <Text style={style.buttonTab}>Documentation</Text>
-                <Text style={style.modalStatus}>Status: Not started</Text>
-              </View>
-              <ScrollView
-                style={{marginTop: 30, marginBottom: 10}}
-                horizontal={true}>
-                <DocumentCard isDone={(isDone = true)} />
-                <DocumentCard />
-                <DocumentCard />
-              </ScrollView>
-              <View style={{marginTop: 30}}>
-                <Tasks name="Payments and Dues" />
-                <Tasks name="Agreements" />
-                <Tasks name="Request for Attestation" />
-                <Tasks name="Software and App terms and agreement" />
-              </View>
-            </View>
-          </ScrollView>
-        </Modal>
-        <View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <Text
-              style={{
-                fontSize: scale(14),
-                color: 'black',
-                fontWeight: 'bold',
-              }}>
-              Pathway: {userData?.package}
-              {/* Pathway: Professionals */}
-            </Text>
-            <TouchableOpacity
-              hitSlop={{x: 25, y: 15}}
-              onPress={() => navigation.navigate(ROUTES.REGULAR)}
-              style={{
-                backgroundColor: color.darkPrimary,
-                padding: scale(8),
-                borderRadius: scale(8),
-              }}>
-              <Text
-                style={{
-                  fontSize: scale(11),
-                  color: 'white',
-                  textAlign: 'center',
-                }}>
-                Check Regular Pathway
-              </Text>
-            </TouchableOpacity>
-          </View>
+        {/* //continue progress notification   */}
 
-          <ProfileLevel />
-        </View>
+        <ProgressNotification />
+
+        {/* 
+        <View className="flex flex-row justify-center items-center">
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(ROUTES.SAMPLE_QUIZ, {
+                // module_id: 386,
+                module_id: 4985,
+              })
+            }>
+            <Text className="text-p1 font-bold text-base">Mock Test</Text>
+          </TouchableOpacity>
+        </View> */}
+
+        <Tabs />
+
         {webinar && isAdVisible ? (
           <Modal
             transparent={true}
             visible={isAdVisible}
             animationType="fade"
             onRequestClose={toggleAd}>
-            <View style={styled.adOverlay}>
-              {/* <TouchableOpacity style={styled.closeButton} onPress={toggleAd}>
-                <Ionicons name="close" size={26} color="black" />
-              </TouchableOpacity> */}
-              <View style={styled.adContainer}>
+            <View className="flex-1 bg-black/40 justify-center items-center">
+              <View className="flex justify-center items-center w-11/12 h-4/5 rounded-lg overflow-hidden">
                 {webinar.web_type == 1 ? (
                   <>
                     {webinar?.webinar_image_url ? (
                       <TouchableOpacity
-                        style={{
-                          display: 'flex',
-                          marginTop: '20%',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: 10,
-                        }}
+                        className="flex mt-20 items-center justify-center p-2"
                         onPress={() => {
                           Linking.openURL(webinar?.webinar_url);
                           setAdVisible(false);
@@ -776,124 +610,41 @@ const Index = ({navigation}) => {
                         {webinar?.webinar_image_url ? (
                           <Image
                             source={{uri: webinar?.webinar_image_url}}
-                            style={{
-                              width: '100%',
-                              height: undefined,
-                              aspectRatio: 1,
-                              resizeMode: 'contain',
-                            }}
+                            className="w-full h-auto aspect-square resize-contain"
                           />
                         ) : null}
                       </TouchableOpacity>
                     ) : (
                       <LinearGradient
                         colors={['#133E87', '#5B99C2', '#87A2FF']}
-                        // colors={['#4e54c8', '#8f94fb']}
-                        style={{
-                          position: 'absolute',
-                          width: '100%',
-                          borderRadius: 20,
-                          padding: 12,
-                          // justifyContent: 'center',
-                          // alignItems: 'center',
-                        }}>
-                        {/* <View
-                          style={{
-                            width: '100%',
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                          }}> */}
+                        className="absolute w-full rounded-lg p-3">
                         <TouchableOpacity
-                          style={styled.closeButton}
+                          className="flex self-end w-10 z-10"
                           onPress={toggleAd}>
                           <Ionicons name="close" size={20} color="white" />
                         </TouchableOpacity>
-                        {/* </View> */}
-                        <View
-                          style={{
-                            position: 'absolute',
-                            width: 200,
-                            height: 200,
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: 100,
-                            top: -30,
-                            right: -30,
-                          }}
-                        />
-                        <View
-                          style={{
-                            position: 'absolute',
-                            width: 150,
-                            height: 150,
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: 75,
-                            bottom: -40,
-                            left: -40,
-                          }}
-                        />
-                        <View
-                          style={{
-                            marginBottom: 20,
-                            alignItems: 'center',
-                            zIndex: 1,
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 20,
-                              fontWeight: 'bold',
-                              color: 'white',
-                              textAlign: 'center',
-                              marginBottom: 8,
-                              textShadowColor: 'rgba(0, 0, 0, 0.3)',
-                              textShadowOffset: {width: 1, height: 1},
-                              textShadowRadius: 2,
-                            }}>
+                        <View className="absolute w-52 h-52 bg-white/10 rounded-full top-[-30px] right-[-30px]" />
+                        <View className="absolute w-36 h-36 bg-white/10 rounded-full bottom-[-40px] left-[-40px]" />
+                        <View className="mb-5 items-center z-10">
+                          <Text className="text-xl font-bold text-white text-center mb-2 shadow-black/30 shadow-md">
                             {webinar?.title}
                           </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: 'white',
-                              textAlign: 'center',
-                              opacity: 0.9,
-                              paddingHorizontal: 10,
-                            }}>
+                          <Text className="text-base text-white text-center opacity-90 px-2">
                             {webinar?.description}
                           </Text>
                         </View>
                         <Animated.View
+                          className="z-10 flex justify-center items-center"
                           style={{
                             transform: [{scale: downloadButtonScale}],
-                            zIndex: 1,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
                           }}>
                           <TouchableOpacity
                             onPress={() => {
                               Linking.openURL(webinar?.webinar_url);
                               setAdVisible(false);
                             }}
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                              backgroundColor: '#1e90ff', // Light blue for the button
-                              paddingVertical: 12,
-                              paddingHorizontal: 24,
-                              borderRadius: 10,
-                              shadowColor: '#1e90ff',
-                              shadowOffset: {width: 0, height: 5},
-                              shadowOpacity: 0.4,
-                              shadowRadius: 6,
-                              elevation: 8,
-                            }}>
-                            <Text
-                              style={{
-                                color: 'white',
-                                fontSize: 18,
-                                fontWeight: '600',
-                                marginRight: 10,
-                              }}>
+                            className="flex-row items-center bg-blue-500 p-3 rounded-lg shadow-blue-500/50 shadow-md">
+                            <Text className="text-white text-lg font-semibold mr-2">
                               Click here
                             </Text>
                             <Action
@@ -910,113 +661,32 @@ const Index = ({navigation}) => {
                   <>
                     <LinearGradient
                       colors={['#133E87', '#5B99C2', '#87A2FF']}
-                      // colors={['#4e54c8', '#8f94fb']}
-                      style={{
-                        position: 'absolute',
-                        width: '100%',
-                        borderRadius: 20,
-                        padding: 12,
-                        // justifyContent: 'center',
-                        // alignItems: 'center',
-                      }}>
-                      {/* <View
-                        style={{
-                          width: '100%',
-                          display: 'flex',
-                          alignItems: 'flex-end',
-                        }}> */}
+                      className="absolute w-full rounded-lg p-3">
                       <TouchableOpacity
-                        style={styled.closeButton}
+                        className="flex self-end w-10 z-10"
                         onPress={toggleAd}>
                         <Ionicons name="close" size={20} color="white" />
                       </TouchableOpacity>
-                      {/* </View> */}
-                      <View
-                        style={{
-                          position: 'absolute',
-                          width: 200,
-                          height: 200,
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                          borderRadius: 100,
-                          top: -30,
-                          right: -30,
-                        }}
-                      />
-                      <View
-                        style={{
-                          position: 'absolute',
-                          width: 150,
-                          height: 150,
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                          borderRadius: 75,
-                          bottom: -40,
-                          left: -40,
-                        }}
-                      />
-                      <View
-                        style={{
-                          marginBottom: 20,
-                          alignItems: 'center',
-                          zIndex: 1,
-                        }}>
-                        <Text
-                          style={{
-                            fontSize: 20,
-                            fontWeight: 'bold',
-                            color: 'white',
-                            textAlign: 'center',
-                            marginBottom: 8,
-                            textShadowColor: 'rgba(0, 0, 0, 0.3)',
-                            textShadowOffset: {width: 1, height: 1},
-                            textShadowRadius: 2,
-                          }}>
+                      <View className="absolute w-52 h-52 bg-white/10 rounded-full top-[-30px] right-[-30px]" />
+                      <View className="absolute w-36 h-36 bg-white/10 rounded-full bottom-[-40px] left-[-40px]" />
+                      <View className="mb-5 items-center z-10">
+                        <Text className="text-xl font-bold text-white text-center mb-2 shadow-black/30 shadow-md">
                           {webinar?.title}
                         </Text>
-                        <Text
-                          style={{
-                            fontSize: 16,
-                            color: 'white',
-                            textAlign: 'center',
-                            opacity: 0.9,
-                            paddingHorizontal: 10,
-                          }}>
+                        <Text className="text-base text-white text-center opacity-90 px-2">
                           {webinar?.description}
                         </Text>
                       </View>
                       <Animated.View
+                        className="z-10 flex justify-center items-center"
                         style={{
                           transform: [{scale: downloadButtonScale}],
-                          zIndex: 1,
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
                         }}>
                         <TouchableOpacity
                           onPressIn={handlePressIn}
                           onPressOut={handlePressOut}
-                          style={{
-                            width: 150,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: '#1e90ff',
-                            paddingVertical: 12,
-                            paddingHorizontal: 25,
-                            borderRadius: 25,
-                            shadowColor: '#000',
-                            shadowOffset: {width: 0, height: 6},
-                            shadowOpacity: 0.3,
-                            shadowRadius: 8,
-                            elevation: 5,
-                          }}>
-                          <Text
-                            style={{
-                              color: 'white',
-                              fontSize: 18,
-                              marginRight: 8,
-                              fontWeight: 'bold',
-                            }}>
+                          className="w-36 flex-row justify-center items-center bg-blue-500 p-3 rounded-full shadow-md">
+                          <Text className="text-white text-lg font-bold mr-2">
                             Download
                           </Text>
                           <Download name="download" size={24} color="white" />
@@ -1028,13 +698,7 @@ const Index = ({navigation}) => {
                   <>
                     {webinar?.webinar_image_url ? (
                       <TouchableOpacity
-                        style={{
-                          display: 'flex',
-                          marginTop: '20%',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: 10,
-                        }}
+                        className="flex mt-20 items-center justify-center p-2"
                         onPress={() => {
                           navigation.navigate('Meeting', {
                             room: webinar.webinar_url,
@@ -1044,98 +708,33 @@ const Index = ({navigation}) => {
                         {webinar?.webinar_image_url ? (
                           <Image
                             source={{uri: webinar?.webinar_image_url}}
-                            style={{
-                              width: '100%',
-                              height: undefined,
-                              aspectRatio: 1,
-                              resizeMode: 'contain',
-                            }}
+                            className="w-full h-auto aspect-square resize-contain"
                           />
                         ) : null}
                       </TouchableOpacity>
                     ) : (
                       <LinearGradient
                         colors={['#133E87', '#5B99C2', '#87A2FF']}
-                        // colors={['#4e54c8', '#8f94fb']}
-                        style={{
-                          position: 'absolute',
-                          width: '100%',
-                          borderRadius: 20,
-                          padding: 12,
-                          // justifyContent: 'center',
-                          // alignItems: 'center',
-                        }}>
-                        {/* <View
-                          style={{
-                            width: '100%',
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                          }}> */}
+                        className="absolute w-full rounded-lg p-3">
                         <TouchableOpacity
-                          style={styled.closeButton}
+                          className="flex self-end w-10 z-10"
                           onPress={toggleAd}>
                           <Ionicons name="close" size={20} color="white" />
                         </TouchableOpacity>
-                        {/* </View> */}
-                        <View
-                          style={{
-                            position: 'absolute',
-                            width: 200,
-                            height: 200,
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: 100,
-                            top: -30,
-                            right: -30,
-                          }}
-                        />
-                        <View
-                          style={{
-                            position: 'absolute',
-                            width: 150,
-                            height: 150,
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                            borderRadius: 75,
-                            bottom: -40,
-                            left: -40,
-                          }}
-                        />
-                        <View
-                          style={{
-                            marginBottom: 20,
-                            alignItems: 'center',
-                            zIndex: 1,
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 20,
-                              fontWeight: 'bold',
-                              color: 'white',
-                              textAlign: 'center',
-                              marginBottom: 8,
-                              textShadowColor: 'rgba(0, 0, 0, 0.3)',
-                              textShadowOffset: {width: 1, height: 1},
-                              textShadowRadius: 2,
-                            }}>
+                        <View className="absolute w-52 h-52 bg-white/10 rounded-full top-[-30px] right-[-30px]" />
+                        <View className="absolute w-36 h-36 bg-white/10 rounded-full bottom-[-40px] left-[-40px]" />
+                        <View className="mb-5 items-center z-10">
+                          <Text className="text-xl font-bold text-white text-center mb-2 shadow-black/30 shadow-md">
                             {webinar?.title}
                           </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: 'white',
-                              textAlign: 'center',
-                              opacity: 0.9,
-                              paddingHorizontal: 10,
-                            }}>
+                          <Text className="text-base text-white text-center opacity-90 px-2">
                             {webinar?.description}
                           </Text>
                         </View>
                         <Animated.View
+                          className="z-10 flex justify-center items-center"
                           style={{
                             transform: [{scale: downloadButtonScale}],
-                            zIndex: 1,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
                           }}>
                           <TouchableOpacity
                             onPress={() => {
@@ -1144,26 +743,8 @@ const Index = ({navigation}) => {
                               });
                               setAdVisible(false);
                             }}
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                              backgroundColor: '#1e90ff', // Light blue for the button
-                              paddingVertical: 12,
-                              paddingHorizontal: 24,
-                              borderRadius: 10,
-                              shadowColor: '#1e90ff',
-                              shadowOffset: {width: 0, height: 5},
-                              shadowOpacity: 0.4,
-                              shadowRadius: 6,
-                              elevation: 8, // Android shadow
-                            }}>
-                            <Text
-                              style={{
-                                color: 'white',
-                                fontSize: 18,
-                                fontWeight: '600',
-                                marginRight: 10,
-                              }}>
+                            className="flex-row items-center bg-blue-500 p-3 rounded-lg shadow-blue-500/50 shadow-md">
+                            <Text className="text-white text-lg font-semibold mr-2">
                               Join Now
                             </Text>
                             <Action
@@ -1182,156 +763,83 @@ const Index = ({navigation}) => {
           </Modal>
         ) : null}
 
-        {isModalVisible && isSingleNotification ? (
-          <Modal
-            transparent={true}
-            visible={isModalVisible}
-            animationType="fade"
-            onRequestClose={() => {
-              setIsModalVisible(false);
-            }}>
-            <View style={styled.adOverlay}>
-              <View style={styled.adContainer}>
-                <LinearGradient
-                  colors={['#133E87', '#5B99C2', '#87A2FF']}
-                  // colors={['#4e54c8', '#8f94fb']}
+        <Modal
+          transparent={true}
+          visible={isModalVisible}
+          animationType="fade"
+          onRequestClose={() => {
+            setIsModalVisible(false);
+          }}>
+          <View className="flex-1 bg-black/40 justify-center items-center">
+            <View className="flex justify-center items-center w-11/12 h-4/5 rounded-lg overflow-hidden">
+              <LinearGradient
+                colors={['#133E87', '#5B99C2', '#87A2FF']}
+                className="absolute w-full rounded-lg p-3">
+                <TouchableOpacity
+                  className="flex self-end w-10 z-10"
+                  onPress={() => {
+                    notificationUpdate(isSingleNotification?.notification_id);
+                    setIsModalVisible(false);
+                  }}>
+                  <Ionicons name="close" size={26} color="white" />
+                </TouchableOpacity>
+                <View className="absolute w-52 h-52 bg-white/10 rounded-full top-[-30px] right-[-30px]" />
+                <View className="absolute w-36 h-36 bg-white/10 rounded-full bottom-[-40px] left-[-40px]" />
+                <View className="mb-5 items-center z-10">
+                  <Text className="text-xl font-bold text-white text-center mb-2 shadow-black/30 shadow-md">
+                    {isSingleNotification?.title}
+                  </Text>
+                  <Text className="text-base text-white text-center opacity-90 px-2">
+                    {isSingleNotification?.description}
+                  </Text>
+                </View>
+                <Animated.View
+                  className="z-10 flex justify-center items-center"
                   style={{
-                    position: 'absolute',
-                    width: '100%',
-                    borderRadius: 20,
-                    padding: 12,
+                    transform: [{scale: downloadButtonScale}],
                   }}>
                   <TouchableOpacity
-                    style={[
-                      {
-                        width: '100%',
-                        display: 'flex',
-                        alignSelf: 'flex-end',
-                        alignItems: 'flex-end',
-                        width: 40,
-                        zIndex: 1,
-                      },
-                      // styled.closeButton,
-                    ]}
-                    onPress={() => {
-                      notificationUpdate(isSingleNotification.notification_id);
-                      setIsModalVisible(false);
-                    }}>
-                    <Ionicons name="close" size={26} color="white" />
-                  </TouchableOpacity>
+                    onPress={
+                      isSingleNotification?.notification_type == 0
+                        ? () => {
+                            navigation.navigate('Meeting', {
+                              room: isSingleNotification?.notification_url,
+                            });
+                            notificationUpdate(
+                              isSingleNotification?.notification_id,
+                            );
+                            setIsModalVisible(false);
+                          }
+                        : () => {
+                            console.log(
+                              'isSingleNotification?.notification_url',
+                              isSingleNotification?.notification_url,
+                            );
 
-                  <View
-                    style={{
-                      position: 'absolute',
-                      width: 200,
-                      height: 200,
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: 100,
-                      top: -30,
-                      right: -30,
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      width: 150,
-                      height: 150,
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: 75,
-                      bottom: -40,
-                      left: -40,
-                    }}
-                  />
-                  <View
-                    style={{
-                      marginBottom: 20,
-                      alignItems: 'center',
-                      zIndex: 1,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                        color: 'white',
-                        textAlign: 'center',
-                        marginBottom: 8,
-                        textShadowColor: 'rgba(0, 0, 0, 0.3)',
-                        textShadowOffset: {width: 1, height: 1},
-                        textShadowRadius: 2,
-                      }}>
-                      {isSingleNotification?.title}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        color: 'white',
-                        textAlign: 'center',
-                        opacity: 0.9,
-                        paddingHorizontal: 10,
-                      }}>
-                      {isSingleNotification?.description}
-                    </Text>
-                  </View>
-                  <Animated.View
-                    style={{
-                      transform: [{scale: downloadButtonScale}],
-                      zIndex: 1,
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <TouchableOpacity
-                      onPress={
-                        isSingleNotification.notification_type == 0
-                          ? () => {
-                              navigation.navigate('Meeting', {
-                                room: isSingleNotification.notification_url,
-                              });
+                            try {
                               notificationUpdate(
-                                isSingleNotification.notification_id,
+                                isSingleNotification?.notification_id,
                               );
-                              setIsModalVisible(false);
-                            }
-                          : () => {
                               Linking.openURL(
-                                isSingleNotification.notification_url,
-                              );
-                              notificationUpdate(
-                                isSingleNotification.notification_id,
+                                isSingleNotification?.notification_url,
                               );
                               setIsModalVisible(false);
+                            } catch (error) {
+                              // console.log('error', error);
                             }
-                      }
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        backgroundColor: '#1e90ff', // Light blue for the button
-                        paddingVertical: 12,
-                        paddingHorizontal: 24,
-                        borderRadius: 10,
-                        shadowColor: '#1e90ff',
-                        shadowOffset: {width: 0, height: 5},
-                        shadowOpacity: 0.4,
-                        shadowRadius: 6,
-                        elevation: 8, // Android shadow
-                      }}>
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: 18,
-                          fontWeight: '600',
-                          marginRight: 10,
-                        }}>
-                        Click here
-                      </Text>
-                      <Action name="action-redo" size={24} color="white" />
-                    </TouchableOpacity>
-                  </Animated.View>
-                </LinearGradient>
-              </View>
+                          }
+                    }
+                    className="flex-row items-center bg-blue-500 p-3 rounded-lg shadow-blue-500/50 shadow-md">
+                    <Text className="text-white text-lg font-semibold mr-2">
+                      Click here
+                    </Text>
+                    <Action name="action-redo" size={24} color="white" />
+                  </TouchableOpacity>
+                </Animated.View>
+              </LinearGradient>
             </View>
-          </Modal>
-        ) : null}
+          </View>
+        </Modal>
       </SafeAreaView>
     );
   };
@@ -1341,7 +849,7 @@ const Index = ({navigation}) => {
       data={[{key: 'renderItem'}]}
       renderItem={renderItem}
       keyExtractor={item => item.key}
-      style={style.dashBoard}
+      className="bg-white dark:bg-n75"
       showsVerticalScrollIndicator={false}
     />
   );

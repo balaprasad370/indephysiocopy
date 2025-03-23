@@ -1,297 +1,259 @@
-// import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-// import React from 'react';
-// import notifee from '@notifee/react-native';
-
-// const Index = () => {
-//   const displayNotifications = async () => {
-//     await notifee.requestPermission();
-
-//     // Create a channel (required for Android)
-//     const channelId = await notifee.createChannel({
-//       id: 'default',
-//       name: 'Default Channel',
-//     });
-
-//     // Display a notification
-//     await notifee.displayNotification({
-//       title: 'Notification Title',
-//       body: 'Main body content of the notification',
-//       android: {
-//         channelId,
-//         // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
-//         // pressAction is needed if you want the notification to open the app when pressed
-//         pressAction: {
-//           id: 'default',
-//         },
-//       },
-//     });
-//   };
-//   return (
-//     <View style={{marginTop: 20, marginBottom: 20}}>
-//       <TouchableOpacity onPress={() => displayNotifications()}>
-//         <Text>Click me </Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// export default Index;
-
-// const styles = StyleSheet.create({});
 import {
-  StyleSheet,
   Text,
   View,
-  FlatList,
   ScrollView,
+  RefreshControl,
+  SafeAreaView,
+  Image,
   TouchableOpacity,
   Linking,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useCallback} from 'react';
 import storage from '../../Constants/storage';
-import axios from 'axios';
 import {AppContext} from '../../theme/AppContext';
 import Icon from 'react-native-vector-icons/Ionicons';
-import LinearGradient from 'react-native-linear-gradient';
-import color from '../../Constants/color';
+import {FlashList} from '@shopify/flash-list';
+import PageTitle from '../../ui/PageTitle';
+import topBgBackground from '../../assets/top-bg-shape2.png';
+import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
+import {ROUTES} from '../../Constants/routes';
+import axiosInstance from '../../Components/axiosInstance';
 
 const Index = () => {
-  const {path} = useContext(AppContext);
-  const [groupedNotifications, setGroupedNotifications] = useState({});
+  const {path, isDark} = useContext(AppContext);
+  const [notifications, setNotifications] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
-  const groupNotificationsByDate = notifications => {
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    const grouped = {
-      Today: [],
-      Yesterday: [],
-    };
-
-    notifications.forEach(notification => {
-      const modifiedDate = new Date(notification.modified_at);
-      const dateKey = modifiedDate.toDateString();
-
-      if (modifiedDate.toDateString() === today.toDateString()) {
-        grouped.Today.push(notification);
-      } else if (modifiedDate.toDateString() === yesterday.toDateString()) {
-        grouped.Yesterday.push(notification);
-      } else {
-        if (!grouped[dateKey]) {
-          grouped[dateKey] = [];
-        }
-        grouped[dateKey].push(notification);
-      }
-    });
-
-    return grouped;
-  };
-
-  const getNotification = async () => {
+  const getNotifications = async () => {
+    setLoading(true);
     const token = await storage.getStringAsync('token');
 
     if (token) {
       try {
-        const response = await axios.get(`${path}/admin/v1/notifications`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axiosInstance.get(`/admin/v2/notifications`);
 
-        const sortedNotifications = response.data.notifications.sort(
-          (a, b) => new Date(b.modified_at) - new Date(a.modified_at),
-        );
+        console.log(response.data.notifications);
 
-        setGroupedNotifications(groupNotificationsByDate(sortedNotifications));
+        if (response.data.status) {
+          setNotifications(response.data.notifications);
+        } else {
+          setNotifications([]);
+        }
       } catch (error) {
-        setGroupedNotifications({Today: [], Yesterday: []});
+        setNotifications([]);
         console.log('error', error);
+      } finally {
+        setRefreshing(false);
+        setLoading(false);
       }
+    } else {
+      setRefreshing(false);
+      setLoading(false);
     }
   };
 
-  const notificationUpdate = async notificationId => {
-    console.log('notificationId', notificationId);
-    const token = await storage.getStringAsync('token');
-    try {
-      const response = await axios.post(
-        `${path}/admin/v1/update-single-notification`,
-        {notificationId},
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getNotifications();
+  }, []);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getNotification();
+    getNotifications();
+  }, []);
+
+  const formatDate = timestamp => {  
+    return moment(timestamp * 1000).fromNow();
+  };
+
+  const handleNotificationPress = (notificationId) => {
+    navigation.navigate(ROUTES.NOTIFICATION_DETAILS, {
+      notificationId: notificationId,
     });
-    return unsubscribe;
-  }, [navigation]);
+  };
 
-  const renderItem = ({item}) => (
-    <TouchableOpacity
-      key={item.notification_id}
-      onPress={
-        item.notification_type == 0
-          ? () => {
-              notificationUpdate(item.notification_id);
-              navigation.navigate('Meeting', {
-                room: item.notification_url,
-              });
-            }
-          : () => {
-              notificationUpdate(item.notification_id);
-              Linking.openURL(item.notification_url);
-            }
-      }>
-      <LinearGradient
-        colors={
-          item.isOpened === false
-            ? ['#ffffff', '#f0f0f5']
-            : [color.darkPrimary, color.darkPrimary]
-        }
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
-        style={styles.notificationCard}>
-        <View style={styles.iconContainer}>
-          <Icon name="notifications-outline" size={20} color="#4b5d67" />
-        </View>
-        <View style={styles.textContainer}>
-          <Text style={item.isOpened ? styles.title : styles.titleOpened}>
-            {item.title}
-          </Text>
-          <Text
-            style={
-              item.isOpened ? styles.description : styles.descriptionOpened
-            }
-            numberOfLines={2}>
-            {item.description}
-          </Text>
-          <Text style={item.isOpened ? styles.time : styles.timeOpened}>
-            {new Date(item.modified_at).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </Text>
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
-  );
+  const getNotificationIcon = type => {
+    switch (type) {
+      case 'alert':
+        return 'alert-circle-outline';
+      case 'warning':
+        return 'warning-outline';
+      case 'info':
+        return 'information-circle-outline';
+      case 'message':
+        return 'chatbox-outline';
+      default:
+        return 'notifications-outline';
+    }
+  };
 
-  const renderSection = (title, data) => (
-    <View style={styles.sectionContainer}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.notification_id.toString()}
-        scrollEnabled={false} // Disables individual FlatList scrolling
+  const getNotificationColor = (type, isRead) => {
+    if (isRead) {
+      return isDark ? 'bg-gray-700' : 'bg-gray-100';
+    }
+
+    switch (type) {
+      case 'alert':
+        return isDark ? 'bg-red-800' : 'bg-red-500 bg-opacity-20';
+      case 'warning':
+        return isDark ? 'bg-amber-800' : 'bg-amber-500 bg-opacity-20';
+      case 'info':
+        return isDark ? 'bg-blue-800' : 'bg-blue-500 bg-opacity-20';
+      case 'message':
+        return isDark ? 'bg-green-800' : 'bg-green-500 bg-opacity-20';
+      default:
+        return isDark ? 'bg-indigo-800' : 'bg-p1 bg-opacity-20';
+    }
+  };
+
+  const getNotificationTextColor = (type, isRead) => {
+    if (isRead) {
+      return isDark ? 'text-gray-300' : 'text-gray-800';
+    }
+
+    switch (type) {
+      case 'alert':
+        return isDark ? 'text-red-300' : 'text-red-700';
+      case 'warning':
+        return isDark ? 'text-amber-300' : 'text-amber-700';
+      case 'info':
+        return isDark ? 'text-blue-300' : 'text-blue-700';
+      case 'message':
+        return isDark ? 'text-green-300' : 'text-green-700';
+      default:
+        return isDark ? 'text-indigo-300' : 'text-p1';
+    }
+  };
+
+  const getNotificationBgColor = (type, isRead) => {
+    if (isRead) {
+      return isDark ? 'bg-gray-800' : 'bg-white';
+    }
+
+    switch (type) {
+      case 'alert':
+        return isDark ? 'bg-red-900/30' : 'bg-red-50';
+      case 'warning':
+        return isDark ? 'bg-amber-900/30' : 'bg-amber-50';
+      case 'info':
+        return isDark ? 'bg-blue-900/30' : 'bg-blue-50';
+      case 'message':
+        return isDark ? 'bg-green-900/30' : 'bg-green-50';
+      default:
+        return isDark ? 'bg-indigo-900/30' : 'bg-p1/20';
+    }
+  };
+
+  const renderItem = ({item}) => {
+    const isRead = item.is_read === 1;
+
+    return (
+      <TouchableOpacity
+        className="mb-3"
+        onPress={() => handleNotificationPress(item.id, item.url)}>
+        <View
+          className={`flex-row items-start p-4 rounded-xl shadow-sm ${getNotificationBgColor(
+            item.type,
+            isRead,
+          )}`}>
+          <View
+            className={`${getNotificationColor(
+              item.type,
+              isRead,
+            )} rounded-full p-3 mr-3`}>
+            <Icon
+              name={getNotificationIcon(item.type)}
+              size={22}
+              color={isRead ? (isDark ? '#9ca3af' : '#4b5563') : '#fff'}
+            />
+          </View>
+          <View className="flex-1">
+            <View className="flex-row justify-between items-start">
+              <Text
+                numberOfLines={1}
+                className={`text-base font-semibold ${getNotificationTextColor(
+                  item.type,
+                  isRead,
+                )}`}>
+                {item.title}
+              </Text>
+              <Text
+                className={`text-xs ${
+                  isDark ? 'text-gray-400' : 'text-gray-500'
+                }`}>
+                {formatDate(item.created_at)}
+              </Text>
+            </View>
+            <Text
+              numberOfLines={4}
+              className={`text-sm ${
+                isDark ? 'text-gray-400' : 'text-neutral-500'
+              } py-1`}>
+              {item.message}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderEmptyList = () => (
+    <View className="flex items-center justify-center py-10">
+      <Icon
+        name="notifications-off-outline"
+        size={50}
+        color={isDark ? '#6366f1' : '#9ca3af'}
       />
+      <Text
+        className={`text-center mt-4 text-base ${
+          isDark ? 'text-gray-400' : 'text-gray-500'
+        }`}>
+        No notifications available
+      </Text>
     </View>
   );
 
   return (
-    <ScrollView style={styles.container}>
-      {Object.keys(groupedNotifications).map(section =>
-        groupedNotifications[section].length > 0
-          ? renderSection(section, groupedNotifications[section])
-          : null,
-      )}
-      {Object.values(groupedNotifications).every(
-        section => section.length === 0,
-      ) && <Text style={styles.emptyMessage}>No notifications available</Text>}
-    </ScrollView>
+    <SafeAreaView className={`flex-1 ${isDark ? 'bg-gray-900' : 'bg-b50'}`}>
+      <View className="relative pb-4">
+        <View className="absolute w-full top-0 left-0 right-0">
+          <Image
+            source={topBgBackground}
+            className="w-full h-[200px] -mt-24"
+            resizeMode="cover"
+          />
+        </View>
+        <View className="flex-row justify-between items-center px-4">
+          <PageTitle pageName="Notifications" />
+        </View>
+      </View>
+
+      <View className="flex-1 px-4 py-4">
+        {loading ? (
+          <View className="flex-1 justify-center items-center">
+            <Text className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+              Loading notifications...
+            </Text>
+          </View>
+        ) : (
+          <FlashList
+            data={notifications}
+            renderItem={renderItem}
+            estimatedItemSize={100}
+            keyExtractor={item => item.id.toString()}
+            ListEmptyComponent={renderEmptyList}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: 20}}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          />
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 
 export default Index;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f0f0f5',
-    paddingHorizontal: 10,
-    paddingVertical: 12,
-  },
-  sectionContainer: {
-    marginVertical: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  notificationCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  iconContainer: {
-    backgroundColor: '#dde2e6',
-    borderRadius: 15,
-    padding: 6,
-    marginRight: 10,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: 'white',
-    marginBottom: 2,
-  },
-  titleOpened: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 2,
-  },
-  description: {
-    fontSize: 12,
-    color: 'white',
-    marginBottom: 4,
-  },
-  descriptionOpened: {
-    fontSize: 12,
-    color: '#555',
-    marginBottom: 4,
-  },
-  time: {
-    fontSize: 10,
-    color: 'white',
-    fontWeight: '500',
-  },
-  timeOpened: {
-    fontSize: 10,
-    color: '#888',
-    fontWeight: '500',
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    color: '#333',
-    fontSize: 14,
-    marginTop: 20,
-  },
-});

@@ -1,23 +1,53 @@
 import React, {memo, useCallback, useContext} from 'react';
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-  Linking,
-} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {TouchableOpacity, View, Text, Linking, Pressable} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
-import color from '../../Constants/color';
 import {AppContext} from '../../theme/AppContext';
-import {Image} from 'react-native';
-import leaderboard from '../../assets/leaderboards.png';
-import DarkTheme from '../../theme/Darktheme';
-import LighTheme from '../../theme/LighTheme';
-import LinearGradient from 'react-native-linear-gradient';
-import IconTimer from 'react-native-vector-icons/Ionicons';
+import trackEvent from './../MixPanel/index';
+
+const CARD_STYLES = {
+  Quiz: {
+    bgColor: 'bg-p1',
+    borderColor: 'border-p1',
+    icon: 'brain',
+    iconType: 'MaterialCommunityIcons',
+    iconColor: '#2563EB',
+    cta: 'Take Quiz',
+  },
+  'Reading Material': {
+    bgColor: 'bg-purple-500',
+    borderColor: 'border-purple-600',
+    icon: 'book-reader',
+    iconType: 'FontAwesome5',
+    iconColor: '#7C3AED',
+    cta: 'Start Reading',
+  },
+  'Flash Card': {
+    bgColor: 'bg-indigo-500',
+    borderColor: 'border-indigo-600',
+    icon: 'cards',
+    iconType: 'MaterialCommunityIcons',
+    iconColor: '#4F46E5',
+    cta: 'Practice Cards',
+  },
+  Assessments: {
+    bgColor: 'bg-orange-500',
+    borderColor: 'border-orange-600',
+    icon: 'clipboard-list',
+    iconType: 'FontAwesome5',
+    iconColor: '#EA580C',
+    cta: 'Start Assessment',
+  },
+  'Live class': {
+    bgColor: 'bg-red-500',
+    borderColor: 'border-red-600',
+    icon: 'video',
+    iconType: 'FontAwesome5',
+    iconColor: '#DC2626',
+  },
+};
 
 const QuizCard = memo(
   ({
@@ -27,403 +57,386 @@ const QuizCard = memo(
     optionClick,
     unique_id,
     status,
-    room_name,
     video_url,
     order_id,
-    time_spent,
     locked,
+    subscription_status,
     live_class_end_date,
     level_id,
+    time_spent = '0 min',
   }) => {
     const navigation = useNavigation();
-    const {isDark} = useContext(AppContext);
-    const style = isDark ? DarkTheme : LighTheme;
+    const cardStyle = CARD_STYLES[optionClick] || CARD_STYLES.Quiz;
 
-    // Memoized time formatter
-    const formatTime = useCallback(milliseconds => {
-      const hours = Math.floor(milliseconds / (1000 * 60 * 60));
-      const minutes = Math.floor(
-        (milliseconds % (1000 * 60 * 60)) / (1000 * 60),
-      );
-      const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
-
-      return `${hours.toString().padStart(2, '0')}:${minutes
-        .toString()
-        .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }, []);
+    const handleNavigation = useCallback(
+      (route, params) => {
+        navigation.navigate(route, params);
+      },
+      [navigation],
+    );
 
     const toggleModal = useCallback(
       option => {
         const routes = {
-          Quiz: () =>
-            navigation.navigate(ROUTES.QUIZ, {
-              module_id: unique_id,
-              title: Title,
-              order_id,
-              chapter_id: parent_module_id,
-              unique_id,
-              level_id,
-            }),
-          'Reading Material': () =>
-            navigation.navigate(ROUTES.READING, {
-              read_id: unique_id,
-              order_id,
-              chapter_id: parent_module_id,
-              unique_id,
-            }),
-          Live: () =>
-            navigation.navigate('Meeting', {
-              room: 'checkpaaras',
-              order_id,
-              chapter_id: parent_module_id,
-              unique_id,
-            }),
-          'Flash Card': () =>
-            navigation.navigate(ROUTES.FLASH, {
-              flash_id: unique_id,
-              order_id,
-              chapter_id: parent_module_id,
-              unique_id,
-            }),
-          Assessments: () =>
-            navigation.navigate(ROUTES.ASSESSMENTS, {
-              assessment_id: unique_id,
-              order_id,
-              chapter_id: parent_module_id,
-              unique_id,
-            }),
+          Quiz: () => {
+            try {
+              trackEvent('Quiz', {
+                title: Title,
+                chapter_id: parent_module_id,
+              });
+
+              handleNavigation(ROUTES.SAMPLE_QUIZ, {
+                module_id: unique_id,
+                title: Title,
+              });
+            } catch (error) {
+              console.log('error', error);
+            }
+          },
+          'Reading Material': () => {
+            try {
+              trackEvent('Reading Material', {
+                title: Title,
+                chapter_id: parent_module_id,
+              });
+
+              handleNavigation(ROUTES.READING, {
+                read_id: unique_id,
+                order_id,
+                chapter_id: parent_module_id,
+                unique_id,
+              });
+            } catch (error) {
+              console.log('error', error);
+            }
+          },
+          Live: () => {
+            try {
+              trackEvent('Live class', {
+                title: Title,
+                chapter_id: parent_module_id,
+              });
+
+              handleNavigation(ROUTES.RECORDING, {video_url});
+            } catch (error) {
+              console.log('error', error);
+            }
+          },
+          'Flash Card': () => {
+            try {
+              trackEvent('Flash Card', {
+                title: Title,
+                chapter_id: parent_module_id,
+              });
+
+              handleNavigation(ROUTES.FLASH, {
+                flash_id: unique_id,
+                order_id,
+                chapter_id: parent_module_id,
+                unique_id,
+              });
+            } catch (error) {
+              console.log('error', error);
+            }
+          },
+          Assessments: () => {
+            try {
+              trackEvent('Assessments', {
+                title: Title,
+                chapter_id: parent_module_id,
+              });
+
+              handleNavigation(ROUTES.ASSESSMENTS, {
+                assessment_id: unique_id,
+                order_id,
+                chapter_id: parent_module_id,
+                unique_id,
+              });
+            } catch (error) {
+              console.log('error', error);
+            }
+          },
         };
 
-        const navigate = routes[option];
-        if (navigate) navigate();
+        routes[option]?.();
       },
-      [navigation, unique_id, Title, order_id, parent_module_id, level_id],
+      [
+        handleNavigation,
+        unique_id,
+        Title,
+        order_id,
+        parent_module_id,
+        level_id,
+        video_url,
+      ],
     );
 
-    return (
-      <View style={styles.cardContainer}>
-        <View style={styles.lockIconContainer}>
-          {locked && (
-            <TouchableOpacity
-              onPress={() => Linking.openURL('https://portal.indephysio.com')}
-              style={styles.lockButton}>
-              <IconTimer
-                name="lock-closed-sharp"
-                size={30}
-                color="#000"
-                style={styles.lockIcon}
-              />
-              <Text style={styles.subscriptionText}>Subscription Required</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+    const ctaButton = item => {
+      switch (optionClick) {
+        case 'Reading Material':
+          return (
+            <Pressable
+              className={`${cardStyle.bgColor} text-white px-4 py-2 rounded-md `}
+              onPress={() => {
+                try {
+                  trackEvent('Reading Material', {
+                    title: Title,
+                    chapter_id: parent_module_id,
+                  });
+                  handleNavigation(ROUTES.READING, {
+                    read_id: unique_id,
+                    order_id,
+                    chapter_id: parent_module_id,
+                    unique_id,
+                  });
+                } catch (error) {
+                  console.log('error', error);
+                }
+              }}>
+              <Text className="text-xs text-white font-semibold">Read now</Text>
+            </Pressable>
+          );
+        case 'Flash Card':
+          return (
+            <Pressable
+              className={`${cardStyle.bgColor} text-white px-4 py-2 rounded-md`}
+              onPress={() => {
+                try {
+                  trackEvent('Flash Card', {
+                    title: Title,
+                    chapter_id: parent_module_id,
+                  });
 
+                  handleNavigation(ROUTES.FLASH, {
+                    flash_id: unique_id,
+                    order_id,
+                    chapter_id: parent_module_id,
+                    unique_id,
+                  });
+                } catch (error) {
+                  console.log('error', error);
+                }
+              }}>
+              <Text className="text-xs text-white font-semibold">
+                Practice now
+              </Text>
+            </Pressable>
+          );
+
+        case 'Assessments':
+          return (
+            <Pressable
+              className={`${cardStyle.bgColor} text-white px-4 py-2 rounded-md`}
+              onPress={() => {
+                try {
+                  trackEvent('Assessments', {
+                    title: Title,
+                    chapter_id: parent_module_id,
+                  });
+                  handleNavigation(ROUTES.ASSESSMENTS, {
+                    assessment_id: unique_id,
+                    order_id,
+                    chapter_id: parent_module_id,
+                    unique_id,
+                  });
+                } catch (error) {
+                  console.log('error', error);
+                }
+              }}>
+              <Text className="text-xs text-white font-semibold">
+                Start Assessment
+              </Text>
+            </Pressable>
+          );
+
+        case 'Live class':
+          if (!video_url) {
+            return null;
+          }
+
+          return (
+            <Pressable
+              className={`${cardStyle.bgColor} text-white px-4 py-2 rounded-md`}
+              onPress={() => {
+                try {
+                  trackEvent('Live class', {
+                    title: Title,
+                    chapter_id: parent_module_id,
+                  });
+
+                  handleNavigation(ROUTES.RECORDING, {video_url});
+                } catch (error) {
+                  console.log('error', error);
+                }
+              }}>
+              <Text className="text-xs text-white font-semibold">
+                Watch recording
+              </Text>
+            </Pressable>
+          );
+
+        case 'Quiz':
+          return (
+            <Pressable
+              className={`${cardStyle.bgColor} text-white px-4 py-2 rounded-md`}
+              onPress={() => {
+                try {
+                  handleNavigation(ROUTES.SAMPLE_QUIZ, {
+                    module_id: unique_id,
+                    title: Title,
+                  });
+                } catch (error) {
+                  console.log('error', error);
+                }
+              }}>
+              <Text className="text-xs text-white font-semibold">Attempt</Text>
+            </Pressable>
+          );
+
+        default:
+          return (
+            <Pressable
+              className={`${cardStyle.bgColor} text-white px-4 py-2 rounded-md`}
+              onPress={() =>
+                handleNavigation(ROUTES.SAMPLE_QUIZ, {
+                  module_id: unique_id,
+                  title: Title,
+                })
+              }>
+              <Text className="text-xs text-white font-semibold">Attempt</Text>
+            </Pressable>
+          );
+      }
+    };
+
+    const formatTime = time => {
+      if (!time || isNaN(time)) return;
+
+      console.log('time', time);
+
+      // time seconds
+      const hours = Math.floor(time / 3600) ? Math.floor(time / 3600) : 0;
+      const minutes = Math.floor((time % 3600) / 60)
+        ? Math.floor((time % 3600) / 60)
+        : 0;
+      const seconds = time % 60 ? time % 60 : 0;
+      return `${hours ? hours + 'h' : ''} ${minutes ? minutes + 'm' : ''} ${
+        seconds ? seconds + 's' : ''
+      }`;
+    };
+
+    return (
+      <>
         <TouchableOpacity
-          hitSlop={{x: 25, y: 15}}
-          style={[style.cardBox, styles.cardShadow]}
+          disabled={locked}
+          className={`py-4 px-4 bg-white rounded-lg border ${
+            cardStyle.borderColor
+          } ${locked ? 'opacity-20' : ''} my-2`}
           onPress={
             locked
-              ? () => Linking.openURL('https://portal.indephysio.com')
+              ? () => Linking.openURL('https://portal.indephysio.com/sign-in')
               : () => toggleModal(optionClick)
           }>
-          <View
-            style={[styles.statusContainer, locked && styles.lockedContent]}>
-            <Text style={styles.statusText}>{optionClick}</Text>
-            {optionClick === 'Live class' && (
-              <TouchableOpacity
-                hitSlop={{x: 25, y: 15}}
-                style={{
-                  backgroundColor: color.darkPrimary,
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                  paddingTop: 5,
-                  paddingBottom: 5,
-                  borderRadius: 20,
-                }}
-                onPress={() => {
-                  navigation.navigate(
-                    status === 1 ? ROUTES.RECORDING : 'Meeting',
-                    status === 1 ? {video_url} : {room: room_name},
-                  );
-                }}>
-                <Text
-                  style={{fontSize: 13, fontWeight: 600, color: color.white}}>
-                  {status === 1 ? 'Recording' : 'Join now'}
-                </Text>
-              </TouchableOpacity>
-            )}
-            {optionClick === 'Quiz' && status && (
-              <TouchableOpacity
-                hitSlop={{x: 25, y: 15}}
-                style={{
-                  backgroundColor: '#ED1C25',
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                  paddingTop: 5,
-                  borderRadius: 20,
-                  paddingBottom: 5,
-                }}
-                onPress={() =>
-                  !locked &&
-                  navigation.navigate(ROUTES.MARKS, {module_id: unique_id})
-                }>
-                <Text
-                  style={{color: color.white, fontSize: 13, fontWeight: 600}}>
-                  Result
-                </Text>
-              </TouchableOpacity>
-            )}
-            {/* {status &&
-              ['Flash Card', 'Assessments', 'Reading Material'].includes(
-                optionClick,
-              ) && (
-                <TouchableOpacity
-                  disabled={true}
-                  style={[
-                    {
-                      backgroundColor: '#7ED957',
-                      paddingLeft: 10,
-                      borderRadius: 20,
-                      paddingRight: 10,
-                      paddingTop: 5,
-                      paddingBottom: 5,
-                      fontSize: 13,
-                      fontWeight: '600',
-                      color: color.black,
-                    },
-                    Platform.OS === 'ios'
-                      ? {borderRadius: 20}
-                      : {borderRadius: 20},
-                  ]}>
-                  <Text>Completed</Text>
-                </TouchableOpacity>
-              )} */}
-            {status &&
-            (optionClick === 'Flash Card' ||
-              optionClick === 'Assessments' ||
-              optionClick === 'Reading Material') ? (
-              <TouchableOpacity
-                disabled={true}
-                style={[
-                  {
-                    backgroundColor: '#7ED957',
-                    paddingLeft: 10,
-                    borderRadius: 20,
-                    paddingRight: 10,
-                    paddingTop: 5,
-                    paddingBottom: 5,
-                    fontSize: 13,
-                    fontWeight: '600',
-                    color: color.black,
-                  },
-                  Platform.OS === 'ios'
-                    ? {borderRadius: 20}
-                    : {borderRadius: 20},
-                ]}>
-                <Text>Completed</Text>
-              </TouchableOpacity>
+          <View className="flex-row items-center justify-between mb-3">
+            <View className="flex-row items-center">
+              {cardStyle.iconType === 'MaterialCommunityIcons' && (
+                <MaterialCommunityIcons
+                  name={cardStyle.icon}
+                  size={22}
+                  color={cardStyle.iconColor}
+                />
+              )}
+              {cardStyle.iconType === 'FontAwesome5' && (
+                <FontAwesome5
+                  name={cardStyle.icon}
+                  size={20}
+                  color={cardStyle.iconColor}
+                />
+              )}
+              <Text
+                className="font-semibold text-base ml-3"
+                style={{color: cardStyle.iconColor}}>
+                {optionClick}
+              </Text>
+            </View>
+
+            {locked ? (
+              <View className="flex-row items-center">
+                <MaterialCommunityIcons name="lock" size={22} color="#DC2626" />
+              </View>
+            ) : status ? (
+              <MaterialCommunityIcons
+                name="check-circle"
+                size={22}
+                color="#22C55E"
+              />
             ) : null}
           </View>
-          <LinearGradient
-            style={styles.textContainer}
-            colors={
-              isDark
-                ? ['#2A89C6', '#3397CB', '#0C5CB4']
-                : ['#f4f5f8', '#f4f5f8', '#f4f5f8']
-            }
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}>
-            {optionClick === 'Quiz' ? (
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{width: '80%'}}>
-                  <Text
-                    selectable={true}
-                    style={[styles.cardTitle, locked && {opacity: 0.5}]}>
-                    {Title}
+
+          <View className="mb-2">
+            <View className="flex-row items-start justify-between">
+              <Text
+                className="font-bold text-gray-900 text-base"
+                numberOfLines={1}>
+                {Title.length > 20 ? Title.slice(0, 20) + '...' : Title}
+              </Text>
+              {optionClick?.toLowerCase() === 'quiz' && !locked && status ? (
+                <TouchableOpacity
+                  className="bg-green-600 rounded-md px-4 py-2"
+                  onPress={() =>
+                    handleNavigation(ROUTES.MARKS, {
+                      module_id: unique_id,
+                      title: Title,
+                      description: secondOption,
+                    })
+                  }>
+                  <Text className="text-sm font-semibold text-white text-center">
+                    View Results
                   </Text>
-                  <Text style={[styles.cardSubtitle, locked && {opacity: 0.5}]}>
-                    {secondOption}
-                  </Text>
-                  {time_spent !== undefined &&
-                    time_spent !== 0 &&
-                    time_spent !== null && (
-                      <Text
-                        style={
-                          locked
-                            ? {fontSize: 12, color: color.black, opacity: 0.5}
-                            : {fontSize: 12, color: color.black}
-                        }>
-                        You have spent: {formatTime(time_spent * 1000)}
-                      </Text>
-                    )}
-                </View>
-                <View
-                  style={{
-                    position: 'relative',
-                    backgroundColor: 'rgba(0,0,0,0.1)',
-                    borderRadius: 10,
-                  }}>
-                  <View
-                    style={{
-                      position: 'absolute',
-                      zIndex: 999,
-                      left: '35%',
-                      top: '20%',
-                    }}>
-                    <Ionicons
-                      name="lock-closed-sharp"
-                      style={{fontSize: 22, color: 'black'}}
-                    />
-                  </View>
-                  <View style={{opacity: 0.5, padding: 2}}>
-                    <TouchableOpacity
-                      hitSlop={{x: 25, y: 15}}
-                      onPress={() => console.log('no')}
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                      }}>
-                      <Image
-                        source={leaderboard}
-                        style={{width: 50, height: 50}}
-                      />
-                      <Text style={{fontSize: 12, color: color.black}}>
-                        Leaderboard
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            ) : (
-              <>
-                <Text style={[styles.cardTitle, locked && styles.lockedText]}>
-                  {Title}
-                </Text>
-                <Text
-                  style={[styles.cardSubtitle, locked && styles.lockedText]}>
-                  {secondOption}
-                </Text>
-                {live_class_end_date && (
-                  <Text style={styles.dateText}>
-                    Class happened{' '}
-                    {new Date(live_class_end_date).toLocaleString()}
-                  </Text>
-                )}
-                {time_spent > 0 && (
-                  <Text
-                    style={[styles.timeSpentText, locked && styles.lockedText]}>
-                    You have spent: {formatTime(time_spent * 1000)}
-                  </Text>
-                )}
-              </>
-            )}
-          </LinearGradient>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+
+            <Text className="text-sm text-gray-600 mt-1" numberOfLines={2}>
+              {secondOption}
+            </Text>
+          </View>
+
+          <View className="flex-row items-center justify-between mt-auto">
+            {ctaButton()}
+            <Text className="text-xs text-gray-500">
+              {formatTime(time_spent)}
+            </Text>
+          </View>
         </TouchableOpacity>
-      </View>
+
+        {locked && (
+          <View className="absolute top-0 right-0 w-full h-[90%] my-2 rounded-lg bg-black/10 flex items-center justify-center z-10">
+            <TouchableOpacity
+              disabled={subscription_status}
+              className="rounded-md px-6 py-3 bg-p1 shadow-lg flex-row items-center justify-center"
+              onPress={() =>
+                Linking.openURL('https://portal.indephysio.com/sign-in')
+              }>
+              <MaterialCommunityIcons name="lock" size={22} color="#fff" />
+              <Text className="text-sm text-white font-bold ml-2">
+                {subscription_status
+                  ? 'Finish prior module first'
+                  : 'Get subscription to access'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </>
     );
   },
 );
 
-const styles = StyleSheet.create({
-  cardContainer: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  contentContainer: {
-    shadowColor: '#000000',
-    shadowOpacity: 0.05,
-    shadowRadius: 100,
-    shadowOffset: {
-      width: 50,
-      height: 60,
-    },
-  },
-  statusContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: color.lowPrimary,
-    paddingHorizontal: 8,
-    paddingBottom: 8,
-    paddingTop: 8,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  statusText: {
-    color: color.black,
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  textContainer: {
-    padding: 16,
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 4,
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#555555',
-    marginBottom: 8,
-  },
-
-  scoreBadge: {
-    position: 'absolute',
-    top: 5,
-    right: 10,
-    alignItems: 'center',
-  },
-  ribbon: {
-    position: 'absolute',
-    bottom: -8,
-    width: 30,
-    height: 30,
-    backgroundColor: color.darkPrimary,
-    zIndex: -1,
-    transform: [{rotate: '45deg'}],
-  },
-  badgeContent: {
-    width: 50,
-    height: 40,
-
-    backgroundColor: color.darkPrimary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-  scoreBadgeText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  lockIconContainer: {
-    position: 'absolute',
-    top: '50%',
-    left: '37%',
-    zIndex: 9999,
-  },
-  lockButton: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor: 'red',
-  },
+// Add getItemLayout for FlashList optimization
+QuizCard.getItemLayout = (data, index) => ({
+  length: 100,
+  offset: 100 * index,
+  index,
 });
 
 export default QuizCard;

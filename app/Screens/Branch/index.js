@@ -1,330 +1,273 @@
 import {
-    FlatList,
-    Image,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-  } from 'react-native';
-  import React, {useContext, useEffect, useState, useCallback} from 'react';
-  import axios from 'axios';
-  import {useNavigation, useRoute} from '@react-navigation/native';
-  import {ROUTES} from '../../Constants/routes';
-  import {AppContext} from '../../theme/AppContext';
-  import color from '../../Constants/color';
-  
-  import LinearGradient from 'react-native-linear-gradient';
-  import Loading from '../../Components/Loading/Loading';
-  import IconTimer from 'react-native-vector-icons/Ionicons';
-  import {useFocusEffect} from '@react-navigation/native';
-  import storage from '../../Constants/storage';
-  import DarkTheme from '../../theme/Darktheme';
-  import LighTheme from '../../theme/LighTheme';
-  
-  const Index = () => {
-    const route = useRoute();
-    const navigation = useNavigation();
-    const {category_id} = route.params;
-    const {path, clientId, packageId, isDark, loader, setLoader} =
-      useContext(AppContext);
-  
-    const [message, setMessage] = useState('');
-  
-    const [chapters, setChapters] = useState([]);
+  FlatList,
+  Image,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Pressable,
+  ActivityIndicator,
+} from 'react-native';
+import React, {useContext, useEffect, useState, useCallback} from 'react';
+import axios from 'axios';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {ROUTES} from '../../Constants/routes';
+import {AppContext} from '../../theme/AppContext';
+import color from '../../Constants/color';
 
-    const style = isDark ? DarkTheme : LighTheme;
-  
-    // Memoized function to fetch chapters data
-    const fetchChapters = useCallback(async () => {
-      const token = await storage.getStringAsync('token');
-      if (!token) return;
-      setLoader(true);
-      try {
-        // console.log(token);
-  
-        const response = await axios.get(
-          // `${path}/admin/v3/chapters-with-progress`,
-          `${path}/admin/v1/chapters/branch`,
-          {
-            params: {
-                category_id : category_id,
-            },
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-  
-          
-        if (response.data.success == false) {
-          setMessage(response.data.message);
-          setChapters([]);
-        } else {
-          setChapters(response.data.chapters);
-        }
-      } catch (error) {
-        // console.log('Error fetching chapters:', error.response?.data?.message);
-        setMessage(error.response?.data?.message);
+import LinearGradient from 'react-native-linear-gradient';
+import Loading from '../../Components/Loading/Loading';
+import IconTimer from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import IonIcon from 'react-native-vector-icons/Ionicons';
+import {useFocusEffect} from '@react-navigation/native';
+import storage from '../../Constants/storage';
+import DarkTheme from '../../theme/Darktheme';
+import LighTheme from '../../theme/LighTheme';
+import topBgBackground from '../../assets/top-bg-shape2.png';
+import PageTitle from '../../ui/PageTitle';
+
+const Index = () => {
+  const route = useRoute();
+  const navigation = useNavigation();
+  const {category_id, title = 'Untitled'} = route.params;
+  const {path, clientId, packageId, isDark, loader, setLoader} =
+    useContext(AppContext);
+
+  const [message, setMessage] = useState('');
+  const [chapters, setChapters] = useState([]);
+  const style = isDark ? DarkTheme : LighTheme;
+  const colors = {
+    bg: isDark ? '#613BFF' : '#613BFF',
+    border: isDark ? '#613BFF20' : '#613BFF20',
+  };
+
+  // Memoized function to fetch chapters data
+  const fetchChapters = useCallback(async () => {
+    const token = await storage.getStringAsync('token');
+    if (!token) return;
+    setLoader(true);
+    try {
+      const response = await axios.get(`${path}/admin/v1/chapters/branch`, {
+        params: {
+          category_id: category_id,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response.data);
+
+      if (response.data.success == false) {
+        setMessage(response.data.message);
         setChapters([]);
-      } finally {
-        setLoader(false);
+      } else {
+        setChapters(response.data.chapters);
       }
-    }, [path, category_id, clientId, packageId]);
-  
-    // Use useFocusEffect to refresh data when screen is focused
-    useFocusEffect(
-      useCallback(() => {
-        fetchChapters();
-      }, [fetchChapters]),
-    );
-  
-    const getProgressColor = useCallback(percentage => {
-      if (percentage >= 75) return '#4CAF50';
-      if (percentage >= 50) return '#FFA726';
-      if (percentage < 25) return '#FF7043';
-      return '#F44336';
-    }, []);
-  
-    const RenderProgressBar = useCallback(({percentage}) => {
-      const progressSteps = 5;
-      const filledSteps = Math.round((percentage / 100) * progressSteps);
-      const color = getProgressColor(percentage);
-  
-      return (
-        <View style={styles.progressWrapper}>
-          <Text style={styles.progressText}>{Math.round(percentage)}%</Text>
-          <View style={styles.dotsContainer}>
-            {Array(progressSteps)
-              .fill(0)
-              .map((_, index) => (
-                <React.Fragment key={index}>
-                  <View
-                    style={[
-                      styles.progressDot,
-                      index < filledSteps && {backgroundColor: color},
-                    ]}
-                  />
-                  {index < progressSteps - 1 && (
-                    <View
-                      style={[
-                        styles.progressLine,
-                        index < filledSteps && {backgroundColor: color},
-                      ]}
-                    />
-                  )}
-                </React.Fragment>
-              ))}
-          </View>
-        </View>
-      );
-    }, []);
-  
-    const renderChapterCard = useCallback(
-      ({item}) => {
-        const {progress} = item;
-//   console.log(item);
-  
-        return (
-          <TouchableOpacity
-            disabled={progress.is_locked}
-            onPress={() => {
+    } catch (error) {
+      setMessage(error.response?.data?.message);
+      setChapters([]);
+    } finally {
+      setLoader(false);
+    }
+  }, [path, category_id, clientId, packageId]);
+
+  // Use useFocusEffect to refresh data when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchChapters();
+    }, [fetchChapters]),
+  );
+
+  const getButtonText = percentage => {
+    if (percentage >= 100) return 'Review Again';
+    if (percentage > 0) return 'Continue Learning';
+    return 'Start Learning';
+  };
+
+  const trackEvent = (name, properties) => {
+    // Analytics tracking function placeholder
+    console.log('Tracking event:', name, properties);
+  };
+
+  const renderChapterCard = ({item}) => {
+    const progress = item.progress || {
+      completion_percentage: 0,
+      is_locked: false,
+    };
+    const progressPercentage = progress.completion_percentage || 0;
+
+    return (
+      <View className="w-[92%] self-center rounded-[24px] shadow-xl mb-4 overflow-hidden border border-p1/20 bg-white dark:bg-n75">
+        <Pressable
+          android_ripple={{color: '#613BFF10'}}
+          style={({pressed}) => [{opacity: pressed ? 0.95 : 1}]}
+          onPress={() => {
+            if (!progress?.is_locked) {
+              trackEvent('Chapters', {
+                chapter_id: item.id,
+                chapter_name: item.name,
+                chapter_description: item.description,
+              });
+
               navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
                 parent_module_id: item.id,
                 title: item.name,
-                // category_id: category_id,
               });
-            }}
-            style={styles.cardContainer}>
-            <LinearGradient
-              style={[
-                styles.gradientContainer,
-                progress.is_locked && styles.lockedCard,
-              ]}
-              colors={
-                isDark
-                  ? ['#2A89C6', '#3397CB', '#0C5CB4']
-                  : [color.lightPrimary, color.lightPrimary, color.lightPrimary]
-              }
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 0}}>
-              {progress.is_locked && (
-                <View style={styles.lockIconContainer}>
-                  <IconTimer
-                    name="lock-closed-sharp"
-                    size={30}
-                    color="#000"
-                    style={styles.lockIcon}
-                  />
+            }
+          }}>
+          <View
+            className={`relative ${progress?.is_locked ? 'opacity-75' : ''}`}>
+            <View className="h-[120px]">
+              {item.image ? (
+                <Image
+                  resizeMode="cover"
+                  className="w-full h-full"
+                  source={{
+                    uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.image}`,
+                  }}
+                />
+              ) : (
+                <View className="w-full h-full bg-n40 justify-center items-center">
+                  <ActivityIndicator size="large" color="#613BFF" />
                 </View>
               )}
-  
-              <View style={styles.contentContainer}>
-                {/* Chapter Image */}
-                {item.image ? (
-                  <Image
-                    source={{
-                      uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.image}`,
-                    }}
-                    style={styles.chapterImage}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View style={styles.placeholderImage} />
-                )}
-                <View style={styles.infoContainer}>
-                  <Text style={styles.chapterName} numberOfLines={1}>
-                    {item.name}
+
+              {progressPercentage > 0 && (
+                <View
+                  className="absolute top-2 right-2 z-50 bg-white px-3 py-1 rounded-full"
+                  style={{borderWidth: 1, borderColor: colors.border}}>
+                  <Text
+                    className="font-semibold text-xs"
+                    style={{color: colors.bg}}>
+                    {progressPercentage >= 100
+                      ? 'Completed'
+                      : `${Math.round(progressPercentage)}% Complete`}
                   </Text>
-                  <Text style={styles.chapterDescription} numberOfLines={2}>
-                    {item.description}
-                  </Text>
-                  <RenderProgressBar
-                    percentage={progress.completion_percentage}
-                  />
                 </View>
+              )}
+            </View>
+
+            {progress?.is_locked && (
+              <View className="absolute inset-0 bg-p1/50 backdrop-blur-[2px] flex items-center justify-center w-full h-full">
+                <IonIcon name="lock-closed" size={48} color="#FFF" />
               </View>
-            </LinearGradient>
-          </TouchableOpacity>
-        );
-      },
-      [isDark, navigation, category_id],
-    );
-  
- 
-    if (loader) return <Loading />;
-  
-    return (
-      <SafeAreaView style={style.chapterContainer}>
-        {chapters && chapters.length > 0 ? (
-          <>
-            <FlatList
-              data={chapters}
-              renderItem={renderChapterCard}
-              keyExtractor={item => item.id.toString()}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.listContainer}
-              removeClippedSubviews={Platform.OS === 'android'}
-              initialNumToRender={5}
-              maxToRenderPerBatch={5}
-              windowSize={5}
-            />
-          </>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{message}</Text>
+            )}
+
+            <View className="p-4">
+              <View className="mb-2">
+                <Text className="text-lg font-bold text-p1 flex-wrap">
+                  {item.name}
+                </Text>
+              </View>
+              <Text className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed flex-wrap">
+                {item.description}
+              </Text>
+
+              {!progress?.is_locked && (
+                <View className="mt-4">
+                  {progressPercentage > 0 && (
+                    <View
+                      className="h-2 rounded-full overflow-hidden"
+                      style={{backgroundColor: colors.border}}>
+                      <View
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${progressPercentage}%`,
+                          backgroundColor: colors.bg,
+                        }}
+                      />
+                    </View>
+                  )}
+
+                  <TouchableOpacity
+                    className="mt-4 rounded-xl py-3 flex-row items-center justify-center shadow-lg"
+                    style={{
+                      backgroundColor: colors.bg,
+                      shadowColor: colors.bg,
+                      shadowOpacity: 0.3,
+                    }}
+                    onPress={() => {
+                      trackEvent('Chapters', {
+                        chapter_id: item.id,
+                        chapter_name: item.name,
+                        chapter_description: item.description,
+                      });
+
+                      navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
+                        parent_module_id: item.id,
+                        title: item.name,
+                      });
+                    }}>
+                    <MaterialIcons name="school" size={20} color="white" />
+                    <Text className="ml-2 text-white font-bold text-sm">
+                      {getButtonText(progressPercentage)}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
           </View>
-        )}
-      </SafeAreaView>
+        </Pressable>
+      </View>
     );
   };
-  
-  const styles = StyleSheet.create({
-    cardContainer: {
-      marginVertical: 6,
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000000',
-          shadowOpacity: 0.05,
-          shadowRadius: 100,
-          shadowOffset: {
-            width: 50,
-            height: 60,
-          },
-        },
-        android: {
-          elevation: 3,
-        },
-      }),
-    },
-    gradientContainer: {
-      borderRadius: 15,
-      padding: 12,
-      overflow: 'hidden',
-    },
-    lockedCard: {
-      opacity: 0.7,
-    },
-    contentContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    lockIconContainer: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      zIndex: 1,
-      transform: [{translateX: -15}, {translateY: -15}],
-    },
-    chapterImage: {
-      width: 70,
-      height: 70,
-      borderRadius: 10,
-      marginRight: 15,
-      backgroundColor: '#f5f5f5',
-    },
-    placeholderImage: {
-      width: 70,
-      height: 70,
-      borderRadius: 10,
-      marginRight: 15,
-      backgroundColor: 'white',
-    },
-    infoContainer: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-    chapterName: {
-      fontSize: 18,
-      color: '#333',
-      fontWeight: 'bold',
-      marginBottom: 4,
-    },
-    chapterDescription: {
-      fontSize: 14,
-      color: '#666',
-      lineHeight: 20,
-      marginBottom: 8,
-    },
-    progressWrapper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    progressText: {
-      fontSize: 12,
-      color: '#333',
-      marginRight: 8,
-      fontWeight: '600',
-    },
-    dotsContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    progressDot: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      backgroundColor: '#E0E0E0',
-    },
-    progressLine: {
-      width: 12,
-      height: 2,
-      backgroundColor: '#E0E0E0',
-      marginHorizontal: 2,
-    },
-    emptyContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    emptyText: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: color.darkPrimary,
-    },
-  });
-  
-  export default Index;
-  
+
+  if (loader) return <Loading />;
+
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <View className="relative pb-8">
+        <View className="absolute w-full top-0 left-0 right-0">
+          <Image
+            source={topBgBackground}
+            className="w-full h-[200px] -mt-24"
+            onError={() => console.warn('Failed to load background image')}
+          />
+        </View>
+        <PageTitle pageName={`${title}`} />
+      </View>
+
+      {chapters && chapters.length > 0 ? (
+        <FlatList
+          data={chapters}
+          renderItem={renderChapterCard}
+          keyExtractor={item => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingVertical: 16}}
+          removeClippedSubviews={Platform.OS === 'android'}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            {message || 'No chapters available'}
+          </Text>
+        </View>
+      )}
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#613BFF',
+    textAlign: 'center',
+  },
+});
+
+export default Index;

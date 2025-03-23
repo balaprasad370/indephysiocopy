@@ -20,6 +20,8 @@ export const ROUTES = {
   SELF_LEARN: 'Self Learn',
   DOCUMENTS: 'Documents',
   FLASH: 'Flash',
+  SAMPLE_QUIZ: 'Sample Quiz',
+  DEMO_LEVEL: 'Demo Level',
 
   DASHBOARD: 'Dashboard',
   PROFILE_SETTING: 'Profile',
@@ -31,12 +33,37 @@ export const ROUTES = {
   Installement: 'Instalment',
   QUIZ: 'Quiz',
   MARKS: 'Marks',
+  MARKS_DETAILS: 'Marks Details',
   LEADERBOARD: 'LeaderBoard',
+  GLOBAL_LEADERBOARD: 'Global LeaderBoard',
+  SUBSCRIPTIONS: 'Subscriptions',
+  TRANSLATIONS: 'Translations',
+  RESUMES: 'Resumes',
   RECORDING: 'Recording',
   FILTER_RECORDING: 'Filter Recording',
   ASSESSMENTS: 'Assessments',
   OFFLINE: 'Offline',
   NOTIFICATIONS: 'Notifications',
+  NOTIFICATION_DETAILS: 'Notification Details',
   FILTER_SCREEN: 'Filter Screen',
   STUDENT_ACCESS: 'Student Access',
+
+  SUBSCRIPTIONS: 'Subscriptions',
+  HELP: 'Help',
+  TRANSLATIONS: 'Translations',
+  GLOBAL_LEADERBOARD: 'Global Leaderboard',
+  
+  
+  SUPPORT: 'Support',
+  TICKET_DETAILS: 'Ticket Details',
+  RAISE: 'Raise',
+  INVOICE: 'Invoice',
+
+  RESUMES: 'Resumes',
+  RESUMES_EDIT: 'Resumes Edit',
+  RESUMES_ADD: 'Resumes Add',
+
+  MEDTALK: 'MedTalk AI',
+  MEDCHAT: 'MedChat',
+  TOKENS: 'Tokens',
 };

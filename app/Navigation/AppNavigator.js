@@ -1,4 +1,11 @@
-import {StatusBar, StyleSheet, View, AppState} from 'react-native';
+import {
+  StatusBar,
+  StyleSheet,
+  View,
+  AppState,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import StackNavigation from './StackNavigation';
 import AuthNavigator from './AuthNavigator';
@@ -12,16 +19,25 @@ import storage from '../Constants/storage';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import {ROUTES} from '../Constants/routes';
+import notifee, {EventType} from '@notifee/react-native';
+import SubscriptionExpiry from '../Screens/SubscriptionExpiry/Index';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import trackEvent from '../Components/MixPanel/index';
 
 const AppNavigator = () => {
+  const navigationRef = useNavigationContainerRef();
   const {isAuthenticate, isDark, show, path} = useContext(AppContext);
 
-  const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef(null);
   const startTimeRef = useRef(null);
   const appStartTimeRef = useRef(null);
   const appStateRef = useRef(AppState.currentState);
   const [isConnected, setIsConnected] = useState(true);
+  const [subscriptionExpiryStatus, setSubscriptionExpiryStatus] =
+    useState(false);
+  const [subscriptionModal, setSubscriptionModal] = useState(false);
+
+  const [currentRoute, setCurrentRoute] = useState(null);
 
   // Helper function to convert milliseconds to hours, minutes, and seconds
   const formatTime = timeInMillis => {
@@ -35,27 +51,23 @@ const AppNavigator = () => {
 
   const saveOpenTime = () => {
     appOpenTime = Date.now();
-    console.log(`App opened at (UTC): ${appOpenTime}`);
   };
 
   const saveExitTime = async () => {
     const appExitTime = Date.now();
-    console.log(`App exited at (UTC): ${appExitTime}`);
 
     const token = await storage.getString('token');
     if (!token) {
-      console.log('Authorization token is missing.');
       return;
     }
     if (!path) {
-      console.log('API base path is missing.');
       return;
     }
     try {
       await axios.post(
         `${path}/student/v1/store-app-time`,
         {
-          app_open_time: appOpenTime, // Ensure this variable is defined
+          app_open_time: appOpenTime,
           app_close_time: appExitTime,
         },
         {
@@ -65,13 +77,9 @@ const AppNavigator = () => {
           },
         },
       );
-      console.log('Open and exit times sent successfully');
     } catch (error) {
       if (error.response?.status === 403) {
-        console.log('Forbidden: Token might be expired or invalid.');
         // Handle token refresh or redirect to login
-      } else {
-        console.log('Unexpected error:', error);
       }
     }
   };
@@ -84,9 +92,8 @@ const AppNavigator = () => {
       const totalTime = parseInt(savedTime, 10) + timeSpent;
       storage.setString(key, totalTime.toString());
       const {hours, minutes, seconds} = formatTime(totalTime);
-      console.log(`totalTime`, totalTime);
     } catch (error) {
-      console.log('Error saving time:', error);
+      // Error handling
     }
   };
   const previousScreenParams = useRef(null);
@@ -105,12 +112,10 @@ const AppNavigator = () => {
     const token = await storage.getString('token');
 
     if (!token) {
-      console.log('Authorization token is missing. storeTimeInDatabase');
       return;
     }
 
     if (!path) {
-      console.log('API base path is missing. storeTimeInDatabase');
       return;
     }
     try {
@@ -130,10 +135,8 @@ const AppNavigator = () => {
           },
         },
       );
-
-      // console.log('Time spent data stored successfully:', response.data);
     } catch (error) {
-      console.log('Error storing time spent data:', error);
+      // Error handling
     }
   };
 
@@ -177,7 +180,7 @@ const AppNavigator = () => {
         }
       }
 
-      // await saveTimeForDay(previousRouteName, timeSpent);
+      await saveTimeForDay(previousRouteName, timeSpent);
     }
 
     if (
@@ -199,6 +202,8 @@ const AppNavigator = () => {
   };
 
   const handleAppStateChange = async nextAppState => {
+    return;
+
     if (nextAppState === 'active') {
       appStartTimeRef.current = Date.now(); // Reset the app-specific start time
       saveOpenTime(); // Store open time
@@ -216,12 +221,10 @@ const AppNavigator = () => {
       const token = await storage.getString('token');
 
       if (!token) {
-        console.log('Authorization token is missing. handleAppStateChange');
         return;
       }
 
       if (!path) {
-        console.log('API base path is missing. handleAppStateChange');
         return;
       }
       let flashTime2 = flashTimeRef.current / 1000;
@@ -248,13 +251,12 @@ const AppNavigator = () => {
           },
         );
 
-        console.log('Total app time sent successfully');
         flashTimeRef.current = 0;
         readingTimeRef.current = 0;
         quizTimeRef.current = 0;
         assessmentTimeRef.current = 0;
       } catch (error) {
-        console.log('Error sending total app usage data:', error);
+        // Error handling
       }
     }
 
@@ -274,21 +276,7 @@ const AppNavigator = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const subscription = AppState.addEventListener(
-  //     'change',
-  //     handleAppStateChange,
-  //   );
-
-  //   return () => {
-  //     if (subscription) subscription.remove();
-  //   };
-  // }, []);
   useEffect(() => {
-    // Immediately check the current app state on mount
-    const currentAppState = AppState.currentState;
-    handleAppStateChange(currentAppState);
-
     const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,
@@ -298,33 +286,265 @@ const AppNavigator = () => {
       if (subscription) subscription.remove();
     };
   }, []);
+  useEffect(() => {
+    // Immediately check the current app state on mount
+    const currentAppState = AppState.currentState;
+    handleAppStateChange(currentAppState);
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+    return () => {
+      if (subscription) subscription.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    // Handle foreground notifications
+    const unsubscribeForeground = notifee.onForegroundEvent(
+      ({type, detail}) => {
+        if (type === EventType.PRESS) {
+          const link = detail?.notification?.data?.link || null;
+          let params = detail?.notification?.data?.params || null;
+
+          if (link === null) {
+            return;
+          }
+          // Check if params is a string, then convert it to an object
+          if (typeof params === 'string') {
+            try {
+              params = JSON.parse(params);
+            } catch (error) {
+              params = {}; // Fallback to empty object if parsing fails
+            }
+          }
+
+          if (link) {
+            navigationRef.navigate(link, params);
+          }
+        }
+      },
+    );
+
+    // Handle background messages
+    const unsubscribeBackground = notifee.onBackgroundEvent(
+      async ({type, detail}) => {
+        if (type === EventType.PRESS) {
+          // You can store the navigation data to be used when the app is opened
+          const link = detail?.notification?.data?.link || null;
+          const params = detail?.notification?.data?.params || null;
+
+          if (link) {
+            // For background events, you might want to store this information
+            // to navigate when the app is opened
+            navigationRef.navigate(link, params);
+
+            await storage.setString('pendingNotificationLink', link);
+            await storage.setString(
+              'pendingNotificationParams',
+              JSON.stringify(params),
+            );
+          }
+        }
+      },
+    );
+
+    return () => {
+      unsubscribeForeground();
+    };
+  }, []);
+
+  const linking = {
+    prefixes: [
+      'meduniverse://',
+      'https://meduniverse.in',
+      'https://www.meduniverse.in',
+    ], // Custom URL scheme & universal link
+    config: {
+      screens: {
+        // Main screens
+        [ROUTES.HOME_TAB]: 'home',
+        [ROUTES.PROFILE_SETTING]: 'profile/:userId?',
+
+        // Learning paths
+        [ROUTES.LEVEL]: 'level/:levelId?',
+        [ROUTES.CHAPTERS]: 'chapters/:branchId?',
+        [ROUTES.BRANCH_CHAPTERS]: 'branch/:branchId?',
+        [ROUTES.SELF_LEARN_SCREEN]: 'selflearn/:courseId?',
+        [ROUTES.READING]: 'reading/:chapterId?',
+
+        // Content screens
+        [ROUTES.FLASH]: 'flashcards/:chapterId?',
+        [ROUTES.SAMPLE_QUIZ]: 'samplequiz/:quizId?',
+        [ROUTES.ASSESSMENTS]: 'assessment/:assessmentId?',
+        [ROUTES.RECORDING]: 'recording/:recordingId?',
+        [ROUTES.FILTER_RECORDING]: 'recordings/filter',
+
+        // User features
+        [ROUTES.SUBSCRIPTIONS]: 'subscriptions',
+        [ROUTES.NOTIFICATIONS]: 'notifications',
+        [ROUTES.NOTIFICATION_DETAILS]: 'notification/:notificationId?',
+        [ROUTES.LEADERBOARD]: 'leaderboard',
+        [ROUTES.GLOBAL_LEADERBOARD]: 'global-leaderboard',
+
+        // Support and help
+        [ROUTES.HELP]: 'help',
+        [ROUTES.SUPPORT]: 'support',
+        [ROUTES.TICKET_DETAILS]: 'ticket/:ticketId?',
+        [ROUTES.RAISE]: 'raise-ticket',
+
+        // Other features
+        [ROUTES.FILTER_SCREEN]: 'filter',
+        [ROUTES.STUDENT_ACCESS]: 'student-access',
+        [ROUTES.TRANSLATIONS]: 'translations',
+        [ROUTES.RESUMES]: 'resumes',
+        [ROUTES.RESUMES_EDIT]: 'resume/edit/:resumeId?',
+        [ROUTES.RESUMES_ADD]: 'resume/add',
+        [ROUTES.MEDCHAT]: 'medchat',
+        [ROUTES.TOKENS]: 'tokens',
+        [ROUTES.OFFLINE]: 'offline',
+        [ROUTES.INVOICE]: 'invoice/:invoiceId?',
+        [ROUTES.PRICING]: 'pricing',
+      },
+    },
+  };
+
+  const getSubscriptionExpiry = async () => {
+    const token = await storage.getStringAsync('token');
+    if (!token) {
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${path}/admin/v2/subscription-timestamp`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      setSubscriptionExpiryStatus(response?.data?.expired);
+      setSubscriptionModal(response?.data?.expired);
+    } catch (error) {
+      // Error handling
+    }
+  };
+
+  useEffect(() => {
+    getSubscriptionExpiry();
+  }, []);
 
   return (
     <NavigationContainer
+      linking={linking}
       ref={navigationRef}
       onReady={() => {
         routeNameRef.current = navigationRef.getCurrentRoute().name;
         startTimeRef.current = Date.now();
       }}
-      onStateChange={async () => {
+      onStateChange={() => {
         const previousRouteName = routeNameRef.current;
         const currentRouteName = navigationRef.getCurrentRoute().name;
+        // console.log('currentRouteName', currentRouteName);
 
-        if (previousRouteName !== currentRouteName) {
-          await handleRouteChange(previousRouteName, currentRouteName);
-          routeNameRef.current = currentRouteName;
+        try {
+          const mixPanelNeglectedRoutes = [
+            ROUTES?.CHAPTERS,
+            ROUTES?.LEVEL,
+            ROUTES?.SELF_LEARN_SCREEN,
+            ROUTES?.READING,
+            ROUTES?.FLASH,
+            ROUTES?.SAMPLE_QUIZ,
+            ROUTES?.ASSESSMENTS,
+            ROUTES?.RECORDING,
+          ];
+
+          if (!mixPanelNeglectedRoutes.includes(currentRouteName)) {
+            trackEvent(currentRouteName, {
+              screen: currentRouteName,
+            });
+          }
+        } catch (error) {
+          // console.log('error', error);
         }
+
+        setCurrentRoute(currentRouteName);
+
+        const neglectedRoutes = [
+          ROUTES.SUBSCRIPTIONS,
+          ROUTES.INVOICE,
+          ROUTES.STUDENT_ACCESS,
+          ROUTES.LOGIN,
+          ROUTES.WELCOME,
+        ];
+        if (neglectedRoutes.includes(currentRouteName)) {
+          setSubscriptionModal(false);
+          return;
+        } else {
+          setSubscriptionModal(true);
+        }
+
+        if (
+          previousRouteName == ROUTES.LOGIN &&
+          currentRouteName == ROUTES.HOME_TAB
+        ) {
+          getSubscriptionExpiry();
+        }
+
+        if (
+          previousRouteName == ROUTES.HOME &&
+          currentRouteName == ROUTES.HOME
+        ) {
+          getSubscriptionExpiry();
+        }
+
+        routeNameRef.current = currentRouteName;
       }}>
-      <StatusBar
-        barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={isDark ? '#000' : '#FFF'}
-      />
+      <StatusBar backgroundColor={'#613BFF'} />
       <Toast visible={show} onClose={() => setShow(false)} />
       {isAuthenticate ? <StackNavigation /> : <AuthNavigator />}
+      {subscriptionExpiryStatus && subscriptionModal && (
+        <View className="absolute inset-0 bg-black/40 bg-opacity-10 h-full w-full">
+          <SubscriptionExpiry
+            subscriptionExpiryStatus={subscriptionExpiryStatus}
+            navigation={navigationRef}
+          />
+        </View>
+      )}
+
+      {[ROUTES.CHAPTERS, ROUTES.LEVEL, ROUTES.SELF_LEARN_SCREEN].includes(
+        currentRoute,
+      ) && (
+        <View style={styles.fabContainer}>
+          <TouchableOpacity
+            onPress={() => navigationRef.navigate(ROUTES.HOME)}
+            style={styles.fab}>
+            <MaterialIcons name="home" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      )}
     </NavigationContainer>
   );
 };
 
-export default AppNavigator;
+const styles = StyleSheet.create({
+  fabContainer: {
+    position: 'absolute',
+    bottom: 50,
+    left: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fab: {
+    backgroundColor: '#613BFF',
+    borderRadius: 30,
+    padding: 15,
+  },
+  fabText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+});
 
-const styles = StyleSheet.create({});
+export default AppNavigator;

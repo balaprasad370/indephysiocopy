@@ -1,15 +1,15 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import LinearGradient from 'react-native-linear-gradient'; // Import LinearGradient
+import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Dashboard, SelfLearn, Documents, LiveClasses} from '../Screens';
+import {
+  Dashboard,
+  SelfLearn,
+  Documents,
+  LiveClasses,
+  MedTalk,
+} from '../Screens';
 import {ROUTES} from '../Constants/routes';
 import {AppContext} from '../theme/AppContext';
 import LighTheme from '../theme/LighTheme';
@@ -37,13 +37,13 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
     console.log('index', index);
     setIndex(index);
     if (index === 0) {
-      navigation.navigate('Home');
+      navigation.navigate(ROUTES.HOME);
     } else if (index === 1) {
-      navigation.navigate('Live Classes');
+      navigation.navigate(ROUTES.LIVE_CLASS);
     } else if (index === 2) {
-      navigation.navigate('Documents');
+      navigation.navigate(ROUTES.MEDTALK);
     } else if (index === 3) {
-      navigation.navigate('Self Learn');
+      navigation.navigate(ROUTES.SELF_LEARN);
     }
   };
 
@@ -52,65 +52,95 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
 
   return (
     <SafeAreaView style={style.bottomTab}>
-      <LinearGradient
-        colors={[color.first, color.second, color.third]} // Gradient colors
-        start={{x: 0, y: 0}} // Start from the left
-        end={{x: 1, y: 0}} // End at the right
-        style={styles.gradientContainer}>
+      <View className="items-center  py-3 flex-row justify-evenly bg-p1">
         <TouchableOpacity
           hitSlop={{x: 25, y: 15}}
           onPress={() => handleNavigateScreen(0)}
-          style={index === 0 ? [styles.activeTabButton] : {}}>
+          className={`${
+            index === 0
+              ? 'flex justify-center border-[0.8px] border-white rounded-[50px] p-1.5 w-1/2 pr-2 flex-row items-center bg-p1'
+              : ''
+          }`}>
           <Ionicons
             name="view-dashboard"
-            style={{marginLeft: 0}}
+            className="ml-0"
             size={30}
             color="white"
           />
-          {index === 0 && <Text style={styles.tabLabel}>DASHBOARD</Text>}
+          {index === 0 && (
+            <Text className="text-base text-white font-semibold ml-2.5">
+              DASHBOARD
+            </Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity
           hitSlop={{x: 25, y: 15}}
-          style={index === 1 ? styles.activeTabButton : {}}
+          className={`${
+            index === 1
+              ? 'flex justify-center border-[0.8px] border-white rounded-[50px] p-1.5 w-1/2 pr-2 flex-row items-center bg-p1'
+              : ''
+          }`}
           onPress={() => handleNavigateScreen(1)}>
           <Ionicons
             name="monitor-dashboard"
             size={30}
-            style={{marginLeft: 0}}
+            className="ml-0"
             color="white"
           />
-          {index === 1 && <Text style={styles.tabLabel}>LIVE CLASS</Text>}
+          {index === 1 && (
+            <Text className="text-base text-white font-semibold ml-2.5">
+              LIVE CLASS
+            </Text>
+          )}
         </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          style={index === 2 ? styles.activeTabButton : {}}
-          onPress={() => handleNavigateScreen(2)}>
-          <Ionicons
-            name="folder-open"
-            size={30}
-            style={{marginLeft: 8}}
-            color="white"
-          />
-          {index === 2 && <Text style={styles.tabLabel}>DOCUMENTS</Text>}
-        </TouchableOpacity> */}
 
         <TouchableOpacity
           hitSlop={{x: 25, y: 15}}
-          style={index === 3 ? styles.activeTabButton : {}}
+          className={`${
+            index === 2
+              ? 'flex justify-center border-[0.8px] border-white rounded-[50px] p-1.5 w-1/2 pr-2 flex-row items-center bg-p1'
+              : ''
+          }`}
+          onPress={() => handleNavigateScreen(2)}>
+          <View className="relative">
+            <Ionicons name="robot" size={30} className="ml-0" color="white" />
+            <View className="absolute -top-2 -right-2 bg-yellow-400 rounded-full px-1 py-0.5">
+              <Text className="text-[10px] text-black font-bold">NEW</Text>
+            </View>
+          </View>
+          {index === 2 && (
+            <Text className="text-base text-white font-semibold ml-2.5">
+              MEDTALK
+            </Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          hitSlop={{x: 25, y: 15}}
+          className={`${
+            index === 3
+              ? 'flex justify-center border-[0.8px] border-white rounded-[50px] p-1.5 w-1/2 pr-2 flex-row items-center bg-p1'
+              : ''
+          }`}
           onPress={() => handleNavigateScreen(3)}>
           <Ionicons
             name="book-open-blank-variant"
-            style={{marginLeft: 0}}
+            className="ml-0"
             size={30}
             color="white"
           />
-          {index === 3 && <Text style={styles.tabLabel}>SELF LEARN</Text>}
+          {index === 3 && (
+            <Text className="text-base text-white font-semibold ml-2.5">
+              SELF LEARN
+            </Text>
+          )}
         </TouchableOpacity>
-      </LinearGradient>
+      </View>
     </SafeAreaView>
   );
 };
+
 const BottomNavigator = () => {
   return (
     <Tab.Navigator
@@ -121,41 +151,9 @@ const BottomNavigator = () => {
       <Tab.Screen name={ROUTES.HOME} component={Dashboard} />
       <Tab.Screen name={ROUTES.LIVE_CLASS} component={LiveClasses} />
       <Tab.Screen name={ROUTES.SELF_LEARN} component={SelfLearn} />
+      <Tab.Screen name={ROUTES.MEDTALK} component={MedTalk} />
     </Tab.Navigator>
   );
 };
 
 export default BottomNavigator;
-
-const styles = StyleSheet.create({
-  gradientContainer: {
-    borderRadius: 50,
-    alignItems: 'center',
-    marginLeft: 6,
-    marginRight: 6,
-    marginBottom: 4,
-    paddingTop: 6,
-    paddingBottom: 6,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
-  activeTabButton: {
-    display: 'flex',
-    justifyContent: 'center',
-    borderWidth: 0.8,
-    borderColor: 'white',
-    borderRadius: 50,
-    padding: 6,
-    width: '50%',
-    paddingRight: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#237FC1', // Active tab background color
-  },
-  tabLabel: {
-    fontSize: 16,
-    color: 'white',
-    fontWeight: '600',
-    marginLeft: 10,
-  },
-});

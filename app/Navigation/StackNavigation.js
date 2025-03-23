@@ -1,8 +1,9 @@
 import React, {useContext} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 import DrawerNavigator from './DrawerNavigator';
-import Dashboard from '../Screens/Dashboard/Index';
-import BottomNavigator from './BottomNavigator';
 import {ROUTES} from '../Constants/routes';
 import {
   ProfileSetting,
@@ -27,28 +28,47 @@ import {
   Offline,
   Notifications,
   FilterScreen,
+  Subscriptions,
+  GlobalLeaderboard,
+  Translations,
+  Resumes,
+  Help,
+  Support,
+  TicketDetails,
+  Raise,
+  Invoice,
+  ResumesEdit,
+  ResumesAdd,
+  MedChat,
+  Tokens,
+  NotificationDetails,
+  Login,
+  SampleQuiz,
+  MarksDetails,
 } from '../Screens';
 import {Button, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {useNavigation, useTheme} from '@react-navigation/native';
 import {AppContext} from '../theme/AppContext';
-import DarkTheme from '../theme/Darktheme';
-import LighTheme from '../theme/LighTheme';
+
 import Recording from '../Screens/Recording/Index';
-import VoiceComponent from '../Screens/Quiz/VoiceComponent';
-import AppUsageTracker from '../Screens/AppUsage/Index';
 import StudentAccess from '../Screens/StudentAccess/StudentAccess';
 import BranchChapters from '../Screens/Branch/index';
 
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
-  const {isDark, setIsDark, isAuthenticate} = useContext(AppContext);
-
-  const style = isDark ? DarkTheme : LighTheme;
-  const navigation = useNavigation();
+  const {isDark} = useContext(AppContext);
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        gestureEnabled: false,
+        gestureDirection: 'horizontal',
+        transitionSpec: {
+          open: {animation: 'timing', config: {duration: 300}},
+          close: {animation: 'timing', config: {duration: 300}},
+        },
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+      }}>
       <Stack.Screen
         name={ROUTES.HOME_TAB}
         options={{headerShown: false}}
@@ -57,24 +77,27 @@ const StackNavigation = () => {
       <Stack.Screen
         name={ROUTES.LEVEL}
         options={{
-          headerTitle: 'Level',
-          headerLeftLabelVisible: false,
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
         component={Level}
       />
+
+      <Stack.Screen
+        name={ROUTES.LOGIN}
+        options={{headerShown: false}}
+        component={Login}
+      />
+
+      <Stack.Screen
+        name={ROUTES.SAMPLE_QUIZ}
+        options={{headerShown: false}}
+        component={SampleQuiz}
+      />
+
       <Stack.Screen
         name={ROUTES.RECORDING}
         options={{
-          headerTitle: 'Recording',
-          headerLeftLabelVisible: false,
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
         component={Recording}
       />
@@ -155,15 +178,19 @@ const StackNavigation = () => {
       <Stack.Screen
         name={ROUTES.NOTIFICATIONS}
         options={{
-          headerTitle: 'Notifications',
-          headerLeftLabelVisible: false,
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
         component={Notifications}
       />
+
+      <Stack.Screen
+        name={ROUTES.NOTIFICATION_DETAILS}
+        options={{
+          headerShown: false,
+        }}
+        component={NotificationDetails}
+      />
+
       <Stack.Screen
         name={ROUTES.ASSESSMENTS}
         options={{
@@ -197,12 +224,7 @@ const StackNavigation = () => {
       <Stack.Screen
         name={ROUTES.CHAPTERS}
         options={{
-          headerTitle: 'Chapters',
-          headerLeftLabelVisible: false,
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
         component={Chapters}
       />
@@ -221,43 +243,50 @@ const StackNavigation = () => {
       <Stack.Screen
         name={ROUTES.MARKS}
         options={{
-          headerTitle: 'Marks',
-          headerLeftLabelVisible: false,
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
         component={MarksImage}
+      />
+      <Stack.Screen
+        name={ROUTES.MARKS_DETAILS}
+        options={{
+          headerShown: false,
+        }}
+        component={MarksDetails}
       />
 
       <Stack.Screen
         name={ROUTES.SELF_LEARN_SCREEN}
         options={{
-          headerLeftLabelVisible: false,
-          title: ' ',
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
         component={SelfLearnScreen}
       />
 
-
       <Stack.Screen
         name={ROUTES.BRANCH_CHAPTERS}
         options={{
-          headerLeftLabelVisible: false,
-          title: 'Categories',
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
         component={BranchChapters}
       />
-      
+
+      <Stack.Screen
+        name={ROUTES.MEDCHAT}
+        options={{
+          headerShown: false,
+        }}
+        component={MedChat}
+      />
+
+      <Stack.Screen
+        name={ROUTES.TOKENS}
+        options={{
+          headerShown: false,
+        }}
+        component={Tokens}
+      />
+
       <Stack.Screen
         name={ROUTES.READING}
         options={{
@@ -297,12 +326,7 @@ const StackNavigation = () => {
       <Stack.Screen
         name={ROUTES.FAQ}
         options={{
-          headerTitle: 'FAQs MedUniverse ',
-          headerLeftLabelVisible: false,
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
         component={FAQ}
       />
@@ -333,22 +357,97 @@ const StackNavigation = () => {
       />
 
       <Stack.Screen
+        name={ROUTES.GLOBAL_LEADERBOARD}
+        options={{
+          headerShown: false,
+        }}
+        component={GlobalLeaderboard}
+      />
+
+      <Stack.Screen
+        name={ROUTES.SUBSCRIPTIONS}
+        options={{
+          headerShown: false,
+        }}
+        component={Subscriptions}
+      />
+
+      <Stack.Screen
+        name={ROUTES.RESUMES}
+        options={{
+          headerShown: false,
+        }}
+        component={Resumes}
+      />
+
+      <Stack.Screen
+        name={ROUTES.TRANSLATIONS}
+        options={{
+          headerShown: false,
+        }}
+        component={Translations}
+      />
+
+      <Stack.Screen
+        name={ROUTES.HELP}
+        options={{
+          headerShown: false,
+        }}
+        component={Help}
+      />
+
+      <Stack.Screen
+        name={ROUTES.SUPPORT}
+        options={{
+          headerShown: false,
+        }}
+        component={Support}
+      />
+
+      <Stack.Screen
+        name={ROUTES.TICKET_DETAILS}
+        options={{
+          headerShown: false,
+        }}
+        component={TicketDetails}
+      />
+
+      <Stack.Screen
+        name={ROUTES.RAISE}
+        options={{
+          headerShown: false,
+        }}
+        component={Raise}
+      />
+
+      <Stack.Screen
+        name={ROUTES.INVOICE}
+        options={{
+          headerShown: false,
+        }}
+        component={Invoice}
+      />
+
+      <Stack.Screen
+        name={ROUTES.RESUMES_EDIT}
+        options={{
+          headerShown: false,
+        }}
+        component={ResumesEdit}
+      />
+
+      <Stack.Screen
+        name={ROUTES.RESUMES_ADD}
+        options={{
+          headerShown: false,
+        }}
+        component={ResumesAdd}
+      />
+
+      <Stack.Screen
         name={ROUTES.PROFILE_SETTING}
         options={{
-          headerTitle: 'Settings',
-          headerTitleStyle: {
-            color: isDark ? 'white' : 'black',
-          },
-          headerStyle: {
-            backgroundColor: isDark ? 'black' : 'white',
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              hitSlop={{x: 25, y: 15}}
-              onPress={() => navigation.goBack()}>
-              <Icon name="left" style={style.headerLeftIcon} />
-            </TouchableOpacity>
-          ),
+          headerShown: false,
         }}
         component={ProfileSetting}
       />

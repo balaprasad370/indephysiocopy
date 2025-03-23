@@ -1,15 +1,10 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {Text, View, TouchableOpacity, Alert} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
 import NetInfo from '@react-native-community/netinfo';
+import LottieView from 'lottie-react-native';
+
 const OfflineScreen = ({onRetry}) => {
   const navigation = useNavigation();
 
@@ -18,7 +13,7 @@ const OfflineScreen = ({onRetry}) => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         // If the internet is available, navigate to Dashboard
-        navigation.navigate(ROUTES.DASHBOARD); // Change 'Dashboard' to your actual route name
+        navigation.navigate(ROUTES.DASHBOARD);
       } else {
         // If no internet, show an alert
         Alert.alert(
@@ -28,62 +23,33 @@ const OfflineScreen = ({onRetry}) => {
       }
     });
   };
+
   return (
-    <View style={styles.container}>
-      <Image
-        source={{
-          uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaDWy2_0GU1-bjNU0LncGCMA1sf_gWwRnRvw&s',
-        }} // Add a "no-internet" image in the assets folder
-        style={styles.image}
-      />
-      <Text style={styles.title}>No Internet Connection</Text>
-      <Text style={styles.subtitle}>
-        Please check your internet connection and try again.
-      </Text>
-      <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
-        <Text style={styles.retryText}>Retry</Text>
-      </TouchableOpacity>
+    <View className="flex-1 justify-center items-center bg-white px-5 py-10">
+      <View className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+        <LottieView
+          source={require('../../assets/lottie/offline.json')}
+          autoPlay
+          loop
+          style={{width: 200, height: 200, alignSelf: 'center'}}
+          className="mb-8"
+        />
+        <Text className="text-2xl font-bold text-gray-800 text-center mb-4">
+          No Internet Connection
+        </Text>
+        <Text className="text-base text-gray-600 text-center mb-8">
+          Please check your internet connection and try again.
+        </Text>
+        <TouchableOpacity
+          onPress={handleRetry}
+          className="bg-blue-600 active:bg-blue-700 rounded-xl py-4 px-6 shadow-md">
+          <Text className="text-white font-semibold text-lg text-center">
+            Try Again
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 export default OfflineScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F8F8F8',
-    paddingHorizontal: 20,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 30,
-  },
-  retryButton: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 5,
-  },
-  retryText: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-});

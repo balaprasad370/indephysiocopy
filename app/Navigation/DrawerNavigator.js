@@ -10,6 +10,7 @@ import {
   Documents,
   SelfLearn,
   ProfileSetting,
+  MedTalk,
 } from '../Screens';
 import COLOR from '../Constants/color';
 import {AppContext} from '../theme/AppContext';
@@ -52,24 +53,14 @@ const DrawerNavigator = () => {
         name={ROUTES.LIVE_CLASS}
         component={LiveClasses}
         options={{
-          headerTitle: 'Live classes',
-          headerLeftLabelVisible: false,
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
       />
       <Drawer.Screen
         name={ROUTES.SELF_LEARN}
         component={SelfLearn}
         options={{
-          headerTitle: 'Self Learn',
-          headerLeftLabelVisible: false,
-          headerStyle: {
-            backgroundColor: isDark ? '#000' : '#fff',
-          },
-          headerTintColor: isDark ? '#fff' : '#000',
+          headerShown: false,
         }}
         // options={{headerShown: true}}
       />
@@ -85,6 +76,25 @@ const DrawerNavigator = () => {
           headerTintColor: isDark ? '#fff' : '#000',
         }}
       />
+
+      <Drawer.Screen
+        name={ROUTES.MEDTALK}
+        component={MedTalk}
+        options={{
+          headerShown: false,
+          drawerLabel: 'MedTalk AI Chat',
+          drawerLabelStyle: {
+            fontWeight: 'bold',
+          },
+          drawerContentStyle: {
+            backgroundColor: isDark ? '#1E1E1E' : '#F5F5F5',
+          },
+          drawerContentOptions: {
+            activeTintColor: COLOR.primary,
+          },
+        }}
+      />
+
       <Drawer.Screen
         name=" "
         component={BottomNavigator}

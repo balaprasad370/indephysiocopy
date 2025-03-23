@@ -28,14 +28,14 @@ const AuthNavigator = () => (
       )}
     </Stack.Screen>
 
-    <Stack.Screen name={ROUTES.LOGIN} options={{headerTitle: 'Login'}}>
+    <Stack.Screen name={ROUTES.LOGIN} options={{headerTitle: 'Login', headerShown: false}}>
       {props => (
         <ScreenWrapper>
           <Login {...props} />
         </ScreenWrapper>
       )}
     </Stack.Screen>
-    <Stack.Screen name={ROUTES.SIGNUP} options={{headerTitle: 'Signup'}}>
+    <Stack.Screen name={ROUTES.SIGNUP} options={{headerTitle: 'Signup', headerShown: false}}>
       {props => (
         <ScreenWrapper>
           <Signup {...props} />

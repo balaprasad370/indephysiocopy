@@ -1,383 +1,334 @@
+import React, {useContext, useEffect, useState, useCallback} from 'react';
 import {
   FlatList,
   Image,
-  Platform,
   SafeAreaView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  ActivityIndicator,
+  Pressable,
+  RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
-import React, {useContext, useEffect, useState, useCallback} from 'react';
 import axios from 'axios';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {ROUTES} from '../../Constants/routes';
 import {AppContext} from '../../theme/AppContext';
-import color from '../../Constants/color';
-
-import LinearGradient from 'react-native-linear-gradient';
-import Loading from '../../Components/Loading/Loading';
-import IconTimer from 'react-native-vector-icons/Ionicons';
-import {useFocusEffect} from '@react-navigation/native';
+import IonIcon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import storage from '../../Constants/storage';
-import DarkTheme from '../../theme/Darktheme';
-import LighTheme from '../../theme/LighTheme';
+import topBgBackground from '../../assets/top-bg-shape2.png';
+import PageTitle from '../../ui/PageTitle';
+import trackEvent from '../../Components/MixPanel';
 
 const Index = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const {level_id} = route.params;
-  const {path, clientId, packageId, isDark, loader, setLoader} =
-    useContext(AppContext);
+  const {path, isDark, loader, setLoader} = useContext(AppContext);
 
   const [message, setMessage] = useState('');
-
   const [chapters, setChapters] = useState([]);
   const [isBranch, setIsBranch] = useState(false);
-  const style = isDark ? DarkTheme : LighTheme;
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Memoized function to fetch chapters data
-  const fetchChapters = useCallback(async () => {
+  const fetchChapters = async () => {
     const token = await storage.getStringAsync('token');
     if (!token) return;
-    setLoader(true);
+
     try {
-      // console.log(token);
+      setLoader(true);
+      setMessage('');
 
-      const response = await axios.get(
-        // `${path}/admin/v3/chapters-with-progress`,
-        `${path}/admin/v1/chapters`,
-        {
-          params: {
-            level_id,
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+      const response = await axios.get(`${path}/admin/v7/chapters`, {
+        params: {level_id},
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-      );
+        signal: controller.signal,
+      });
 
-      console.log(response.data);
-      
-      if (response.data.success == false) {
+      console.log('chapters response', response.data);
+      clearTimeout(timeoutId);
+
+      if (!response.data.success) {
         setMessage(response.data.message);
         setChapters([]);
       } else {
-        setIsBranch(response.data?.is_branch ? true : false);
+        setIsBranch(response.data?.is_branch || false);
         setChapters(response.data.chapters);
       }
     } catch (error) {
-      console.log('Error fetching chapters:', error.response.data);
-      setMessage(error.response?.data?.message);
+      // console.error('Error fetching chapters:', error);
+      setMessage(error.response?.data?.message || 'Error loading chapters');
       setChapters([]);
     } finally {
       setLoader(false);
     }
-  }, [path, level_id, clientId, packageId]);
+  };
 
-  // Use useFocusEffect to refresh data when screen is focused
-  useFocusEffect(
-    useCallback(() => {
-      fetchChapters();
-    }, [fetchChapters]),
-  );
-
-  const getProgressColor = useCallback(percentage => {
-    if (percentage >= 75) return '#4CAF50';
-    if (percentage >= 50) return '#FFA726';
-    if (percentage < 25) return '#FF7043';
-    return '#F44336';
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await fetchChapters();
+    } catch (error) {
+      console.error('Error during refresh:', error);
+    } finally {
+      setRefreshing(false);
+    }
   }, []);
 
-  const RenderProgressBar = useCallback(({percentage}) => {
-    const progressSteps = 5;
-    const filledSteps = Math.round((percentage / 100) * progressSteps);
-    const color = getProgressColor(percentage);
+  useEffect(() => {
+    fetchChapters();
+  }, []);
+
+  const renderChapterCard = ({item}) => {
+    const {progress} = item;
+    const progressPercentage = progress?.completion_percentage || 0;
+
+    const getProgressColors = percentage => {
+      if (percentage >= 100) return {bg: '#22C55E', border: '#22C55E20'};
+      if (percentage >= 75) return {bg: '#3B82F6', border: '#3B82F620'};
+      if (percentage >= 50) return {bg: '#EAB308', border: '#EAB30820'};
+      return {bg: '#EF4444', border: '#EF444420'};
+    };
+
+    const getButtonText = percentage => {
+      if (percentage >= 100) return 'Review Chapter';
+      if (percentage > 0) return 'Continue Learning';
+      return 'Start Learning';
+    };
+
+    const colors = getProgressColors(progressPercentage);
+
+    if (isBranch) {
+      return (
+        <View className="w-[92%] self-center rounded-[24px] shadow-xl mb-4 overflow-hidden border border-p1/20 bg-white dark:bg-n75">
+          <Pressable
+            android_ripple={{color: '#613BFF10'}}
+            style={({pressed}) => [{opacity: pressed ? 0.95 : 1}]}
+            onPress={() => {
+              navigation.navigate(ROUTES.BRANCH_CHAPTERS, {
+                category_id: item.category_id,
+                title: item.category_title,
+              });
+            }}>
+            <View className="relative">
+              <View className="h-[120px]">
+                {item.category_img ? (
+                  <Image
+                    resizeMode="cover"
+                    className="w-full h-full"
+                    source={{
+                      uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.category_img}`,
+                    }}
+                  />
+                ) : (
+                  <View className="w-full h-full bg-n40 justify-center items-center">
+                    <ActivityIndicator size="large" color="#613BFF" />
+                  </View>
+                )}
+              </View>
+
+              <View className="p-4">
+                <View className="mb-2">
+                  <Text className="text-lg font-bold text-p1 flex-wrap">
+                    {item.category_title}
+                  </Text>
+                </View>
+                <Text className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed flex-wrap">
+                  {item.category_description}
+                </Text>
+
+                <View className="mt-4">
+                  <TouchableOpacity
+                    className="mt-4 rounded-xl py-3 flex-row items-center justify-center shadow-lg"
+                    style={{
+                      backgroundColor: '#613BFF',
+                      shadowColor: '#613BFF',
+                      shadowOpacity: 0.3,
+                    }}
+                    onPress={() => {
+                      navigation.navigate(ROUTES.BRANCH_CHAPTERS, {
+                        category_id: item.category_id,
+                        title: item.category_title,
+                      });
+                    }}>
+                    <MaterialIcons name="school" size={20} color="white" />
+                    <Text className="ml-2 text-white font-bold text-sm">
+                      Start Learning
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Pressable>
+        </View>
+      );
+    }
 
     return (
-      <View style={styles.progressWrapper}>
-        <Text style={styles.progressText}>{Math.round(percentage)}%</Text>
-        <View style={styles.dotsContainer}>
-          {Array(progressSteps)
-            .fill(0)
-            .map((_, index) => (
-              <React.Fragment key={index}>
-                <View
-                  style={[
-                    styles.progressDot,
-                    index < filledSteps && {backgroundColor: color},
-                  ]}
-                />
-                {index < progressSteps - 1 && (
-                  <View
-                    style={[
-                      styles.progressLine,
-                      index < filledSteps && {backgroundColor: color},
-                    ]}
-                  />
-                )}
-              </React.Fragment>
-            ))}
-        </View>
-      </View>
-    );
-  }, []);
-
-  const renderChapterCard = useCallback(
-    ({item}) => {
-      const {progress} = item;
-
-      return (
-        <TouchableOpacity
-          disabled={progress.is_locked}
+      <View className="w-[92%] self-center rounded-[24px] shadow-xl mb-4 overflow-hidden border border-p1/20 bg-white dark:bg-n75">
+        <Pressable
+          android_ripple={{color: '#613BFF10'}}
+          style={({pressed}) => [{opacity: pressed ? 0.95 : 1}]}
           onPress={() => {
-            navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
-              parent_module_id: item.id,
-              title: item.name,
-              level_id: level_id,
-            });
-          }}
-          style={styles.cardContainer}>
-          <LinearGradient
-            style={[
-              styles.gradientContainer,
-              progress.is_locked && styles.lockedCard,
-            ]}
-            colors={
-              isDark
-                ? ['#2A89C6', '#3397CB', '#0C5CB4']
-                : [color.lightPrimary, color.lightPrimary, color.lightPrimary]
-            }
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}>
-            {progress.is_locked && (
-              <View style={styles.lockIconContainer}>
-                <IconTimer
-                  name="lock-closed-sharp"
-                  size={30}
-                  color="#000"
-                  style={styles.lockIcon}
-                />
-              </View>
-            )}
+            if (!progress?.is_locked) {
+              trackEvent('Chapters', {
+                chapter_id: item.id,
+                chapter_name: item.name,
+                chapter_description: item.description,
+              });
 
-            <View style={styles.contentContainer}>
-              {/* Chapter Image */}
+              navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
+                parent_module_id: item.id,
+                title: item.name,
+                level_id: level_id,
+              });
+            }
+          }}>
+          <View
+            className={`relative ${progress?.is_locked ? 'opacity-75' : ''}`}>
+            <View className="h-[120px]">
               {item.image ? (
                 <Image
+                  resizeMode="cover"
+                  className="w-full h-full"
                   source={{
                     uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.image}`,
                   }}
-                  style={styles.chapterImage}
-                  resizeMode="cover"
                 />
               ) : (
-                <View style={styles.placeholderImage} />
+                <View className="w-full h-full bg-n40 justify-center items-center">
+                  <ActivityIndicator size="large" color="#613BFF" />
+                </View>
               )}
-              <View style={styles.infoContainer}>
-                <Text style={styles.chapterName} numberOfLines={1}>
+
+              {progressPercentage > 0 && (
+                <View
+                  className="absolute top-2 right-2 z-50 bg-white px-3 py-1 rounded-full"
+                  style={{borderWidth: 1, borderColor: colors.border}}>
+                  <Text
+                    className="font-semibold text-xs"
+                    style={{color: colors.bg}}>
+                    {progressPercentage >= 100
+                      ? 'Completed'
+                      : `${Math.round(progressPercentage)}% Complete`}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {progress?.is_locked && (
+              <View className="absolute inset-0 bg-p1/50 backdrop-blur-[2px] flex items-center justify-center w-full h-full">
+                <IonIcon name="lock-closed" size={48} color="#FFF" />
+              </View>
+            )}
+
+            <View className="p-4">
+              <View className="mb-2">
+                <Text className="text-lg font-bold text-p1 flex-wrap">
                   {item.name}
                 </Text>
-                <Text style={styles.chapterDescription} numberOfLines={2}>
-                  {item.description}
-                </Text>
-                <RenderProgressBar
-                  percentage={progress.completion_percentage}
-                />
               </View>
-            </View>
-          </LinearGradient>
-        </TouchableOpacity>
-      );
-    },
-    [isDark, navigation, level_id],
-  );
+              <Text className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed flex-wrap">
+                {item.description}
+              </Text>
 
-  const renderChapterBranchCard = useCallback(
-    ({item}) => {
-      return (
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate(ROUTES.BRANCH_CHAPTERS, {
-              category_id: item.category_id,
-              title: item.category_title,
-            });
-          }}
-          style={styles.cardContainer}>
-          <LinearGradient
-            style={[styles.gradientContainer]}
-            colors={
-              isDark
-                ? ['#2A89C6', '#3397CB', '#0C5CB4']
-                : [color.lightPrimary, color.lightPrimary, color.lightPrimary]
-            }
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}>
+              {!progress?.is_locked && (
+                <View className="mt-4">
+                  {progressPercentage > 0 && (
+                    <View
+                      className="h-2 rounded-full overflow-hidden"
+                      style={{backgroundColor: colors.border}}>
+                      <View
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${progressPercentage}%`,
+                          backgroundColor: colors.bg,
+                        }}
+                      />
+                    </View>
+                  )}
 
-            <View style={styles.contentContainer}>
-              {/* Chapter Image */}
-              {item.category_img ? (
-                <Image
-                  source={{
-                    uri: `https://d2c9u2e33z36pz.cloudfront.net/${item.category_img}`,
-                  }}
-                  style={styles.chapterImage}
-                  resizeMode="cover"
-                />
-              ) : (
-                <View style={styles.placeholderImage} />
+                  <TouchableOpacity
+                    className="mt-4 rounded-xl py-3 flex-row items-center justify-center shadow-lg"
+                    style={{
+                      backgroundColor: colors.bg,
+                      shadowColor: colors.bg,
+                      shadowOpacity: 0.3,
+                    }}
+                    onPress={() => {
+                      trackEvent('Chapters', {
+                        chapter_id: item.id,
+                        chapter_name: item.name,
+                        chapter_description: item.description,
+                      });
+
+                      navigation.navigate(ROUTES.SELF_LEARN_SCREEN, {
+                        parent_module_id: item.id,
+                        title: item.name,
+                        level_id: level_id,
+                      });
+                    }}>
+                    <MaterialIcons name="school" size={20} color="white" />
+                    <Text className="ml-2 text-white font-bold text-sm">
+                      {getButtonText(progressPercentage)}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               )}
-              <View style={styles.infoContainer}>
-                <Text style={styles.chapterName} numberOfLines={1}>
-                  {item.category_title}
-                </Text>
-                <Text style={styles.chapterDescription} numberOfLines={2}>
-                  {item.category_description}
-                </Text>
-                {/* <RenderProgressBar
-                  percentage={progress.completion_percentage}
-                /> */}
-              </View>
             </View>
-          </LinearGradient>
-        </TouchableOpacity>
-      );
-    },
-    [isDark, navigation, level_id],
-  );
-
-  if (loader) return <Loading />;
+          </View>
+        </Pressable>
+      </View>
+    );
+  };
 
   return (
-    <SafeAreaView style={style.chapterContainer}>
-      {/* <Text>Chapters</Text> */}
-      {chapters && chapters.length > 0 ? (
-        <>
-          <FlatList
-            data={chapters}
-            renderItem={isBranch ? renderChapterBranchCard : renderChapterCard}
-            // keyExtractor={item => item.id.toString()}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.listContainer}
-            removeClippedSubviews={Platform.OS === 'android'}
-            initialNumToRender={5}
-            maxToRenderPerBatch={5}
-            windowSize={5}
+    <SafeAreaView className={`flex-1 bg-b50 ${isDark ? 'bg-n75' : ''}`}>
+      <View className="relative pb-8">
+        <View className="absolute w-full top-0 left-0 right-0">
+          <Image
+            source={topBgBackground}
+            className="w-full h-[200px] -mt-24"
+            onError={() => console.warn('Failed to load background image')}
           />
-        </>
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>{message}</Text>
         </View>
+        <PageTitle pageName={`${isBranch ? 'Categories' : 'Chapters'}`} />
+      </View>
+
+      {loader ? (
+        <View className="flex-1 justify-center items-center py-8">
+          <ActivityIndicator size="large" color="#613BFF" />
+        </View>
+      ) : (
+        <FlatList
+          data={chapters}
+          renderItem={renderChapterCard}
+          keyExtractor={item => item.id?.toString()}
+          ListEmptyComponent={
+            <View className="flex-1 justify-center items-center p-4">
+              <Text className="text-lg font-black text-center">
+                {message || 'No chapters available'}
+              </Text>
+            </View>
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          onError={error => {
+            console.error('FlatList error:', error);
+            setMessage('Error displaying content');
+          }}
+        />
       )}
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  cardContainer: {
-    marginVertical: 6,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOpacity: 0.05,
-        shadowRadius: 100,
-        shadowOffset: {
-          width: 50,
-          height: 60,
-        },
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  gradientContainer: {
-    borderRadius: 15,
-    padding: 12,
-    overflow: 'hidden',
-  },
-  lockedCard: {
-    opacity: 0.7,
-  },
-  contentContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  lockIconContainer: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    zIndex: 1,
-    transform: [{translateX: -15}, {translateY: -15}],
-  },
-  chapterImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 10,
-    marginRight: 15,
-    backgroundColor: '#f5f5f5',
-  },
-  placeholderImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 10,
-    marginRight: 15,
-    backgroundColor: 'white',
-  },
-  infoContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  chapterName: {
-    fontSize: 18,
-    color: '#333',
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  chapterDescription: {
-    fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
-    marginBottom: 8,
-  },
-  progressWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressText: {
-    fontSize: 12,
-    color: '#333',
-    marginRight: 8,
-    fontWeight: '600',
-  },
-  dotsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#E0E0E0',
-  },
-  progressLine: {
-    width: 12,
-    height: 2,
-    backgroundColor: '#E0E0E0',
-    marginHorizontal: 2,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: color.darkPrimary,
-  },
-});
 
 export default Index;

@@ -312,7 +312,7 @@ const Index = () => {
   return (
     <>
     <SafeAreaView style={{flex: 1}}>
-      <StatusBar backgroundColor={isDark ? color.darkPrimary : color.lightPrimary} />
+      <StatusBar backgroundColor={"#613BFF"} />
       <View style={style.liveClasscontainer}>
         <View style={{height: '18%'}}>
           <View style={styles.toggleContainer}>

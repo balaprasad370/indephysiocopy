@@ -32,6 +32,7 @@ import ImageResizer from 'react-native-image-resizer';
 import axios from 'axios';
 import scale from '../../utils/utils';
 import {PermissionsAndroid, Platform} from 'react-native';
+import trackEvent, {mixPanel} from '../../Components/MixPanel/index';
 
 const Index = () => {
   const navigation = useNavigation();
@@ -58,11 +59,17 @@ const Index = () => {
           onPress: async () => {
             try {
               await storage.setBoolAsync('isLoggedIn', false);
-              storage.removeItem('token');
-              storage.removeItem('show');
-              storage.removeItem('email');
+              await storage.removeItem('token');
+              await storage.removeItem('studentName');
+              await storage.removeItem('studentId');
+              await storage.removeItem('email');
+              await storage.removeItem('isAdmin');
+
+              trackEvent('Log out');
+              mixPanel.reset();
+
               setIsAuthenticate(false);
-              navigation.navigate(ROUTES.LOGIN);
+              navigation.replace(ROUTES.LOGIN);
             } catch (error) {
               console.log('Error during logout:', error);
             }

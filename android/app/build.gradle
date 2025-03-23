@@ -81,9 +81,15 @@ android {
         applicationId "com.inde.physio"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 110// major.minor.patch
-        versionName "1.0.10" // major.minor.patch
+        versionCode 112// major.minor.patch
+        versionName "1.0.12" // major.minor.patch
     }
+
+    compileOptions {
+	sourceCompatibility JavaVersion.VERSION_1_8
+	targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -121,6 +127,8 @@ dependencies {
     implementation("com.google.android.play:app-update-ktx:2.1.0")
     implementation ('com.google.android.material:material:1.9.0')
     implementation("com.google.android.play:app-update:2.1.0")
+    implementation project(':react-native-audio-recorder-player')
+     implementation project(':react-native-fs')
 
 
     if (hermesEnabled.toBoolean()) {

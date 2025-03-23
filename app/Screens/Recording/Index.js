@@ -1,619 +1,437 @@
-// import {
-//   StyleSheet,
-//   Text,
-//   View,
-//   TouchableOpacity,
-//   Dimensions,
-//   StatusBar,
-//   ActivityIndicator,
-//   TouchableWithoutFeedback,
-//   BackHandler,
-// } from 'react-native';
-// import React, {
-//   useContext,
-//   useRef,
-//   useState,
-//   useEffect,
-//   useCallback,
-// } from 'react';
-// import Video from 'react-native-video';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-// import Slider from '@react-native-community/slider';
-// import Orientation from 'react-native-orientation-locker';
-// import DarkTheme from '../../theme/Darktheme';
-// import LightTheme from '../../theme/LighTheme';
-// import {AppContext} from '../../theme/AppContext';
-
-// const RecordingPlayer = ({route, navigation}) => {
-//   const {isDark} = useContext(AppContext);
-//   const videoRef = useRef(null);
-//   const controlsTimeoutRef = useRef(null);
-//   const [isPaused, setIsPaused] = useState(true);
-//   const [currentTime, setCurrentTime] = useState(0);
-//   const [duration, setDuration] = useState(0);
-//   const [isFullScreen, setIsFullScreen] = useState(false);
-//   const [showControls, setShowControls] = useState(true);
-//   const [isBuffering, setIsBuffering] = useState(false);
-//   const [isLoading, setIsLoading] = useState(true); // New state for initial loading
-//   const [isSeeking, setIsSeeking] = useState(false); // New state for seeking operations
-
-//   const style = isDark ? DarkTheme : LightTheme;
-//   const videoUrl = route.params.video_url;
-
-//   useEffect(() => {
-//     const cleanup = () => {
-//       if (controlsTimeoutRef.current) {
-//         clearTimeout(controlsTimeoutRef.current);
-//       }
-//       Orientation.lockToPortrait();
-//     };
-
-//     const backHandler = BackHandler.addEventListener(
-//       'hardwareBackPress',
-//       () => {
-//         if (isFullScreen) {
-//           toggleFullScreen();
-//           return true;
-//         }
-//         return false;
-//       },
-//     );
-
-//     const unsubscribeFocus = navigation.addListener('focus', () => {
-//       setIsPaused(true);
-//       setCurrentTime(0);
-//       setIsLoading(true); // Reset loading state on focus
-//       if (videoRef.current) {
-//         videoRef.current.pause();
-//       }
-//     });
-
-//     const unsubscribeBlur = navigation.addListener('blur', () => {
-//       setIsPaused(true);
-//       if (videoRef.current) {
-//         videoRef.current.pause();
-//       }
-//     });
-
-//     return () => {
-//       cleanup();
-//       backHandler.remove();
-//       unsubscribeFocus();
-//       unsubscribeBlur();
-//     };
-//   }, [navigation, isFullScreen]);
-
-//   useEffect(() => {
-//     // Lock to portrait by default
-//     Orientation.lockToPortrait();
-
-//     // Listen to orientation changes
-//     Orientation.addOrientationListener(handleOrientationChange);
-
-//     return () => {
-//       Orientation.removeOrientationListener(handleOrientationChange);
-//       Orientation.lockToPortrait(); // Reset to portrait on unmount
-//     };
-//   }, []);
-
-//   useEffect(() => {
-//     console.log('mount');
-//     return () => {
-//       console.log('unmount');
-//       stopPlayVideo();
-//     };
-//   }, []);
-
-//   const stopPlayVideo = () => {
-//     setIsPaused(true);
-//     setCurrentTime(0);
-//     if (videoRef.current) {
-//       videoRef.current.pause();
-//     }
-//   };
-
-//   const formatTime = time => {
-//     const minutes = Math.floor(time / 60);
-//     const seconds = Math.floor(time % 60);
-//     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-//   };
-
-//   const togglePlayback = () => {
-//     setIsPaused(!isPaused);
-//     resetHideControlsTimer();
-//   };
-
-//   const stopPlayback = () => {
-//     setIsPaused(true);
-//     setCurrentTime(0);
-//     if (videoRef.current) {
-//       videoRef.current.pause();
-//     }
-//     resetHideControlsTimer();
-//   };
-
-//   const onLoad = data => {
-//     setDuration(data.duration);
-//     setIsLoading(false); // Hide loading indicator after initial load
-//     setIsBuffering(false);
-//   };
-
-//   const onProgress = data => {
-//     if (!isSeeking) {
-//       // Only update time if not seeking
-//       setCurrentTime(data.currentTime);
-//     }
-//   };
-
-//   const handleSliderChange = value => {
-//     setIsSeeking(true); // Start seeking state
-//     setCurrentTime(value);
-//   };
-
-//   const handleSliderComplete = value => {
-//     setIsSeeking(true); // Maintain seeking state during seek operation
-//     if (videoRef.current) {
-//       videoRef.current.seek(value);
-//     }
-//     // Let the onSeek handler clear the seeking state
-//     resetHideControlsTimer();
-//   };
-
-//   const onSeek = () => {
-//     setIsSeeking(false); // Clear seeking state after seek completes
-//   };
-
-//   const handleOrientationChange = useCallback(
-//     orientation => {
-//       const isLandscape = orientation.includes('LANDSCAPE');
-//       if (isLandscape !== isFullScreen) {
-//         setIsFullScreen(isLandscape);
-//         navigation.setOptions({headerShown: !isLandscape});
-//       }
-//     },
-//     [isFullScreen, navigation],
-//   );
-
-//   const toggleFullScreen = () => {
-//     if (isFullScreen) {
-//       Orientation.lockToPortrait();
-//       setIsFullScreen(false);
-//       navigation.setOptions({headerShown: true});
-//     } else {
-//       Orientation.lockToLandscape();
-//       setIsFullScreen(true);
-//       navigation.setOptions({headerShown: false});
-//     }
-//     resetHideControlsTimer();
-//   };
-
-//   const resetHideControlsTimer = () => {
-//     if (controlsTimeoutRef.current) {
-//       clearTimeout(controlsTimeoutRef.current);
-//     }
-
-//     setShowControls(true);
-
-//     if (!isPaused && isFullScreen) {
-//       controlsTimeoutRef.current = setTimeout(() => {
-//         setShowControls(false);
-//       }, 3000);
-//     }
-//   };
-
-// const handleScreenTap = () => {
-//   if (controlsTimeoutRef.current) {
-//     clearTimeout(controlsTimeoutRef.current);
-//   }
-
-//   setShowControls(!showControls);
-
-//   if (!showControls && !isPaused) {
-//     controlsTimeoutRef.current = setTimeout(() => {
-//       setShowControls(false);
-//     }, 3000);
-//   }
-// };
-
-//   // Combined loading indicator for all loading states
-//   const showLoadingIndicator = isLoading || isBuffering || isSeeking;
-
-//   return (
-//     <TouchableWithoutFeedback onPress={handleScreenTap}>
-//       <View
-//         style={[styles.container, isFullScreen && {backgroundColor: '#000'}]}>
-//         <StatusBar hidden={isFullScreen} />
-//         <Video
-//           ref={videoRef}
-//           source={{uri: `https://d3kpi6hpyesigd.cloudfront.net/${videoUrl}`}}
-//           style={isFullScreen ? styles.fullscreenVideo : styles.video}
-//           resizeMode="contain"
-//           paused={isPaused}
-//           onLoad={onLoad}
-//           onProgress={onProgress}
-//           onBuffer={({isBuffering}) => setIsBuffering(isBuffering)} // Handle buffering
-//           onError={error => console.log('Video Error:', error)}
-//         />
-
-//         {showLoadingIndicator && (
-//           <View style={styles.bufferingIndicator}>
-//             <ActivityIndicator size="large" color="#FFF" />
-//           </View>
-//         )}
-//         {showControls && (
-//           <View style={styles.overlay}>
-//             <Slider
-//               style={styles.slider}
-//               minimumValue={0}
-//               maximumValue={duration}
-//               value={currentTime}
-//               onValueChange={handleSliderChange}
-//               onSlidingComplete={handleSliderComplete}
-//               minimumTrackTintColor="#1fb28a"
-//               maximumTrackTintColor="#d3d3d3"
-//               thumbTintColor="#1eb900"
-//             />
-
-//             <View style={styles.controls}>
-//               <TouchableOpacity
-//                 style={styles.controlButton}
-//                 onPress={togglePlayback}>
-//                 <Icon
-//                   name={isPaused ? 'play-arrow' : 'pause'}
-//                   size={30}
-//                   color={'#FFF'}
-//                 />
-//               </TouchableOpacity>
-
-//               <TouchableOpacity
-//                 style={styles.controlButton}
-//                 onPress={stopPlayback}>
-//                 <Icon name="stop" size={30} color={'#FFF'} />
-//               </TouchableOpacity>
-
-//               <TouchableOpacity
-//                 style={styles.controlButton}
-//                 onPress={toggleFullScreen}>
-//                 <Icon
-//                   name={isFullScreen ? 'fullscreen-exit' : 'fullscreen'}
-//                   size={30}
-//                   color={'#FFF'}
-//                 />
-//               </TouchableOpacity>
-//             </View>
-
-//             <Text style={styles.timeText}>
-//               {formatTime(currentTime)} / {formatTime(duration)}
-//             </Text>
-//           </View>
-//         )}
-//         {isFullScreen && !showControls && (
-//           <TouchableOpacity
-//             style={styles.exitFullScreenButton}
-//             onPress={toggleFullScreen}>
-//             <Icon name="close" size={30} color={'#FFF'} />
-//           </TouchableOpacity>
-//         )}
-//       </View>
-//     </TouchableWithoutFeedback>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: '#111B21',
-//   },
-//   video: {
-//     width: '100%',
-//     height: 300,
-//   },
-//   fullscreenVideo: {
-//     position: 'absolute',
-//     top: 0,
-//     left: 0,
-//     bottom: 0,
-//     right: 0,
-//     width: '100%',
-//     height: '100%',
-//   },
-//   // fullscreenVideo: {
-//   //   width: Dimensions.get('window').height,
-//   //   height: Dimensions.get('window').width,
-//   // },
-//   overlay: {
-//     position: 'absolute',
-//     bottom: 0,
-//     left: 0,
-//     right: 0,
-//     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-//     padding: 10,
-//   },
-//   controls: {
-//     flexDirection: 'row',
-//     justifyContent: 'center',
-//     marginVertical: 10,
-//   },
-//   controlButton: {
-//     marginHorizontal: 10,
-//     borderRadius: 50,
-//     padding: 10,
-//   },
-//   slider: {
-//     width: '100%',
-//     height: 40,
-//   },
-//   timeText: {
-//     color: '#FFF',
-//     textAlign: 'center',
-//     marginTop: 5,
-//   },
-//   bufferingIndicator: {
-//     position: 'absolute',
-//     top: '50%',
-//     left: '50%',
-//     marginLeft: -25,
-//     marginTop: -25,
-//     zIndex: 1,
-//   },
-//   exitFullScreenButton: {
-//     position: 'absolute',
-//     top: 20,
-//     right: 20,
-//     padding: 10,
-//     borderRadius: 50,
-//     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-//   },
-// });
-
-// export default RecordingPlayer;
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {
-  StyleSheet,
-  Text,
   View,
   TouchableOpacity,
+  StyleSheet,
   Dimensions,
+  Pressable,
+  Text,
+  ActivityIndicator,
+  Alert,
   StatusBar,
-  ActivityIndicator, // Added for buffering indicator
-  TouchableWithoutFeedback,
+  BackHandler,
 } from 'react-native';
-import React, {useContext, useRef, useState, useEffect} from 'react';
+import Orientation from 'react-native-orientation-locker'; 
 import Video from 'react-native-video';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Slider from '@react-native-community/slider';
-import Orientation from 'react-native-orientation-locker'; // For orientation handling
-import DarkTheme from '../../theme/Darktheme';
-import LightTheme from '../../theme/LighTheme';
-import {AppContext} from '../../theme/AppContext';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {ROUTES} from '../../Constants/routes';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  Easing,
+} from 'react-native-reanimated';
+const {width, height} = Dimensions.get('window');
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-const RecordingPlayer = ({route, navigation}) => {
-  const {isDark} = useContext(AppContext);
+const VideoPlayer = ({route, navigation}) => {
   const videoRef = useRef(null);
-  const [isPaused, setIsPaused] = useState(true);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [fullScreen, setFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
-  const [isBuffering, setIsBuffering] = useState(false); // State for buffering
-  const controlsTimeoutRef = useRef(null);
+  const [isBuffering, setIsBuffering] = useState(true); // Start with buffering true
+  const source = route.params.video_url;
+  const insets = useSafeAreaInsets();
 
-  const style = isDark ? DarkTheme : LightTheme;
-  const videoUrl = route.params.video_url;
 
-  // Format time to mm:ss
-  const formatTime = time => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
 
-  const togglePlayback = () => {
-    setIsPaused(!isPaused);
-    resetHideControlsTimer();
-  };
+  useEffect(() => {
 
-  const stopPlayback = () => {
-    setIsPaused(true);
-    setCurrentTime(0);
-    videoRef.current.seek(0);
-    resetHideControlsTimer();
-  };
+      if(!source.includes('https://')){
+        console.log('source', source);
+        
+        handleVideoError('Video file may not be found or has an invalid path. Please try again later.');
+      }
 
-  const onLoad = data => {
-    setDuration(data.duration);
-    setIsBuffering(false); // Stop showing buffer when video is loaded
-  };
+  }, []);
 
-  const onProgress = data => {
-    setCurrentTime(data.currentTime);
-  };
 
-  const handleSliderChange = value => {
-    videoRef.current.seek(value); // Immediately update video to the slider's value
-    setCurrentTime(value); // Update current time instantly
-    resetHideControlsTimer();
-  };
 
-  // Handle full-screen toggle
-  const toggleFullScreen = () => {
-    if (isFullScreen) {
-      Orientation.lockToPortrait();
-      setIsFullScreen(false);
-      navigation.setOptions({headerShown: true});
-    } else {
+  const [isSliding, setIsSliding] = useState(false);
+
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+
+  // Animation values
+  const topBarOpacity = useSharedValue(1);
+  const controlsOpacity = useSharedValue(1);
+  const bottomBarTranslateY = useSharedValue(0);
+
+  // Animated styles
+  const topBarAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: topBarOpacity.value,
+      transform: [
+        {translateY: withTiming(showControls ? 0 : -100, {duration: 300})},
+      ],
+    };
+  });
+
+  const centerControlsAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: controlsOpacity.value,
+    };
+  });
+
+  const bottomBarAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: controlsOpacity.value,
+      transform: [{translateY: bottomBarTranslateY.value}],
+    };
+  });
+
+  // Handle full screen mode
+  useEffect(() => {
+    if (fullScreen) {
+      // Lock to landscape orientation
+      StatusBar.setHidden(true);
       Orientation.lockToLandscape();
-      setIsFullScreen(true);
-      navigation.setOptions({headerShown: false});
+    } else {
+      // Restore portrait orientation
+      StatusBar.setHidden(false);
+      Orientation.lockToPortrait();
     }
-    resetHideControlsTimer();
-  };
+  }, [fullScreen, navigation]);
 
-  const resetHideControlsTimer = () => {
-    setShowControls(true);
-    if (isFullScreen) {
-      setTimeout(() => {
-        setShowControls(false); // Auto-hide controls after 3 seconds
-      }, 3000);
-    }
-  };
+  // Reset orientation when screen loses focus
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        Orientation.lockToPortrait();
+        StatusBar.setHidden(false);
+      };
+    }, [navigation]),
+  );
 
-  // Handle showing/hiding controls on screen tap
-  const handleScreenTap = () => {
-    if (controlsTimeoutRef.current) {
-      clearTimeout(controlsTimeoutRef.current);
-    }
+  // Controls visibility timer
+  useEffect(() => {
+    let timer;
+    if (showControls) {
+      // Show controls with animation
+      topBarOpacity.value = withTiming(1, {duration: 300, easing: Easing.ease});
+      controlsOpacity.value = withTiming(1, {
+        duration: 300,
+        easing: Easing.ease,
+      });
+      bottomBarTranslateY.value = withSpring(0);
 
-    setShowControls(!showControls);
-
-    if (!showControls && !isPaused) {
-      controlsTimeoutRef.current = setTimeout(() => {
+      timer = setTimeout(() => {
         setShowControls(false);
       }, 3000);
+    } else {
+      // Hide controls with animation
+      topBarOpacity.value = withTiming(0, {duration: 300, easing: Easing.ease});
+      controlsOpacity.value = withTiming(0, {
+        duration: 300,
+        easing: Easing.ease,
+      });
+      bottomBarTranslateY.value = withSpring(100);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [showControls]);
+
+  const handlePlayPause = () => setPaused(!paused);
+  const handleSeek = time => {
+    videoRef.current.seek(time);
+    setCurrentTime(time);
+  };
+
+  const handleForward = () => handleSeek(currentTime + 10);
+  const handleBackward = () => handleSeek(Math.max(0, currentTime - 10));
+  const toggleControls = () => setShowControls(!showControls);
+
+  const formatTime = time => {
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = Math.floor(time % 60);
+
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds
+        .toString()
+        .padStart(2, '0')}`;
+    } else {
+      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
     }
   };
 
+  const handleVideoError = error => {
+    // console.error('Video playback error:', error);
+    Alert.alert(
+      'Video Error',
+      'Error occurred: Video file may not be found or has an invalid path. Please try again later.',
+      [{text: 'OK', onPress: () => navigation.goBack()}],
+    );
+  };
+
+  const handleBackPress = useCallback(() => {
+    if (fullScreen) {
+      // If in landscape mode, first switch to portrait
+      setFullScreen(false);
+      StatusBar.setHidden(false);
+      Orientation.lockToPortrait();
+      return true; // Prevent default back behavior
+    }
+    
+    // Navigate back or to home if can't go back
+    navigation.canGoBack() ? navigation.goBack() : navigation.navigate(ROUTES.HOME);
+    return true; // Handled the back press
+  }, [fullScreen, navigation]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+    return () => backHandler.remove();
+  }, [handleBackPress]);
+
   return (
-    <TouchableWithoutFeedback onPress={handleScreenTap}>
+    <View 
+      style={[
+        styles.mainContainer, 
+        fullScreen && {
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        }
+      ]}>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            top: fullScreen ? insets.top : 0,
+            left: 0,
+            zIndex: 100,
+            width: '100%',
+            minHeight: 70,
+            justifyContent: 'start',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            alignItems: 'center',
+            flexDirection: 'row',
+            paddingLeft: 10,
+          },
+          topBarAnimatedStyle,
+        ]}>
+        <TouchableOpacity
+          onPress={handleBackPress}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginLeft: 20,
+            justifyContent: 'center',
+            gap: 10,
+            padding: 10, // Added padding for better touch target
+          }}>
+          <Icon name="arrow-back" size={30} color="white" />
+          <Text
+            style={{
+              color: 'white',
+              marginLeft: 10,
+              fontSize: 18,
+              fontWeight: 'bold',
+            }}>
+            Back
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
+
+      {isBuffering && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 10,
+          }}>
+          <ActivityIndicator size="large" color="#613BFF" />
+        </View>
+      )}
+
       <View
-        style={[styles.container, isFullScreen && {backgroundColor: '#000'}]}>
-        <StatusBar hidden={isFullScreen} />
+        style={[
+          styles.container,
+          fullScreen ? styles.fullScreen : styles.normal,
+        ]}>
+        {/* Video as the first layer (absolute) */}
         <Video
           ref={videoRef}
-          source={{uri: `https://d3kpi6hpyesigd.cloudfront.net/${videoUrl}`}}
-          style={isFullScreen ? styles.fullscreenVideo : styles.video}
+          source={{uri: source}}
+          style={styles.videoAbsolute}
+          paused={paused}
           resizeMode="contain"
-          paused={isPaused}
-          onLoad={onLoad}
-          onProgress={onProgress}
-          onBuffer={({isBuffering}) => setIsBuffering(isBuffering)} // Handle buffering
-          onError={error => console.log('Video Error:', error)}
+          onBuffer={({isBuffering: buffering}) => {
+            setIsBuffering(buffering);
+          }}
+          onProgress={data => {
+            if (!isSliding) {
+              setCurrentTime(data.currentTime);
+            }
+          }}
+          onLoad={data => {
+            setDuration(data.duration);
+            setIsBuffering(false);
+          }}
+          onError={handleVideoError}
         />
 
-        {isBuffering && (
-          <View style={styles.bufferingIndicator}>
-            <ActivityIndicator size="large" color="#FFF" />
-          </View>
+        {/* Pressable layer to toggle controls */}
+        <Pressable style={styles.pressableLayer} onPress={toggleControls} />
+
+        {/* Center video controls - only show when not buffering */}
+        {!isBuffering && (
+          <Animated.View
+            style={[styles.centerControls, centerControlsAnimatedStyle]}>
+            <TouchableOpacity
+              onPress={handleBackward}
+              style={styles.controlButton}>
+              <Icon name="replay-10" size={40} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handlePlayPause}
+              style={styles.controlButton}>
+              <Icon
+                name={paused ? 'play-arrow' : 'pause'}
+                size={50}
+                color="white"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleForward}
+              style={styles.controlButton}>
+              <Icon name="forward-10" size={40} color="white" />
+            </TouchableOpacity>
+          </Animated.View>
         )}
 
-        {showControls && (
-          <View style={styles.overlay}>
+        {/* Bottom slider */}
+        <Animated.View
+          style={[
+            {
+              position: 'absolute',
+              bottom: fullScreen ? insets.bottom + 20 : 60,
+              width: '100%',
+              paddingHorizontal: 20,
+              zIndex: 2,
+            },
+            bottomBarAnimatedStyle,
+          ]}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 20,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={{color: 'white'}}>{formatTime(currentTime)}</Text>
+            </View>
             <Slider
-              style={styles.slider}
+              style={{flex: 1}}
               minimumValue={0}
               maximumValue={duration}
               value={currentTime}
-              onValueChange={handleSliderChange}
-              minimumTrackTintColor="#1fb28a"
-              maximumTrackTintColor="#d3d3d3"
-              thumbTintColor="#1eb900"
+              onSlidingStart={() => setIsSliding(true)}
+              onSlidingEnd={() => {
+                setIsSliding(false);
+              }}
+              onSlidingComplete={value => {
+                setCurrentTime(value);
+                videoRef.current.seek(value);
+              }}
+              minimumTrackTintColor="#613BFF"
+              maximumTrackTintColor="#FFFFFF"
+              thumbTintColor="#613BFF"
             />
 
-            <View style={styles.controls}>
-              <TouchableOpacity
-                style={styles.controlButton}
-                onPress={togglePlayback}>
-                <Icon
-                  name={isPaused ? 'play-arrow' : 'pause'}
-                  size={30}
-                  color={'#FFF'}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.controlButton}
-                onPress={stopPlayback}>
-                <Icon name="stop" size={30} color={'#FFF'} />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.controlButton}
-                onPress={toggleFullScreen}>
-                <Icon
-                  name={isFullScreen ? 'fullscreen-exit' : 'fullscreen'}
-                  size={30}
-                  color={'#FFF'}
-                />
-              </TouchableOpacity>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={{color: 'white'}}>{formatTime(duration)}</Text>
             </View>
 
-            <Text style={styles.timeText}>
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </Text>
+            <TouchableOpacity onPress={() => setFullScreen(!fullScreen)}>
+              <Icon name={fullScreen ? 'fullscreen-exit' : 'fullscreen'} size={30} color="white" />
+            </TouchableOpacity>
           </View>
-        )}
-
-        {isFullScreen && !showControls && (
-          <TouchableOpacity
-            style={styles.exitFullScreenButton}
-            onPress={toggleFullScreen}>
-            <Icon name="close" size={30} color={'#FFF'} />
-          </TouchableOpacity>
-        )}
+        </Animated.View>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
+    backgroundColor: 'black',
+    position: 'relative',
+  },
+  container: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#111B21',
+    backgroundColor: 'black',
+    flex: 1,
   },
-  video: {
+  normal: {
     width: '100%',
-    height: 300,
   },
-  fullscreenVideo: {
-    width: Dimensions.get('window').height, // Switch width and height for landscape
-    height: Dimensions.get('window').width,
+  fullScreen: {
+    width: '100%',
+    height: '100%',
   },
-  overlay: {
+  videoAbsolute: {
     position: 'absolute',
-    bottom: 0,
+    top: 0,
     left: 0,
+    bottom: 0,
     right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay
-    padding: 10,
+    width: '100%',
+    height: '100%',
   },
-  controls: {
+  pressableLayer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    zIndex: 1,
+  },
+  centerControls: {
+    position: 'absolute',
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 10,
+    alignItems: 'center',
+    zIndex: 2,
   },
   controlButton: {
-    marginHorizontal: 10,
-    borderRadius: 50,
+    marginHorizontal: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 30,
     padding: 10,
   },
   slider: {
     width: '100%',
-    height: 40,
   },
-  timeText: {
-    color: '#FFF',
-    textAlign: 'center',
-    marginTop: 5,
-  },
-  bufferingIndicator: {
+  fullscreenContainer: {
     position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginLeft: -25,
-    marginTop: -25,
-    zIndex: 1,
-  },
-  exitFullScreenButton: {
-    position: 'absolute',
-    top: 20,
     right: 20,
-    padding: 10,
-    borderRadius: 50,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent button background
+    bottom: 0,
   },
 });
 
-export default RecordingPlayer;
+export default VideoPlayer;

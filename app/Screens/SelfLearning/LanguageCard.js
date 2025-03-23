@@ -1,256 +1,22 @@
-// import React, {useCallback, useContext, useState} from 'react';
-// import {
-//   StyleSheet,
-//   SafeAreaView,
-//   ScrollView,
-//   TouchableOpacity,
-//   View,
-//   Image,
-//   Text,
-//   ActivityIndicator,
-// } from 'react-native';
-// import FontAwesome from 'react-native-vector-icons/FontAwesome5';
-// import FeatherIcon from 'react-native-vector-icons/Feather';
-// import IonIcon from 'react-native-vector-icons/Ionicons';
-// import {useNavigation} from '@react-navigation/native';
-// import LinearGradient from 'react-native-linear-gradient';
-// import {AppContext} from '../../theme/AppContext';
-// import DarkTheme from '../../theme/Darktheme';
-// import LighTheme from '../../theme/LighTheme';
-// import color from '../../Constants/color';
-
-// export default function Example({id, lang_id, img, name, description, route}) {
-//   const navigation = useNavigation();
-
-//   const {isDark} = useContext(AppContext);
-//   const style = isDark ? DarkTheme : LighTheme;
-
-//   return (
-//     <LinearGradient
-//     key={lang_id}
-//       colors={[color.lightPrimary, color.lowPrimary]}
-//       start={{x: 0, y: 0}} // Start from the left
-//       end={{x: 1, y: 0}} // End at the right
-//       style={{
-//         borderRadius: 10,
-//         width: '90%',
-//         alignSelf: 'center',
-//       }}>
-//       <TouchableOpacity
-//         hitSlop={{x: 25, y: 15}}
-//         key={id}
-//         onPress={() => navigation.navigate(route, {lang_id: lang_id})}>
-//         <View style={styles.card}>
-//           <View style={styles.cardLikeWrapper}>
-//             <TouchableOpacity
-//               hitSlop={{x: 25, y: 15}}
-//               onPress={() => handleSave(id)}></TouchableOpacity>
-//           </View>
-//           <View style={styles.cardTop}>
-//             {img ? (
-//               <Image
-//                 alt=""
-//                 resizeMode="cover"
-//                 style={styles.cardImg}
-//                 source={{uri: img}}
-//               />
-//             ) : (
-//               <View style={styles.dummycardImg}>
-//                 <ActivityIndicator
-//                   size="large"
-//                   color="#0000ff"
-//                   style={styles.loader}
-//                 />
-//               </View>
-//             )}
-//           </View>
-
-//           <View style={styles.cardBody}>
-//             <View style={styles.cardHeader}>
-//               <Text style={style.selfcardTitle}>{name}</Text>
-//             </View>
-//             <Text style={style.cardDates}>{description}</Text>
-//           </View>
-//         </View>
-//       </TouchableOpacity>
-//       <TouchableOpacity
-//         hitSlop={{x: 25, y: 15}}
-//         key={id}
-//         style={{position: 'relative'}}
-//         // onPress={() => navigation.navigate(route, {lang_id: lang_id})}
-//       >
-//         <View
-//           style={{
-//             position: 'absolute',
-//             left: '60%',
-//             top: '40%',
-//             transform: [{translateX: -50}],
-//           }}>
-//           <IonIcon
-//             name="lock-closed-sharp"
-//             style={{
-//               fontSize: 26,
-//               color: color.black,
-//               zIndex: 999,
-//             }}
-//           />
-//         </View>
-//         <View style={[styles.card, {opacity: 0.2}]}>
-//           <View style={styles.cardLikeWrapper}>
-//             <TouchableOpacity
-//               hitSlop={{x: 25, y: 15}}
-//               onPress={() => handleSave(id)}></TouchableOpacity>
-//           </View>
-//           <View style={styles.cardTop}>
-//             {img ? (
-//               <Image
-//                 alt=""
-//                 resizeMode="cover"
-//                 style={styles.cardImg}
-//                 source={{uri: img}}
-//               />
-//             ) : (
-//               <View style={styles.dummycardImg}>
-//                 <ActivityIndicator
-//                   size="large"
-//                   color="#0000ff"
-//                   style={styles.loader}
-//                 />
-//               </View>
-//             )}
-//           </View>
-
-//           <View style={styles.cardBody}>
-//             <View style={styles.cardHeader}>
-//               <Text style={style.selfcardTitle}>{name}</Text>
-//             </View>
-
-//             <Text style={style.cardDates}>{description}</Text>
-//           </View>
-//         </View>
-//       </TouchableOpacity>
-//     </LinearGradient>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   content: {
-//     paddingTop: 8,
-//     paddingHorizontal: 16,
-//   },
-//   /** Header */
-//   header: {
-//     paddingHorizontal: 16,
-//     marginBottom: 12,
-//   },
-//   headerTop: {
-//     marginHorizontal: -6,
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//   },
-//   headerAction: {
-//     width: 40,
-//     height: 40,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   headerTitle: {
-//     fontSize: 32,
-//     fontWeight: '700',
-//     color: '#1d1d1d',
-//   },
-//   /** Card */
-//   card: {
-//     position: 'relative',
-//     borderRadius: 8,
-//     // backgroundColor: '#f1f1f8',
-//     paddingBottom: 6,
-//     shadowColor: 'rgba(0, 0, 0, 0.5)',
-//     shadowOffset: {
-//       width: 0,
-//       height: 1,
-//     },
-//   },
-//   cardLikeWrapper: {
-//     position: 'absolute',
-//     zIndex: 1,
-//     top: 12,
-//     right: 12,
-//   },
-//   cardLike: {
-//     width: 40,
-//     height: 40,
-//     borderRadius: 9999,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   cardTop: {
-//     borderTopLeftRadius: 8,
-//     borderTopRightRadius: 8,
-//     height: 160,
-//   },
-//   cardImg: {
-//     width: '100%',
-//     height: '100%',
-//     borderTopLeftRadius: 8,
-//     borderTopRightRadius: 8,
-//   },
-//   dummycardImg: {
-//     width: '100%',
-//     backgroundColor: color.lighGrey,
-//     height: 160,
-//     borderTopLeftRadius: 8,
-//     borderTopRightRadius: 8,
-//   },
-//   cardBody: {
-//     paddingHorizontal: 10,
-//     paddingVertical: 2,
-//   },
-//   cardHeader: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//   },
-
-//   cardStars: {
-//     marginLeft: 2,
-//     marginRight: 4,
-//     fontSize: 15,
-//     fontWeight: '500',
-//     color: '#232425',
-//   },
-//   cardPrice: {
-//     marginTop: 6,
-//     fontSize: 16,
-//     color: '#232425',
-//   },
-//   loader: {
-//     position: 'absolute',
-//     top: '50%',
-//     left: '50%',
-//     marginLeft: -25,
-//     marginTop: -25,
-//   },
-// });
-
 import React, {useContext} from 'react';
 import {
-  StyleSheet,
   View,
   Image,
   Text,
   ActivityIndicator,
   TouchableOpacity,
+  Dimensions,
+  Pressable,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import LinearGradient from 'react-native-linear-gradient';
 import IonIcon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {AppContext} from '../../theme/AppContext';
 import DarkTheme from '../../theme/Darktheme';
 import LighTheme from '../../theme/LighTheme';
 import color from '../../Constants/color';
+
+const {width} = Dimensions.get('window');
 
 export default function Example({
   id,
@@ -260,6 +26,7 @@ export default function Example({
   description,
   route,
   status,
+  trackEvent,
 }) {
   const navigation = useNavigation();
   const {isDark} = useContext(AppContext);
@@ -270,94 +37,89 @@ export default function Example({
   };
 
   return (
-    <LinearGradient
-      key={lang_id}
-      colors={[color.lightPrimary, color.lowPrimary]}
-      start={{x: 0, y: 0}}
-      end={{x: 1, y: 0}}
-      style={{
-        borderRadius: 10,
-        width: '95%',
-        alignSelf: 'center',
-        marginBottom: 0,
-      }}>
-      <TouchableOpacity
-        hitSlop={{x: 25, y: 15}}
+    <View className="w-[92%] self-center rounded-[24px] shadow-xl mb-4 overflow-hidden border border-p1/20 bg-white dark:bg-n75">
+      <Pressable
+        android_ripple={{color: '#613BFF10'}}
+        style={({pressed}) => [
+          {
+            opacity: pressed ? 0.95 : 1,
+          },
+        ]}
         onPress={() => {
           if (status === 'unlocked') {
+            trackEvent("Subjects", {
+              lang_id: lang_id,
+              subject_name: name,
+              subject_description: description,
+            });
+
             navigation.navigate(route, {lang_id: lang_id});
           }
         }}>
-        <View style={[styles.card, status === 'locked' && {opacity: 0.5}]}>
-          <View style={styles.cardTop}>
+        <View className={`relative ${status === 'locked' ? 'opacity-75' : ''}`}>
+          <View className="h-[160px]">
             {img ? (
               <Image
                 resizeMode="cover"
-                style={styles.cardImg}
+                className="w-full h-full"
                 source={{uri: img}}
               />
             ) : (
-              <View style={styles.dummycardImg}>
-                <ActivityIndicator
-                  size="large"
-                  color="#0000ff"
-                  style={styles.loader}
-                />
+              <View className="w-full h-full bg-n40 justify-center items-center">
+                <ActivityIndicator size="large" color="#613BFF" />
+              </View>
+            )}
+            {status === 'unlocked' ? (
+              <View className="absolute top-2 right-2 z-50 bg-white border border-green-600/20 px-3 py-1 rounded-full">
+                <Text className="text-green-600 font-semibold text-xs">
+                  Enrolled
+                </Text>
+              </View>
+            ) : (
+              <View className="absolute top-2 right-2 z-50 bg-white border border-red-600/20 px-3 py-1 rounded-full">
+                <Text className="text-red-600 font-semibold text-xs">
+                  Not Enrolled
+                </Text>
               </View>
             )}
           </View>
-          <View style={styles.cardBody}>
-            <Text style={style.selfcardTitle}>{name}</Text>
-            <Text style={style.cardDates}>{description}</Text>
+
+          {status === 'locked' && (
+            <View className="absolute inset-0 bg-p1/50 backdrop-blur-[2px] flex items-center justify-center w-full h-full">
+              <IonIcon name="lock-closed" size={48} color="#FFF" />
+            </View>
+          )}
+
+          <View className="p-4">
+            <View className="mb-2">
+              <Text className="text-lg font-bold text-p1 flex-wrap">
+                {name}
+              </Text>
+            </View>
+            <Text className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed flex-wrap">
+              {description}
+            </Text>
+
+            {status === 'unlocked' && (
+              <TouchableOpacity
+                className="mt-4 bg-p1 rounded-xl py-3 flex-row items-center justify-center shadow-lg shadow-p1/30"
+                onPress={() => {
+                  trackEvent("Subjects", {
+                    lang_id: lang_id,
+                    subject_name: name,
+                    subject_description: description,
+                  });
+                  navigation.push(route, {lang_id: lang_id});
+                }}>
+                <MaterialIcons name="school" size={20} color="white" />
+                <Text className="ml-2 text-white font-bold text-sm">
+                  Learn Now
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
-        {status === 'locked' && (
-          <View style={styles.lockIconWrapper}>
-            <IonIcon name="lock-closed-sharp" style={styles.lockIcon} />
-          </View>
-        )}
-      </TouchableOpacity>
-    </LinearGradient>
+      </Pressable>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    position: 'relative',
-    borderRadius: 10,
-  },
-  cardTop: {
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    height: 160,
-  },
-  cardImg: {
-    width: '100%',
-    height: '100%',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-  },
-  dummycardImg: {
-    width: '100%',
-    backgroundColor: color.lightGrey,
-    height: 160,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cardBody: {
-    padding: 10,
-  },
-  lockIconWrapper: {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    transform: [{translateX: -12}, {translateY: -12}],
-    zIndex: 10,
-  },
-  lockIcon: {
-    fontSize: 26,
-    color: color.black,
-  },
-});
