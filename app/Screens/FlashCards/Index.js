@@ -36,6 +36,7 @@ import Animated, {
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import RNFS from 'react-native-fs';
 import Recordings from './components/Recordings';
+import axiosInstance from '../../Components/axiosInstance';
 
 const {width, height} = Dimensions.get('window');
 
@@ -334,30 +335,73 @@ const Index = ({route}) => {
 
   const getFlashcardQuestions = useCallback(async () => {
     try {
-      const token = await storage.getStringAsync('token');
-      if (!token) return;
-
-      const {data} = await axios.get(
-        `${path}/v2/flashcard/questions/${flash_id}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const {data} = await axiosInstance.get(
+        `/v2/flashcard/questions/${flash_id}`,
       );
-      console.log('data', data);
+      // console.log('data', data);
       setFlashcards(data);
 
       // Show language selector when flashcards are loaded
       if (data.length > 0 && !languageSetupComplete) {
-        setFrontLanguageModalVisible(true);
+        // setFrontLanguageModalVisible(true);
       }
     } catch (err) {
       console.log('Error fetching flashcard questions:', err);
       Alert.alert('Error', 'Failed to load flashcards');
     }
   }, [flash_id, path, languageSetupComplete]);
+
+  useEffect(() => {
+    if (frontLanguage && backLanguage) {
+      updateLanguages();
+    }
+  }, [frontLanguage, backLanguage]);
+
+  useEffect(() => {
+    getFlashcardLanguages();
+  }, [flash_id]);
+
+  const getFlashcardLanguages = async () => {
+    try {
+      // console.log('fhvbsdhf');
+
+      const response = await axiosInstance.get(
+        `/v7/flashcard/languages/${flash_id}`,
+      );
+      // console.log(response.data);
+      if (response.data.status) {
+        setFrontLanguage(response.data.data.front_language);
+        setBackLanguage(response.data.data.back_language);
+        setFrontLanguageModalVisible(false);
+        setBackLanguageModalVisible(false);
+        setLanguageSetupComplete(true);
+      } else {
+        setFrontLanguageModalVisible(true);
+        setBackLanguageModalVisible(true);
+        setLanguageSetupComplete(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateLanguages = useCallback(async () => {
+    // console.log(frontLanguage, backLanguage);
+
+    try {
+      const response = await axiosInstance.post(
+        `/v7/flashcard/update-languages`,
+        {
+          flash_id,
+          front_language: frontLanguage,
+          back_language: backLanguage,
+        },
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [frontLanguage, backLanguage]);
 
   const submitFlashcardCompletion = useCallback(async () => {
     Alert.alert(
@@ -372,16 +416,10 @@ const Index = ({route}) => {
               const token = await storage.getStringAsync('token');
               if (!token) throw new Error('No token found');
 
-              await axios.post(
-                `${path}/student/flashcardresults`,
-                {flash_id, completed: 1},
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                  },
-                },
-              );
+              await axiosInstance.post(`/v7/flashcard/results`, {
+                flash_id,
+                completed: 1,
+              });
               navigation.goBack();
             } catch (error) {
               console.log('Error submitting flashcard:', error);
@@ -476,10 +514,10 @@ const Index = ({route}) => {
         voice: voiceId,
         pitch: 1.0,
         rate: 0.5,
-        androidParams: {
-          KEY_PARAM_PAN: -1,
-          KEY_PARAM_VOLUME: 0.5,
-        },
+        // androidParams: {
+        //   KEY_PARAM_PAN: -1,
+        //   KEY_PARAM_VOLUME: 0.5,
+        // },
       },
     });
 
@@ -595,25 +633,29 @@ const Index = ({route}) => {
         }
       })(),
     };
-
-
-  }, [getCurrentFlashcard, showAnswer, frontLanguage, backLanguage,flashcards]);
+  }, [
+    getCurrentFlashcard,
+    showAnswer,
+    frontLanguage,
+    backLanguage,
+    flashcards,
+  ]);
 
   const updateRecordings = (newRecordingsUpdate, is_front) => {
     // console.log('flashcards', flashcards[currentIndex]);
 
-    console.log('newRecordingsUpdate', newRecordingsUpdate);
-    console.log('is_front', is_front);
-    
+    // console.log('newRecordingsUpdate', newRecordingsUpdate);
+    // console.log('is_front', is_front);
 
     const updatedFlashcards = [...flashcards];
-    updatedFlashcards[currentIndex][is_front ? 'front_recordings' : 'back_recordings'] = newRecordingsUpdate;
+    updatedFlashcards[currentIndex][
+      is_front ? 'front_recordings' : 'back_recordings'
+    ] = newRecordingsUpdate;
     setFlashcards(updatedFlashcards);
 
-    console.log('flashcards', flashcards[currentIndex]);
+    // console.log('flashcards', flashcards[currentIndex]);
 
-    console.log('updatedFlashcards', updatedFlashcards);
-
+    // console.log('updatedFlashcards', updatedFlashcards);
   };
 
   if (!flashcards.length) {
@@ -716,8 +758,8 @@ const Index = ({route}) => {
 
       {/* Record Button */}
 
-      <View className="flex-row justify-between items-center px-5">
-        <TouchableOpacity
+      <View className="flex-row justify-end items-center px-5">
+        {/* <TouchableOpacity
           onPress={openRecordingsModal}
           style={{
             alignSelf: 'center',
@@ -744,7 +786,7 @@ const Index = ({route}) => {
           <Text style={{color: '#FFFFFF', fontWeight: '600', fontSize: 16}}>
             Pronounce
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {currentText && (
           <TouchableOpacity

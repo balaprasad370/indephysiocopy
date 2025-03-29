@@ -16,7 +16,7 @@ const Index = () => {
 
   const getProgressNotification = async () => {
     try {
-      console.log('getProgressNotification');
+      //   console.log('getProgressNotification');
 
       const response = await axiosInstance.get('/student/progress');
 
@@ -29,45 +29,65 @@ const Index = () => {
     }
   };
 
-  const getModuleIcon = (moduleType) => {
-    switch(moduleType) {
-      case 'quiz': return 'quiz';
-      case 'reading': return 'menu-book';
-      case 'flashcard': return 'flip';
-      case 'chapters': return 'library-books';
-      default: return 'notifications';
+  const getModuleIcon = moduleType => {
+    switch (moduleType) {
+      case 'quiz':
+        return 'quiz';
+      case 'reading':
+        return 'menu-book';
+      case 'flashcard':
+        return 'flip';
+      case 'chapters':
+        return 'library-books';
+      default:
+        return 'notifications';
     }
   };
 
-  const getModuleColor = (moduleType) => {
-    switch(moduleType) {
-      case 'quiz': return '#FF6B6B';
-      case 'reading': return '#4ECDC4';
-      case 'flashcard': return '#FFD166';
-      case 'chapters': return '#613BFF';
-      default: return '#613BFF';
+  const getModuleColor = moduleType => {
+    switch (moduleType) {
+      case 'quiz':
+        return '#FF6B6B';
+      case 'reading':
+        return '#4ECDC4';
+      case 'flashcard':
+        return '#FFD166';
+      case 'chapters':
+        return '#613BFF';
+      default:
+        return '#613BFF';
     }
   };
 
   const handlePress = () => {
-    if (progressNotification && progressNotification.route) {
-      navigation.navigate(progressNotification.route, progressNotification.params);
+    try {
+      if (progressNotification && progressNotification.route) {
+        navigation.navigate(
+          progressNotification.route,
+          progressNotification.params,
+        );
+      }
+    } catch (error) {
+      //   console.log('error', error);
     }
   };
 
   return (
     <View>
       {status && progressNotification && progressNotification.show && (
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
-            styles.banner, 
-            {borderLeftColor: getModuleColor(progressNotification.module_type)}
-          ]} 
-          onPress={handlePress}
-        >
+            styles.banner,
+            {borderLeftColor: getModuleColor(progressNotification.module_type)},
+          ]}
+          onPress={handlePress}>
           <View style={styles.contentContainer}>
             <View style={styles.textContainer}>
-              <Text style={[styles.continueText, {color: getModuleColor(progressNotification.module_type)}]}>
+              <Text
+                style={[
+                  styles.continueText,
+                  {color: getModuleColor(progressNotification.module_type)},
+                ]}>
                 Continue Learning
               </Text>
               <Text style={styles.titleText}>{progressNotification.title}</Text>
@@ -77,14 +97,19 @@ const Index = () => {
                 </Text>
               )}
             </View>
-            <View style={[
-              styles.iconContainer, 
-              {backgroundColor: `${getModuleColor(progressNotification.module_type)}20`}
-            ]}>
-              <Icon 
-                name={getModuleIcon(progressNotification.module_type)} 
-                size={24} 
-                color={getModuleColor(progressNotification.module_type)} 
+            <View
+              style={[
+                styles.iconContainer,
+                {
+                  backgroundColor: `${getModuleColor(
+                    progressNotification.module_type,
+                  )}20`,
+                },
+              ]}>
+              <Icon
+                name={getModuleIcon(progressNotification.module_type)}
+                size={24}
+                color={getModuleColor(progressNotification.module_type)}
               />
             </View>
           </View>

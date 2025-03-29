@@ -23,8 +23,8 @@ const Index = () => {
   const route = useRoute();
   const {attempt_id, module_id} = route.params;
 
-//   const module_id = 4985;
-//   const attempt_id = 56;
+  // const module_id = 4985;
+  // const attempt_id = 48;
 
   const {isDark} = useContext(AppContext);
   const style = isDark ? DarkTheme : LighTheme;

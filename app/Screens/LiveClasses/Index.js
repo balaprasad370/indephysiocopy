@@ -101,8 +101,10 @@ const Schedule = () => {
           if (!dayName) return;
 
           const [startHours, startMinutes] =
-            item.schedule_start_time.split(':');
-          const [endHours, endMinutes] = item.schedule_end_time.split(':');
+            item.schedule_start_time?.split(':') || [];
+          const [endHours, endMinutes] = item?.schedule_end_time?.split(':') || [];
+
+          if (!startHours || !startMinutes || !endHours || !endMinutes) return;
 
           // Get current week's date for this weekday
           const currentDate = new Date(getStartOfWeek());
@@ -149,14 +151,14 @@ const Schedule = () => {
             if (eventStartDate >= startOfWeek && eventStartDate <= endOfWeek) {
               fetchedEvents.push({
                 id: item.schedule_id,
-                title: item.title,
-                description: item.description,
+                title: item.title || 'Untitled',
+                description: item.description || '',
                 start: eventStartDate,
                 end: eventEndDate,
                 start_time: item.schedule_start_time,
-                end_time: item.schedule_end_time,
+                end_time: item?.schedule_end_time,
                 day: dayName,
-                room_name: item.room_name,
+                room_name: item.room_name || '',
               });
             }
           } else {
@@ -171,24 +173,28 @@ const Schedule = () => {
               ) {
                 fetchedEvents.push({
                   id: item.schedule_id,
-                  title: item.title,
-                  description: item.description,
+                  title: item.title || 'Untitled',
+                  description: item.description || '',
                   start: eventStartDate,
                   end: eventEndDate,
                   start_time: item.schedule_start_time,
-                  end_time: item.schedule_end_time,
+                  end_time: item?.schedule_end_time,
                   day: dayName,
-                  room_name: item.room_name,
+                  room_name: item.room_name || '',
                 });
               }
             }
           }
         } else if (item.schedule_is_recurring === 0) {
           // Handle non-recurring events
+          if (!item.schedule_start_date) return;
+          
           const startDate = new Date(item.schedule_start_date);
           const [startHours, startMinutes] =
-            item.schedule_start_time.split(':');
-          const [endHours, endMinutes] = item.schedule_end_time.split(':');
+            item.schedule_start_time?.split(':') || [];
+          const [endHours, endMinutes] = item?.schedule_end_time?.split(':') || [];
+
+          if (!startHours || !startMinutes || !endHours || !endMinutes) return;
 
           const eventStartDate = new Date(startDate);
           const eventEndDate = new Date(startDate);
@@ -209,14 +215,14 @@ const Schedule = () => {
 
             fetchedEvents.push({
               id: item.schedule_id,
-              title: item.title,
-              description: item.description,
+              title: item.title || 'Untitled',
+              description: item.description || '',
               start: eventStartDate,
               end: eventEndDate,
               start_time: item.schedule_start_time,
-              end_time: item.schedule_end_time,
+              end_time: item?.schedule_end_time,
               day: daysOfWeek[startDate.getDay() - 1] || daysOfWeek[6],
-              room_name: item.room_name,
+              room_name: item.room_name || '',
             });
           }
         }
@@ -226,7 +232,7 @@ const Schedule = () => {
 
       setEvents(fetchedEvents);
     } catch (err) {
-      // console.log('Error fetching schedule:', err);
+      console.error('Error fetching schedule:', err);
       setEvents([]);
     } finally {
       setIsLoading(false);
@@ -284,7 +290,7 @@ const Schedule = () => {
             <Text
               className="text-gray-800 dark:text-white text-lg font-bold"
               numberOfLines={1}>
-              {item.title.length > 20
+              {item.title && item.title.length > 20
                 ? item.title.substring(0, 20) + '...'
                 : item.title}
             </Text>
@@ -299,7 +305,7 @@ const Schedule = () => {
           <View className="flex-row items-start space-x-4 mb-4">
             <FontAwesome name="info-circle" size={16} color="#666" />
             <Text className="text-gray-600 dark:text-white flex-1 text-sm">
-              {item.description}
+              {item.description || 'No description available'}
             </Text>
           </View>
 
@@ -353,7 +359,9 @@ const Schedule = () => {
   };
 
   const RenderClassInfo = () => {
-    const isExpired = new Date(classInfo?.schedule_start_date) < new Date();
+    const isExpired = classInfo?.schedule_start_date 
+      ? new Date(classInfo.schedule_start_date) < new Date()
+      : false;
 
     return (
       <View className="flex-1 bg-white dark:bg-n75 rounded-lg w-full h-full">
@@ -374,17 +382,8 @@ const Schedule = () => {
         <View className="">
           <View className="px-6 py-6">
             <Text className="text-2xl font-bold text-p1 mb-4">
-              {classInfo?.title}
+              {classInfo?.title || 'Untitled Class'}
             </Text>
-
-            <View className="flex-row items-center mb-4">
-              <MaterialIcons name="event" size={20} color="#666" />
-              <Text className="text-gray-800 dark:text-gray-200 font-medium ml-2">
-                {moment(classInfo?.live_class_created_date).format(
-                  'DD MMM, YYYY',
-                )}
-              </Text>
-            </View>
 
             <View className="flex-row items-start mb-6">
               <MaterialIcons
@@ -394,16 +393,16 @@ const Schedule = () => {
                 style={{marginTop: 2}}
               />
               <Text className="text-gray-600 dark:text-gray-300 text-base leading-relaxed ml-2 flex-1">
-                {classInfo?.description}
+                {classInfo?.description || 'No description available'}
               </Text>
             </View>
 
             <View className="flex-row items-center justify-start">
               <MaterialIcons name="access-time" size={20} color="#666" />
               <Text className="text-gray-600 dark:text-gray-300 text-base leading-relaxed  ml-2">
-                {moment(classInfo?.schedule_start_time, 'HH:mm').format(
-                  'HH:mm',
-                )}
+                {classInfo?.schedule_start_time
+                  ? moment(classInfo.schedule_start_time, 'HH:mm').format('HH:mm')
+                  : '--:--'}
               </Text>
 
               <MaterialIcons
@@ -414,48 +413,47 @@ const Schedule = () => {
               />
 
               <Text className="text-gray-600 dark:text-gray-300 text-base leading-relaxed ">
-                {moment(classInfo?.schedule_end_time, 'HH:mm').format('HH:mm')}
+                {classInfo?.schedule_end_time
+                  ? moment(classInfo.schedule_end_time, 'HH:mm').format('HH:mm')
+                  : '--:--'}
               </Text>
             </View>
           </View>
         </View>
 
         <View className="px-6 py-4 border-t border-gray-200">
-          {moment(classInfo.schedule_end_time, 'HH:mm').isAfter(moment()) &&
-            !classInfo?.live_class_recording_url && (
-              <TouchableOpacity
-                className="bg-p1 flex-row items-center justify-center py-4 px-6 rounded-xl mb-4"
-                onPress={async () => {
-                  const studentName = await storage.getStringAsync(
-                    'studentName',
-                  );
-                  const studentId = await storage.getStringAsync('studentId');
-                  const email = await storage.getStringAsync('email');
+          {!classInfo?.live_class_recording_url && (
+            <TouchableOpacity
+              className="bg-p1 flex-row items-center justify-center py-4 px-6 rounded-xl mb-4"
+              onPress={async () => {
+                const studentName = await storage.getStringAsync('studentName');
+                const studentId = await storage.getStringAsync('studentId');
+                const email = await storage.getStringAsync('email');
 
-                  mixpanel.track('Join Live Class', {
-                    room: classInfo?.room_name,
-                    title: classInfo?.title,
-                    studentName: studentName,
-                    studentId: studentId,
-                    email: email,
-                  });
+                mixpanel.track('Join Live Class', {
+                  room: classInfo?.room_name,
+                  title: classInfo?.title,
+                  studentName: studentName,
+                  studentId: studentId,
+                  email: email,
+                });
 
-                  // Handle join meeting
-                  navigation.navigate(ROUTES.MEETING, {
-                    room: classInfo?.room_name,
-                  });
-                }}>
-                <MaterialIcons
-                  name="video-call"
-                  size={24}
-                  color="white"
-                  style={{marginRight: 8}}
-                />
-                <Text className="text-white font-bold text-base">
-                  Join Live Class
-                </Text>
-              </TouchableOpacity>
-            )}
+                // Handle join meeting
+                navigation.navigate(ROUTES.MEETING, {
+                  room: classInfo?.room_name,
+                });
+              }}>
+              <MaterialIcons
+                name="video-call"
+                size={24}
+                color="white"
+                style={{marginRight: 8}}
+              />
+              <Text className="text-white font-bold text-base">
+                Join Live Class
+              </Text>
+            </TouchableOpacity>
+          )}
 
           {classInfo?.live_class_recording_url ? (
             <TouchableOpacity
@@ -498,6 +496,11 @@ const Schedule = () => {
   };
 
   const fetchClassInfo = async () => {
+    if (!selectedEvent?.id || !selectedEvent?.room_name || !selectedEvent?.start) {
+      console.error('Missing required event information');
+      return;
+    }
+    
     try {
       const url = `/student/schedule/info/${selectedEvent.id}/${
         selectedEvent.room_name
@@ -514,12 +517,11 @@ const Schedule = () => {
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && selectedEvent) {
       console.log('selectedEvent', selectedEvent);
-
       fetchClassInfo();
     }
-  }, [isOpen]);
+  }, [isOpen, selectedEvent]);
 
   return (
     <SafeAreaView className="flex-1 bg-b50  min-h-full dark:bg-n75 dark:text-white">
@@ -616,20 +618,12 @@ const Schedule = () => {
                 <Text className="text-xl font-bold text-gray-800 mb-2">
                   No Classes Found
                 </Text>
-                {/* <Text className="text-gray-600 text-center mb-4">
-                  Subscribe to our premium plan to access all classes and
-                  learning materials
-                </Text> */}
-                {/* <TouchableOpacity
-                  className="bg-blue-600 px-6 py-3 rounded-xl"
-                  onPress={() => navigation.navigate('Subscription')}>
-                  <Text className="text-white font-bold">Subscribe Now</Text>
-                </TouchableOpacity> */}
               </View>
             ) : (
               <FlatList
                 data={filteredEvents}
                 renderItem={renderEventCard}
+                keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{paddingBottom: 20}}
                 onRefresh={fetchSchedule}

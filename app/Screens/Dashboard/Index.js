@@ -62,6 +62,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import SubscriptionExpiry from '..//SubscriptionExpiry/Index';
 import LottieView from 'lottie-react-native';
 import Tabs from '../../Components/Dashboard/Tabs';
+import HomeAnimation from '../../assets/lottie/homeanimation.json';
 
 const storage = new MMKVLoader().initialize();
 const Index = ({navigation}) => {
@@ -446,7 +447,7 @@ const Index = ({navigation}) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      console.log('jbg');
+      // console.log('jbg');
       // getSubscriptionExpiry();
 
       storeDeviceInfo();
@@ -475,9 +476,7 @@ const Index = ({navigation}) => {
             zIndex: -1,
           }}>
           <LottieView
-            source={{
-              uri: 'https://lottie.host/8c5b5a42-228d-40a1-be1f-88e586dd4c98/sB2gF4vRJk.json',
-            }}
+            source={HomeAnimation}
             autoPlay
             loop
             style={{width: '100%', height: '100%'}}

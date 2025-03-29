@@ -81,8 +81,8 @@ android {
         applicationId "com.inde.physio"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 112// major.minor.patch
-        versionName "1.0.12" // major.minor.patch
+        versionCode 114 // major.minor.patch
+        versionName "1.0.14" // major.minor.patch
     }
 
     compileOptions {

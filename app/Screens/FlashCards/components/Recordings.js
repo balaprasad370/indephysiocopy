@@ -45,7 +45,7 @@ const Recordings = ({
   // Memoize currentSideData to prevent unnecessary re-renders
   const memoizedSideData = useMemo(
     () => {
-      console.log('currentSideData', currentSideData);
+      // console.log('currentSideData', currentSideData);
       
       return currentSideData;
     },
@@ -232,7 +232,7 @@ const Recordings = ({
         ],
       );
 
-      console.log('response', response.data);
+      // console.log('response', response.data);
 
       const parsedResponse = JSON.parse(response.data);
       const cloud_uri = parsedResponse.filepath;
@@ -249,28 +249,41 @@ const Recordings = ({
         isRemote: false,
       };
 
-      const prev = [...recordings];
-      const recordingsNewUpdate = prev.map(recording => recording.uri);
-      recordingsNewUpdate.push(cloud_uri);
-
-      updateRecordings(recordingsNewUpdate, memoizedSideData?.side === 'front' ? 1 : 0);
+      // Get all existing recording URIs
+      const existingRecordingUris = recordings.map(recording => recording.uri);
+      
+      // Create a new array with the cloud URI added
+      let updatedRecordingUris = [...existingRecordingUris, cloud_uri];
+      
+      // If we have more than 3 recordings, remove the first one
+      if (updatedRecordingUris.length > 3) {
+        updatedRecordingUris = updatedRecordingUris.slice(1);
+      }
+      
+      // Update the recordings in the parent component
+      updateRecordings(updatedRecordingUris, memoizedSideData?.side === 'front' ? 1 : 0);
+      
+      // console.log('Updated recordings:', updatedRecordingUris);
 
       setRecordings(prev => {
         let newRecordings;
         if (prev.length >= 3) {
+          // If we already have 3 recordings, shift them (remove first, move second to first, third to second)
+          // and add the new one at the end
           newRecordings = [...prev.slice(1), newRecording];
         } else {
+          // If we have less than 3, just add the new one
           newRecordings = [...prev, newRecording];
         }
 
         setHasChanges(true);
-        console.log('newRecordings', newRecordings);
+        // console.log('newRecordings', newRecordings);
         return newRecordings;
       });
 
       setIsRecording(false);
       setCurrentRecordingTime('00:00');
-      console.log('Recording stopped', result);
+      // console.log('Recording stopped', result);
     } catch (error) {
       console.log('Error stopping recording:', error?.response?.data || error);
       setIsRecording(false);
@@ -280,6 +293,7 @@ const Recordings = ({
     audioRecorderPlayer,
     currentRecordingTime,
     memoizedSideData,
+    recordings,
   ]);
 
   const handlePlaybackStatusChange = useCallback((isPlaying, index) => {
@@ -359,12 +373,12 @@ const Recordings = ({
       const isFrontSide = memoizedSideData?.side === 'front';
       const flash_question_id = memoizedSideData?.flash_question_id;
 
-      console.log(
-        'Saving recordings for flash_question_id:',
-        flash_question_id,
-      );
-      console.log('is_front:', isFrontSide ? 1 : 0);
-      console.log('Recordings URIs:', JSON.stringify(recordingUris));
+      // console.log(
+      //   'Saving recordings for flash_question_id:',
+      //   flash_question_id,
+      // );
+      // console.log('is_front:', isFrontSide ? 1 : 0);
+      // console.log('Recordings URIs:', JSON.stringify(recordingUris));
 
       const dataToSave = {
         flash_question_id,

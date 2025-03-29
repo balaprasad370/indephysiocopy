@@ -2788,7 +2788,6 @@ __metadata:
     react-native-svg: 13.13.0
     react-native-video: 6.0.0-alpha.11
     react-native-watch-connectivity: 1.1.0
-    react-native-webrtc: 118.0.2
     react-native-webview: 13.5.1
     text-encoding: 0.7.0
   checksum: 8540cc055f7c7aa59b4ce72ba1a6c6616d620e15d083e125eefa9861963a0466aaf01059f4d45bb1b728afdaf03c1ac5b94a3fffbef85bf8c96a5ae15858a5e0

@@ -52,7 +52,7 @@ const Index = () => {
         signal: controller.signal,
       });
 
-      console.log('chapters response', response.data);
+      // console.log('chapters response', response.data);
       clearTimeout(timeoutId);
 
       if (!response.data.success) {
@@ -310,7 +310,7 @@ const Index = () => {
         <FlatList
           data={chapters}
           renderItem={renderChapterCard}
-          keyExtractor={item => item.id?.toString()}
+          keyExtractor={(item, index) => `${index}`}
           ListEmptyComponent={
             <View className="flex-1 justify-center items-center p-4">
               <Text className="text-lg font-black text-center">
